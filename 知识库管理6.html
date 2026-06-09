@@ -378,14 +378,14 @@ function buildListRows(docs){
     </div>`+
   docs.map(doc=>{
     const c=CC[doc.type]||{dot:'#888',tag:'#eee',txt:'#444'};
-    const actions=doc.mine
-      ?`<div class="act-row">
-            <button class="ia" onclick="openDetail(${doc.id})">${I.doc} 查看</button>
-            <button class="ia" onclick="openModal('settings',${doc.id})">${I.eye} 可见范围</button>
-            <button class="ia" onclick="openModal('edit',${doc.id})">${I.ed} 编辑</button>
-            <button class="ia rd" onclick="openModal('confirm',${doc.id})">${I.del} 下架</button>
-          </div>`
-      :`<div class="act-row"><button class="ia" onclick="openDetail(${doc.id})">${I.doc} 查看</button></div>`;
+    const isAdmin=S.role==='admin';
+    const canManage=doc.mine||isAdmin;   /* 可见范围、下架：本人或管理员（管理员可治理任意文档）*/
+    const canEdit=doc.mine;              /* 编辑内容：仅本人，管理员不替改他人内容 */
+    let btns=`<button class="ia" onclick="openDetail(${doc.id})">${I.doc} 查看</button>`;
+    if(canManage) btns+=`<button class="ia" onclick="openModal('settings',${doc.id})">${I.eye} 可见范围</button>`;
+    if(canEdit)   btns+=`<button class="ia" onclick="openModal('edit',${doc.id})">${I.ed} 编辑</button>`;
+    if(canManage) btns+=`<button class="ia rd" onclick="openModal('confirm',${doc.id})">${I.del} 下架</button>`;
+    const actions=`<div class="act-row">${btns}</div>`;
     return `<div class="lrow${doc.mine?' mine':''}">
       <div class="col-t clk" onclick="openDetail(${doc.id})">
         <div class="doc-name">${doc.title}</div>
@@ -456,7 +456,7 @@ function buildMSettings(){
         <option value="team"${doc.vis==='team'?' selected':''}>本部门/公司可见 — 仅本部门或子公司成员</option>
         <option value="private"${doc.vis==='private'?' selected':''}>仅自己可见 — 完全私密</option>
       </select></div>
-      <div class="hint-box">${I.lock} <span>仅可修改自己上传的文档可见范围</span></div>
+      <div class="hint-box">${I.lock} <span>${S.role==='admin'?'管理员可调整任意文档的可见范围':'仅可修改自己上传的文档可见范围'}</span></div>
     </div>
     <div class="modal-foot">
       <button class="btn" onclick="closeModal()">取消</button>
