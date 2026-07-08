@@ -16,9 +16,12 @@ input,textarea,select,button{font-family:inherit}
   --color-border-secondary:var(--border);--color-border-tertiary:#e4e2da;--color-border-danger:#e8c4c4;
   --border-radius-md:6px;--border-radius-lg:10px;
 }
-body{font-family:-apple-system,BlinkMacSystemFont,'PingFang SC','Microsoft YaHei',sans-serif;font-size:13px;color:var(--text);background:var(--bg3)}
+html,body{height:100%;margin:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'PingFang SC','Microsoft YaHei',sans-serif;font-size:13px;color:var(--text);background:var(--bg)}
 
-.shell{position:relative;border:1px solid var(--border2);border-radius:10px;overflow:hidden;background:var(--bg)}
+/* 内嵌 iframe：贴边铺满，随容器高度自适应，不再是固定尺寸卡片 */
+.shell{position:relative;display:flex;flex-direction:column;height:100vh;overflow:hidden;background:var(--bg)}
+#page{display:flex;flex-direction:column;flex:1;min-height:0}
 
 /* ── top nav ── */
 .tnav{display:flex;align-items:center;gap:10px;padding:0 14px;height:46px;background:var(--bg);border-bottom:1.5px solid var(--border2);flex-shrink:0}
@@ -32,7 +35,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'PingFang SC','Microsoft YaHei
 .btn-upload:hover{opacity:.85}
 
 /* ── layout ── */
-.layout{display:flex;height:720px}
+.layout{display:flex;flex:1;min-height:0}
 
 /* ── sidebar ── */
 .sb{width:var(--sidebar-w);flex-shrink:0;background:var(--bg2);border-right:1.5px solid var(--border2);display:flex;flex-direction:column;padding:8px;overflow-y:auto}
@@ -168,11 +171,9 @@ body{font-family:-apple-system,BlinkMacSystemFont,'PingFang SC','Microsoft YaHei
 .col-t.clk:hover .doc-name{color:var(--text);text-decoration:underline}
 </style>
 
-<div style="padding:1rem 0">
-  <div class="shell" id="shell">
-    <div id="page"></div>
-    <div id="modal-layer"></div>
-  </div>
+<div class="shell" id="shell">
+  <div id="page"></div>
+  <div id="modal-layer"></div>
 </div>
 <div id="toast-el" class="toast"></div>
 
@@ -564,4 +565,3 @@ function addType(){
 
 render();
 </script>
-                                                                                               
