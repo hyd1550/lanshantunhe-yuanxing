@@ -464,7 +464,7 @@ function buildMConfirm(){
   return `<div class="modal" style="max-width:380px" onclick="event.stopPropagation()">
     <div class="modal-body">
       ${mHead(I.del,'下架确认')}
-      <p style="font-size:13px;color:var(--color-text-secondary);line-height:1.7">确认下架「${doc?doc.title:''}」？<br>下架后文档转为草稿，其他用户将无法查看。</p>
+      <p style="font-size:13px;color:var(--color-text-secondary);line-height:1.7">确认下架「${doc?doc.title:''}」？<br>下架后文档将从知识库中移除，且无法恢复，请谨慎操作。</p>
     </div>
     <div class="modal-foot">
       <button class="btn" onclick="closeModal()">取消</button>
