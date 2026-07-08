@@ -169,6 +169,49 @@ body{font-family:-apple-system,BlinkMacSystemFont,'PingFang SC','Microsoft YaHei
 .kw{font-size:11px;padding:2px 9px;border-radius:99px;background:var(--bg3);color:var(--text2);border:1px solid var(--border)}
 .col-t.clk{cursor:pointer}
 .col-t.clk:hover .doc-name{color:var(--text);text-decoration:underline}
+
+/* ── 附件多文件 / 图片拼版 ── */
+.att-list{margin-top:16px;border-top:1px solid var(--border);padding-top:12px}
+.att-list-hd{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:8px}
+.att-list-hd .lbl{font-size:12px;font-weight:600;color:var(--text)}
+.att-switch{font-size:11px;color:var(--text3)}
+.att-row{display:flex;align-items:center;gap:10px;padding:8px;border-radius:8px;cursor:pointer;border:1px solid transparent;transition:background .12s}
+.att-row:hover{background:var(--bg2)}
+.att-row.on{background:var(--blue-bg);border-color:var(--blue)}
+.att-icon{width:30px;height:34px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:#fff;flex-shrink:0}
+.att-icon.k-pdf{background:#D8503C}
+.att-icon.k-office-w{background:#2B6CB0}
+.att-icon.k-office-x{background:#2F855A}
+.att-icon.k-image{background:#2F855A}
+.att-meta{flex:1;min-width:0}
+.att-name{font-size:12px;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.att-size{font-size:11px;color:var(--text3);margin-top:1px}
+.att-badge{font-size:10px;padding:1px 7px;border-radius:99px;flex-shrink:0;font-weight:500}
+.b-pdf{background:var(--red-bg);color:var(--red)}
+.b-conv{background:var(--amber-bg);color:var(--amber)}
+.b-img{background:var(--green-bg);color:var(--green)}
+.att-del{opacity:0;display:inline-flex;padding:3px;border-radius:5px;color:var(--text3);cursor:pointer;flex-shrink:0}
+.att-row:hover .att-del{opacity:.65}
+.att-del:hover{opacity:1;background:var(--red-bg);color:var(--red)}
+.att-upload{margin-top:8px;display:flex;align-items:center;justify-content:center;gap:6px;padding:10px;border:1.5px dashed var(--border2);border-radius:8px;color:var(--text2);font-size:12px;cursor:pointer;background:var(--bg2)}
+.att-upload:hover{border-color:var(--text2);background:var(--bg3);color:var(--text)}
+.att-upload-hint{font-size:11px;color:var(--text3);text-align:center;margin-top:6px}
+.att-preview{display:flex;flex-direction:column;min-width:0}
+.att-pv-head{display:flex;align-items:center;gap:10px;margin-bottom:14px}
+.att-pv-title{font-size:14px;font-weight:600;color:var(--text)}
+.att-pv-count{font-size:12px;color:var(--text3)}
+.att-pv-total{font-size:11px;color:var(--text2);background:var(--bg2);border:1px solid var(--border);padding:2px 8px;border-radius:99px}
+.att-pv-head .spacer{flex:1}
+.img-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.img-tile{aspect-ratio:16/10;border-radius:8px;cursor:pointer;border:1px solid var(--border);background-size:cover;background-position:center}
+.img-tile.single{grid-column:1 / -1;aspect-ratio:16/9}
+.office-pv{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:56px 20px;min-height:340px}
+.office-big{width:76px;height:76px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:700;color:#fff;margin-bottom:16px}
+.office-big.w{background:#2B6CB0}
+.office-big.x{background:#2F855A}
+.office-name{font-size:15px;font-weight:600;color:var(--text)}
+.office-note{font-size:12px;color:var(--text3);margin:8px 0 18px;display:flex;align-items:center;gap:5px}
+.office-btns{display:flex;gap:10px}
 </style>
 
 <div class="shell" id="shell">
@@ -199,8 +242,29 @@ let S={
     {id:6,title:'与中科院宁波材料所专家交流纪要',desc:'共聚酯合成工艺优化方向及合作意向',type:'专家交流纪要',author:'我',mine:true,vis:'team',status:'published',date:'今天',time:'2025-04-08 15:30',file:'中科院宁波材料所交流纪要.docx',size:'0.6 MB',views:18,kw:['中科院宁波材料所','共聚酯','工艺优化','产学研']},
   ],
   modal:null, mid:null, detailId:null,
-  uf:{title:'',desc:'',type:'产品分析报告',vis:'team',file:'',size:''},
+  uf:{title:'',desc:'',type:'产品分析报告',vis:'team',file:'',size:'',files:[]},
+  ef:{file:'',size:''},
+  detailAtt:null,
+  ue:null,
 };
+/* 多文件迁移：旧单文件转 attachments；示例文档1配多附件展示 */
+S.docs.forEach(d=>{
+  if(d.attachments) return;
+  d.attachments=[];
+  if(d.file){
+    const ext=(d.file.split('.').pop()||'').toLowerCase();
+    if(['doc','docx','xls','xlsx','ppt','pptx'].includes(ext)) d.attachments.push({id:'a'+d.id+'-1',name:d.file,kind:'office',ext:(ext[0]==='x'?'X':'W'),size:d.size,converted:true});
+    else if(['png','jpg','jpeg','gif','webp'].includes(ext)) d.attachments.push({id:'a'+d.id+'-1',name:d.file,kind:'image',ext:ext.toUpperCase(),size:d.size});
+    else d.attachments.push({id:'a'+d.id+'-1',name:d.file,kind:'pdf',size:d.size});
+  }
+});
+const _d1=S.docs.find(d=>d.id===1);
+if(_d1) _d1.attachments=[
+  {id:'a1-1',name:'PLA市场竞品分析报告.pdf',kind:'pdf',size:'2.4 MB'},
+  {id:'a1-3',name:'PLA数据源汇总.docx',kind:'office',ext:'W',size:'1.2 MB',converted:true},
+];
+const _d4=S.docs.find(d=>d.id===4);
+if(_d4) _d4.attachments.push({id:'a4-2',name:'配方体系对比图.png',kind:'image',ext:'PNG',size:'742 KB'});
 
 const I={
   kb:'<svg width="14" height="14" viewBox="0 0 14 14" fill="none"><rect x="1" y="1" width="5" height="5" rx="1" stroke="currentColor" stroke-width="1.3"/><rect x="8" y="1" width="5" height="5" rx="1" stroke="currentColor" stroke-width="1.3"/><rect x="1" y="8" width="5" height="5" rx="1" stroke="currentColor" stroke-width="1.3"/><rect x="8" y="8" width="5" height="5" rx="1" stroke="currentColor" stroke-width="1.3"/></svg>',
@@ -217,6 +281,7 @@ const I={
   back:'<svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M8 2.5L3.5 6.5 8 10.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>',
   doc:'<svg width="11" height="11" viewBox="0 0 11 11" fill="none"><path d="M2.7 1.5h3.4l2.2 2.2v5.3a.5.5 0 01-.5.5h-5.1a.5.5 0 01-.5-.5v-7a.5.5 0 01.5-.5z" stroke="currentColor" stroke-width="1.1" stroke-linejoin="round"/><path d="M6 1.6v2.1h2.1M4 6.2h3M4 7.8h3" stroke="currentColor" stroke-width="1.1" stroke-linecap="round"/></svg>',
   dl:'<svg width="11" height="11" viewBox="0 0 11 11" fill="none"><path d="M5.5 1.5v5M3.3 4.3l2.2 2.2 2.2-2.2" stroke="currentColor" stroke-width="1.1" stroke-linecap="round" stroke-linejoin="round"/><path d="M2 8.5v.5a.5.5 0 00.5.5h6a.5.5 0 00.5-.5v-.5" stroke="currentColor" stroke-width="1.1" stroke-linecap="round"/></svg>',
+  expand:'<svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 4.5V2h2.5M10 4.5V2H7.5M2 7.5V10h2.5M10 7.5V10H7.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>',
 };
 
 function toast(msg){const e=document.getElementById('toast-el');e.textContent=msg;e.classList.add('show');setTimeout(()=>e.classList.remove('show'),2200)}
@@ -296,58 +361,161 @@ function buildListView(){
 function visLabel(v){return v==='public'?'全集团可见':v==='team'?'本部门/公司可见':'仅自己可见'}
 
 /* 文档详情页：返回 + 在线预览/下载 + 文档信息卡 + 关键词 */
+function attKindInfo(a){
+  if(a.kind==='pdf')   return {ic:'k-pdf',il:'PDF',bc:'b-pdf',bt:'PDF'};
+  if(a.kind==='images')return {ic:'k-image',il:'IMG',bc:'b-img',bt:a.count+'张'};
+  if(a.kind==='image') return {ic:'k-image',il:'IMG',bc:'b-img',bt:(a.ext||'IMG')};
+  if(a.kind==='office'){const x=a.ext==='X';return {ic:x?'k-office-x':'k-office-w',il:x?'X':'W',bc:'b-conv',bt:'已转PDF'};}
+  return {ic:'k-pdf',il:'FILE',bc:'b-pdf',bt:'文件'};
+}
+const IMG_GRADS=['linear-gradient(135deg,#c9b8a8,#efe0cc)','linear-gradient(135deg,#b7c7d6,#dde8f0)','linear-gradient(135deg,#3f3a56,#6b6187)','linear-gradient(135deg,#a9c6d0,#d9ebef)','linear-gradient(135deg,#d8c4a0,#f0e3c8)','linear-gradient(135deg,#c3b2cc,#e6dcec)'];
+function imgTile(i,single){return `<div class="img-tile${single?' single':''}" style="background:${IMG_GRADS[i%IMG_GRADS.length]}" onclick="toast('查看第${i+1}张（原型演示）')"></div>`;}
+function buildPdfSheet(a){
+  return `<div class="att-preview">
+    <div class="att-pv-head"><div class="att-pv-title">${a.name}</div><div class="spacer"></div>
+      <button class="btn" onclick="toast('下载（原型演示）')">${I.dl} 下载</button>
+      <button class="btn" onclick="toast('全屏预览（原型演示）')">${I.expand} 全屏</button></div>
+    <div class="preview-sheet">
+      <div class="sheet-h">${a.name.replace(/\.[^.]+$/,'')}</div>
+      <div class="sheet-sub">PDF 在线预览（原型示意）</div>
+      <div class="sheet-sec">摘要</div>
+      <div class="sheet-line" style="width:100%"></div>
+      <div class="sheet-line" style="width:96%"></div>
+      <div class="sheet-line" style="width:88%"></div>
+      <div class="sheet-sec">正文</div>
+      <div class="sheet-line" style="width:100%"></div>
+      <div class="sheet-line" style="width:94%"></div>
+      <div class="sheet-line" style="width:70%"></div>
+    </div>
+  </div>`;
+}
+function buildAttPreview(a){
+  if(!a) return `<div class="empty">该文档暂无附件</div>`;
+  if(a.kind==='images'){
+    let tiles='';for(let i=0;i<a.count;i++) tiles+=imgTile(i,false);
+    return `<div class="att-preview">
+      <div class="att-pv-head">
+        <div class="att-pv-title">${a.name}</div>
+        <div class="att-pv-count">${a.count} 张图片</div>
+        <div class="spacer"></div>
+        <div class="att-pv-total">共 ${a.count} 张</div>
+        <button class="btn" onclick="toast('下载全部（原型演示）')">${I.dl} 下载</button>
+        <button class="btn" onclick="toast('全屏预览（原型演示）')">${I.expand} 全屏</button>
+      </div>
+      <div class="img-grid">${tiles}</div>
+    </div>`;
+  }
+  if(a.kind==='image'){
+    return `<div class="att-preview">
+      <div class="att-pv-head"><div class="att-pv-title">${a.name}</div><div class="spacer"></div>
+        <button class="btn" onclick="toast('下载（原型演示）')">${I.dl} 下载</button>
+        <button class="btn" onclick="toast('全屏预览（原型演示）')">${I.expand} 全屏</button></div>
+      <div class="img-grid">${imgTile(0,true)}</div>
+    </div>`;
+  }
+  if(a.kind==='office'){
+    const x=a.ext==='X';
+    return `<div class="office-pv">
+      <div class="office-big ${x?'x':'w'}">${x?'X':'W'}</div>
+      <div class="office-name">${a.name}</div>
+      <div class="office-note">${I.doc} 该文件已转换为 PDF</div>
+      <div class="office-btns">
+        <button class="btn" onclick="toast('查看 PDF（原型演示）')">${I.doc} 查看 PDF</button>
+        <button class="btn dark" onclick="toast('下载原文件（原型演示）')">${I.dl} 下载原文件</button>
+      </div>
+    </div>`;
+  }
+  return buildPdfSheet(a);
+}
 function buildDetailView(doc){
   const c=CC[doc.type]||{dot:'#888',tag:'#eee',txt:'#444'};
+  const atts=doc.attachments||[];
+  if(!S.detailAtt||!atts.some(a=>a.id===S.detailAtt)) S.detailAtt=atts.length?atts[0].id:null;
+  const sel=atts.find(a=>a.id===S.detailAtt);
+
   const bar=`<div class="detail-bar">
     <button class="detail-back" onclick="closeDetail()">${I.back} 返回列表</button>
     <span class="tag" style="background:${c.tag};color:${c.txt}"><span style="width:5px;height:5px;border-radius:50%;background:${c.dot};display:inline-block"></span>${doc.type}</span>
-    <div class="detail-actions">
-      <button class="btn dark" onclick="toast('开始下载（原型演示）')">${I.dl} 下载原文</button>
-    </div>
   </div>`;
 
-  const sheet=`<div class="preview-sheet">
-    <div class="sheet-h">${doc.title}</div>
-    <div class="sheet-sub">${doc.type} ｜ ${doc.author} ｜ ${doc.time||doc.date}</div>
-    <div class="sheet-sec">摘要</div>
-    <div class="sheet-p">${doc.desc}。本文档围绕上述主题展开，系统梳理了相关背景、技术现状与关键数据，供研发与决策参考。</div>
-    <div class="sheet-sec">一、概述</div>
-    <div class="sheet-line" style="width:100%"></div>
-    <div class="sheet-line" style="width:96%"></div>
-    <div class="sheet-line" style="width:88%"></div>
-    <div class="sheet-sec">二、关键分析</div>
-    <div class="sheet-line" style="width:100%"></div>
-    <div class="sheet-line" style="width:94%"></div>
-    <div class="sheet-line" style="width:97%"></div>
-    <div class="sheet-line" style="width:68%"></div>
-    <div style="text-align:center;font-size:11px;color:#aaa;margin-top:26px">— 文档在线预览（原型示意，正式版渲染上传的原始文件）—</div>
-  </div>`;
+  const canManage=doc.mine||S.role==='admin';
+  const attRows=atts.map(a=>{
+    const k=attKindInfo(a);
+    return `<div class="att-row${a.id===S.detailAtt?' on':''}" onclick="selectAtt('${a.id}')">
+      <div class="att-icon ${k.ic}">${k.il}</div>
+      <div class="att-meta"><div class="att-name">${a.name}</div><div class="att-size">${a.size||''}</div></div>
+      <span class="att-badge ${k.bc}">${k.bt}</span>
+    </div>`;
+  }).join('');
+  const uploadRow='';
 
-  const previewCol=`<div class="preview-col">
+  const leftCol=`<div class="meta-col">
     <div class="preview-title">${doc.title}</div>
-    <div class="preview-submeta">
-      <span>上传人：${doc.author}</span>
-      <span>上传时间：${doc.time||doc.date}</span>
-      <span>浏览 ${doc.views!=null?doc.views:0} 次</span>
-    </div>
-    ${sheet}
-  </div>`;
-
-  const metaCol=`<div class="meta-col">
-    <div class="meta-card">
-      <h4>文档信息</h4>
-      <div class="meta-row"><span class="meta-k">文档类型</span><span class="meta-v">${doc.type}</span></div>
-      <div class="meta-row"><span class="meta-k">上传人</span><span class="meta-v">${doc.author}</span></div>
-      <div class="meta-row"><span class="meta-k">上传时间</span><span class="meta-v">${doc.time||doc.date}</span></div>
+    <div class="doc-sub" style="white-space:normal;margin:6px 0 14px;font-size:12px;line-height:1.6">${doc.desc}</div>
+    <div class="meta-card" style="background:transparent;border:none;padding:0">
+      <div class="meta-row"><span class="meta-k">类型</span><span class="meta-v">${doc.type}</span></div>
+      <div class="meta-row"><span class="meta-k">作者</span><span class="meta-v">${doc.author}</span></div>
+      <div class="meta-row"><span class="meta-k">日期</span><span class="meta-v">${doc.time||doc.date}</span></div>
       <div class="meta-row"><span class="meta-k">可见范围</span><span class="meta-v">${visLabel(doc.vis)}</span></div>
-      <div class="meta-row"><span class="meta-k">文件</span><span class="meta-v" style="max-width:165px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${doc.file||''}">${doc.file||'—'}</span></div>
-      <div class="meta-row"><span class="meta-k">大小</span><span class="meta-v">${doc.size||'—'}</span></div>
-      <div class="meta-row"><span class="meta-k">浏览次数</span><span class="meta-v">${doc.views!=null?doc.views:0}</span></div>
+    </div>
+    <div class="att-list">
+      <div class="att-list-hd"><span class="lbl">附件（${atts.length}个）</span><span class="att-switch">点击切换预览</span></div>
+      ${attRows}
+      ${uploadRow}
     </div>
   </div>`;
 
-  return `<div class="detail">${bar}<div class="detail-body">${previewCol}${metaCol}</div></div>`;
+  const rightCol=`<div class="preview-col">${buildAttPreview(sel)}</div>`;
+  return `<div class="detail">${bar}<div class="detail-body" style="align-items:flex-start">${leftCol}${rightCol}</div></div>`;
 }
+function selectAtt(id){S.detailAtt=id;renderPage();}
+function addAttach(){
+  const inp=document.createElement('input');inp.type='file';inp.multiple=true;
+  inp.onchange=()=>{const d=S.docs.find(x=>x.id===S.detailId);if(!d)return;if(!d.attachments)d.attachments=[];
+    [...inp.files].forEach(f=>addFileToDoc(d,f));toast('已添加附件');renderPage();};
+  inp.click();
+}
+function addFileToDoc(d,f){
+  const ext=(f.name.split('.').pop()||'').toLowerCase();
+  const rid='a'+Date.now()+Math.random().toString(36).slice(2,5);
+  if(['png','jpg','jpeg','gif','webp','bmp'].includes(ext)){
+    let g=d.attachments.find(a=>a.kind==='images');
+    if(g){g.count++;g.size=g.count+' 张图片';}
+    else d.attachments.push({id:rid,name:'图片附件',kind:'images',count:1,size:'1 张图片'});
+    return;
+  }
+  if(['doc','docx','xls','xlsx','ppt','pptx'].includes(ext)){
+    d.attachments.push({id:rid,name:f.name,kind:'office',ext:(ext[0]==='x'?'X':'W'),size:fmtSize(f.size),converted:true});return;
+  }
+  d.attachments.push({id:rid,name:f.name,kind:'pdf',size:fmtSize(f.size)});
+}
+function removeAtt(id,ev){
+  if(ev)ev.stopPropagation();
+  const d=S.docs.find(x=>x.id===S.detailId);if(!d||!d.attachments)return;
+  d.attachments=d.attachments.filter(a=>a.id!==id);
+  if(S.detailAtt===id) S.detailAtt=d.attachments.length?d.attachments[0].id:null;
+  toast('附件已删除');renderPage();
+}
+function addFileToList(list,f){
+  const ext=(f.name.split('.').pop()||'').toLowerCase();
+  const rid='a'+Date.now()+Math.random().toString(36).slice(2,5);
+  if(['png','jpg','jpeg','gif','webp','bmp'].includes(ext)){
+    let g=list.find(a=>a.kind==='images');
+    if(g){g.count++;g.size=g.count+' 张图片';}
+    else list.push({id:rid,name:'图片附件',kind:'images',count:1,size:'1 张图片'});
+    return;
+  }
+  if(['doc','docx','xls','xlsx','ppt','pptx'].includes(ext)){
+    list.push({id:rid,name:f.name,kind:'office',ext:(ext[0]==='x'?'X':'W'),size:fmtSize(f.size),converted:true});return;
+  }
+  list.push({id:rid,name:f.name,kind:'pdf',size:fmtSize(f.size)});
+}
+function editAddAttach(){
+  const inp=document.createElement('input');inp.type='file';inp.multiple=true;
+  inp.onchange=()=>{if(!S.ue)return;if(!S.ue.attachments)S.ue.attachments=[];[...inp.files].forEach(f=>addFileToList(S.ue.attachments,f));renderModal();};
+  inp.click();
+}
+function editRemoveAtt(id){if(!S.ue||!S.ue.attachments)return;S.ue.attachments=S.ue.attachments.filter(a=>a.id!==id);renderModal();}
 
 function buildListRows(docs){
   if(!docs.length) return `<div class="empty">暂无匹配的文档</div>`;
@@ -414,12 +582,12 @@ function buildMUpload(){
         <option value="private"${f.vis==='private'?' selected':''}>仅自己可见</option>
       </select></div>
       <div class="fr"><label>上传文件 <span style="color:var(--color-text-danger)">*</span></label>
-        <input type="file" id="upfile" style="display:none" onchange="onPickFile(this)">
+        <input type="file" id="upfile" multiple style="display:none" onchange="onPickFile(this)">
         <div style="display:flex;align-items:center;gap:10px">
           <button class="btn" style="flex-shrink:0" onclick="document.getElementById('upfile').click()">${I.up} 选择文件</button>
-          <span id="upload-filename" style="font-size:12px;color:${f.file?'var(--color-text-primary)':'var(--color-text-tertiary)'};white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${f.file?f.file+(f.size?'（'+f.size+'）':''):'未选择文件'}</span>
+          <span id="upload-filename" style="font-size:12px;color:${(f.files&&f.files.length)?'var(--color-text-primary)':'var(--color-text-tertiary)'};white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${(f.files&&f.files.length)?(f.files.length>1?'已选 '+f.files.length+' 个文件':f.files[0].name+'（'+f.files[0].size+'）'):'未选择文件'}</span>
         </div>
-        <div style="font-size:11px;color:var(--color-text-tertiary);margin-top:5px">支持 PDF、Word、Excel、图片等格式</div>
+        <div style="font-size:11px;color:var(--color-text-tertiary);margin-top:5px">支持 PDF、Word、Excel、图片等，可一次多选；Word/Excel 自动转 PDF，多张图片自动合并展示</div>
       </div>
     </div>
     <div class="modal-foot">
@@ -447,12 +615,26 @@ function buildMSettings(){
 }
 function buildMEdit(){
   const doc=S.docs.find(d=>d.id===S.mid);if(!doc)return'';
+  const u=S.ue||{};
+  const rows=(u.attachments||[]).map(a=>{
+    const k=attKindInfo(a);
+    return `<div class="att-row" style="cursor:default">
+      <div class="att-icon ${k.ic}">${k.il}</div>
+      <div class="att-meta"><div class="att-name">${a.name}</div><div class="att-size">${a.size||''}</div></div>
+      <span class="att-del" title="删除附件" onclick="editRemoveAtt('${a.id}')">${I.del}</span>
+    </div>`;
+  }).join('');
   return `<div class="modal" onclick="event.stopPropagation()">
     <div class="modal-body">
       ${mHead(I.ed,'编辑文档')}
-      <div class="fr"><label>标题</label><input type="text" id="etitle" value="${doc.title}"></div>
-      <div class="fr"><label>摘要</label><textarea rows="2" id="edesc">${doc.desc}</textarea></div>
-      <div class="fr"><label>文档类型</label><select id="etype">${S.types.map(t=>`<option${doc.type===t?' selected':''}>${t}</option>`).join('')}</select></div>
+      <div class="fr"><label>标题</label><input type="text" value="${u.title||''}" oninput="S.ue.title=this.value"></div>
+      <div class="fr"><label>摘要</label><textarea rows="2" oninput="S.ue.desc=this.value">${u.desc||''}</textarea></div>
+      <div class="fr"><label>文档类型</label><select onchange="S.ue.type=this.value">${S.types.map(t=>`<option${u.type===t?' selected':''}>${t}</option>`).join('')}</select></div>
+      <div class="fr"><label>附件（${(u.attachments||[]).length}个）</label>
+        <div style="display:flex;flex-direction:column;gap:2px;max-height:190px;overflow-y:auto">${rows||`<div style="font-size:12px;color:var(--color-text-tertiary);padding:6px 2px">暂无附件</div>`}</div>
+        <div class="att-upload" onclick="editAddAttach()">${I.up} 上传文件</div>
+        <div class="att-upload-hint">Word、Excel 上传后自动转为 PDF，多张图片自动合并展示</div>
+      </div>
     </div>
     <div class="modal-foot">
       <button class="btn" onclick="closeModal()">取消</button>
@@ -506,29 +688,47 @@ function doSearch(v){S.q=v;
 }
 function clearQ(){S.q='';render()}
 function switchRole(){S.role=S.role==='admin'?'user':'admin';toast('已切换为'+(S.role==='admin'?'管理员':'普通用户'));render()}
-function openModal(m,id){S.modal=m;S.mid=id||null;if(m==='upload')S.uf={title:'',desc:'',type:S.types[0],vis:'team',file:'',size:''};renderModal()}
+function openModal(m,id){S.modal=m;S.mid=id||null;if(m==='upload')S.uf={title:'',desc:'',type:S.types[0],vis:'team',file:'',size:'',files:[]};if(m==='edit'){const _d=S.docs.find(x=>x.id===id);S.ue=_d?{title:_d.title,desc:_d.desc,type:_d.type,attachments:(_d.attachments||[]).map(a=>({...a}))}:null;}renderModal()}
 function closeModal(){S.modal=null;S.mid=null;renderModal()}
-function openDetail(id){S.detailId=id;S.modal=null;render()}
+function openDetail(id){S.detailId=id;S.detailAtt=null;S.modal=null;render()}
 function closeDetail(){S.detailId=null;render()}
 function fmtSize(b){if(b<1024)return b+' B';if(b<1048576)return (b/1024).toFixed(1)+' KB';return (b/1048576).toFixed(1)+' MB'}
 function onPickFile(input){
-  const f=input.files&&input.files[0];if(!f)return;
-  S.uf.file=f.name;S.uf.size=fmtSize(f.size);
+  const fs=input.files;if(!fs||!fs.length)return;
+  S.uf.files=[...fs].map(f=>({name:f.name,size:fmtSize(f.size)}));
+  S.uf.file=S.uf.files[0].name;S.uf.size=S.uf.files[0].size;
   const span=document.getElementById('upload-filename');
-  if(span){span.textContent=f.name+'（'+S.uf.size+'）';span.style.color='var(--color-text-primary)';}
-  if(!S.uf.title.trim()){            /* 标题留空时用文件名（去扩展名）预填 */
-    S.uf.title=f.name.replace(/\.[^.]+$/,'');
+  if(span){span.textContent=S.uf.files.length>1?('已选 '+S.uf.files.length+' 个文件'):(S.uf.file+'（'+S.uf.size+'）');span.style.color='var(--color-text-primary)';}
+  if(!S.uf.title.trim()){
+    S.uf.title=S.uf.files[0].name.replace(/\.[^.]+$/,'');
     const ti=document.querySelector('.modal input[type=text]');
     if(ti)ti.value=S.uf.title;
   }
 }
-
+function onPickEditFile(input){
+  const f=input.files&&input.files[0];if(!f)return;
+  S.ef.file=f.name;S.ef.size=fmtSize(f.size);
+  const span=document.getElementById('edit-filename');
+  if(span){span.textContent=f.name+'（'+S.ef.size+'）· 将替换';span.style.color='var(--text)';}
+}
 function doUpload(){
-  if(!S.uf.file){toast('请选择要上传的文件');return}
+  if(!S.uf.files||!S.uf.files.length){toast('请选择要上传的文件');return}
   if(!S.uf.title.trim()){toast('请填写标题');return}
-  S.docs.unshift({id:Date.now(),title:S.uf.title,desc:S.uf.desc||'暂无摘要',type:S.uf.type,
-    author:'我',mine:true,vis:S.uf.vis,status:'published',date:'今天',
-    time:'刚刚',file:S.uf.file,size:S.uf.size,views:0});
+  const nd={id:Date.now(),title:S.uf.title,desc:S.uf.desc||'暂无摘要',type:S.uf.type,author:'我',mine:true,vis:S.uf.vis,status:'published',date:'今天',time:'刚刚',views:0,attachments:[]};
+  S.uf.files.forEach(f=>{
+    const ext=(f.name.split('.').pop()||'').toLowerCase();
+    const rid='n'+Math.random().toString(36).slice(2,7);
+    if(['png','jpg','jpeg','gif','webp','bmp'].includes(ext)){
+      let g=nd.attachments.find(a=>a.kind==='images');
+      if(g){g.count++;g.size=g.count+' 张图片';}
+      else nd.attachments.push({id:rid,name:'图片附件',kind:'images',count:1,size:'1 张图片'});
+    } else if(['doc','docx','xls','xlsx','ppt','pptx'].includes(ext)){
+      nd.attachments.push({id:rid,name:f.name,kind:'office',ext:(ext[0]==='x'?'X':'W'),size:f.size,converted:true});
+    } else {
+      nd.attachments.push({id:rid,name:f.name,kind:'pdf',size:f.size});
+    }
+  });
+  S.docs.unshift(nd);
   S.modal=null;S.mineOnly=true;S.ft='全部';S.q='';S.detailId=null;toast('上传成功！');render();
 }
 function saveSettings(){
@@ -539,8 +739,11 @@ function saveSettings(){
 }
 function saveEdit(){
   const d=S.docs.find(d=>d.id===S.mid);
-  if(d){d.title=document.getElementById('etitle').value;d.desc=document.getElementById('edesc').value;d.type=document.getElementById('etype').value;}
-  closeModal();toast('文档已保存');renderPage();
+  if(d&&S.ue){
+    d.title=S.ue.title;d.desc=S.ue.desc;d.type=S.ue.type;d.attachments=S.ue.attachments;
+    if(S.detailAtt&&!(d.attachments||[]).some(a=>a.id===S.detailAtt)) S.detailAtt=(d.attachments&&d.attachments.length)?d.attachments[0].id:null;
+  }
+  S.ue=null;closeModal();toast('文档已保存');renderPage();
 }
 function doUnpublish(){
   if(S.detailId===S.mid) S.detailId=null;
