@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>企业对标分析</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#ffffff;--bg2:#f7f6f3;--bg3:#f0efe9;--border:#e2e0da;--border2:#c8c6bc;
+  --text:#1a1a18;--text2:#6b6960;--text3:#9c9a90;
+  --blue:#185FA5;--blue-bg:#E6F1FB;--teal:#0F6E56;--amber:#8A5A0B;--red:#A32D2D;--red-bg:#FCEBEB;
+}
+html,body{height:100%}
+body{font-family:-apple-system,BlinkMacSystemFont,'PingFang SC','Microsoft YaHei',sans-serif;font-size:13px;color:var(--text);background:var(--bg2)}
+.app{width:1660px;height:990px;background:var(--bg2);display:flex;flex-direction:column;overflow:hidden;position:relative}
+.main{flex:1;display:flex;flex-direction:column;min-width:0;overflow:hidden}
+.rpage{flex:1;display:flex;flex-direction:column;min-width:0;overflow:hidden}
+.rpbar{flex-shrink:0;display:flex;align-items:center;gap:12px;padding:12px 20px;background:var(--bg);border-bottom:1px solid var(--border)}
+.rpbar h3{font-size:15px;font-weight:600}
+.rbody{flex:1;overflow-y:auto;padding:20px 28px;background:var(--bg2)}
+.rsheet{max-width:1120px;margin:0 auto;background:var(--bg);border:1px solid var(--border);border-radius:12px;padding:24px 30px}
+.selbar{flex-shrink:0;display:flex;align-items:center;gap:10px;padding:14px 20px;background:var(--bg);border-bottom:1px solid var(--border);flex-wrap:wrap}
+.selbar .lbl{font-size:13px;font-weight:600;margin-right:2px}
+.chip{display:inline-flex;align-items:center;gap:7px;padding:5px 9px 5px 11px;border-radius:99px;font-size:12.5px;border:1px solid var(--border2);background:var(--bg)}
+.chip .dot{width:9px;height:9px;border-radius:50%}
+.chip.base{border-color:var(--blue);background:var(--blue-bg);color:var(--blue)}
+.chip .x{cursor:pointer;color:var(--text3)}
+.chip .x:hover{color:var(--red)}
+.addbtn{display:inline-flex;align-items:center;gap:5px;padding:6px 12px;border:1px dashed var(--border2);border-radius:99px;font-size:12.5px;color:var(--text2);cursor:pointer;background:var(--bg)}
+.addbtn:hover{background:var(--bg2);color:var(--text)}
+.sp{flex:1}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:8px 15px;font-size:13px;border:1px solid var(--border2);border-radius:6px;background:var(--bg);color:var(--text);cursor:pointer;font-family:inherit;font-weight:500}
+.btn:hover{background:var(--bg2)}
+.btn.pri{background:var(--blue);color:#fff;border-color:var(--blue)}
+.btn.pri:hover{opacity:.9}
+.view{flex:1;overflow-y:auto;padding:16px 20px;display:grid;grid-template-columns:1fr 1fr;grid-auto-rows:min-content;gap:16px}
+.card{background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:14px 16px}
+.card h4{font-size:13.5px;font-weight:600;margin-bottom:2px}
+.card .desc{font-size:11.5px;color:var(--text3);margin-bottom:10px}
+.legend{display:flex;flex-wrap:wrap;gap:14px;margin-top:8px}
+.lg{display:inline-flex;align-items:center;gap:6px;font-size:11.5px;color:var(--text2)}
+.lg .dot{width:9px;height:9px;border-radius:50%}
+table.cmp{width:100%;border-collapse:collapse;font-size:12.5px;margin-top:8px}
+table.cmp th,table.cmp td{padding:8px 10px;border-bottom:1px solid var(--border);text-align:left;white-space:nowrap}
+table.cmp th{color:var(--text2);font-weight:600;font-size:11.5px;background:var(--bg2)}
+table.cmp td.metric{color:var(--text2)}
+table.cmp tr:last-child td{border-bottom:none}
+.best{color:var(--teal);font-weight:600}
+.note{grid-column:1 / -1;font-size:11.5px;color:var(--text3);background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:9px 12px;line-height:1.6}
+
+/* modal shared */
+.ov{position:absolute;inset:0;background:rgba(20,25,35,.5);display:none;align-items:center;justify-content:center;z-index:60}
+.ov.show{display:flex}
+.modal{background:var(--bg);border-radius:12px;display:flex;flex-direction:column;overflow:hidden;max-height:88%}
+.mhd{display:flex;align-items:center;gap:10px;padding:15px 20px;border-bottom:1px solid var(--border)}
+.mhd h3{font-size:15px;font-weight:600;flex:1}
+.mx{cursor:pointer;color:var(--text2);width:28px;height:28px;border:1px solid var(--border2);border-radius:6px;display:flex;align-items:center;justify-content:center}
+.mbody{overflow-y:auto;padding:16px 20px}
+.mft{padding:12px 20px;border-top:1px solid var(--border);display:flex;align-items:center;gap:8px}
+/* select modal */
+.msearch{display:flex;align-items:center;gap:8px;height:36px;padding:0 12px;margin:0 20px;border:1px solid var(--border2);border-radius:7px}
+.msearch input{border:none;outline:none;flex:1;font-size:13px;font-family:inherit;background:transparent;color:var(--text)}
+.slist{overflow-y:auto;padding:10px 12px;max-height:420px;min-height:300px}
+.srow{display:flex;align-items:center;gap:11px;padding:9px 10px;border-radius:8px;cursor:pointer}
+.srow:hover{background:var(--bg2)}
+.srow.dis{opacity:.6;cursor:default}
+.sck{width:16px;height:16px;border:1.5px solid var(--border2);border-radius:4px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:11px;flex-shrink:0}
+.srow.on .sck{background:var(--blue);border-color:var(--blue)}
+.srow.dis .sck{background:var(--text3);border-color:var(--text3)}
+.sdot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+.sinfo{flex:1;min-width:0}
+.sname{font-size:13px;font-weight:500}
+.smeta{font-size:11px;color:var(--text3);margin-top:1px}
+.stag{font-size:10px;padding:1px 7px;border-radius:99px;background:var(--blue-bg);color:var(--blue)}
+/* report modal */
+.rsec{font-size:13.5px;font-weight:600;margin:16px 0 8px;padding-left:9px;border-left:3px solid var(--blue)}
+.rsec:first-child{margin-top:0}
+.rmeta{font-size:12px;color:var(--text2);background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:10px 14px;line-height:1.7}
+.maptoggle{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px}
+.mtbtn{display:inline-flex;align-items:center;gap:6px;padding:5px 11px;border:1px solid var(--border2);border-radius:99px;background:var(--bg);font-size:12px;color:var(--text2);cursor:pointer;font-family:inherit}
+.mtbtn.on{border-color:var(--blue);background:var(--blue-bg);color:var(--blue);font-weight:600}
+.mtbtn .dot{width:9px;height:9px;border-radius:50%}
+.toast{position:absolute;bottom:20px;left:50%;transform:translateX(-50%);background:var(--text);color:#fff;padding:8px 16px;border-radius:6px;font-size:12.5px;opacity:0;transition:opacity .2s;pointer-events:none;z-index:99}
+.toast.show{opacity:1}
+</style>
+<script src="https://cdn.jsdelivr.net/npm/echarts@4.9.0/dist/echarts.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/echarts@4.9.0/map/js/china.js"></script>
+</head>
+<body>
+<div class="app">
+  <div id="mainpage" class="main">
+    <div class="selbar">
+      <span class="lbl">选择对标企业：</span>
+      <span id="chips"></span>
+      <span class="addbtn" onclick="openSelect()">＋ 选择对标企业</span>
+      <span class="sp"></span>
+      <button class="btn pri" onclick="openReport()">查看对比报告</button>
+    </div>
+    <div class="view" id="view"></div>
+  </div>
+
+  <div class="ov" id="selov"><div class="modal" style="width:560px">
+    <div class="mhd"><h3>选择对标企业</h3><div class="mx" onclick="closeSelect()">✕</div></div>
+    <div class="msearch"><span style="color:var(--text3)">🔍</span><input id="ssearch" placeholder="搜索企业名称…" oninput="renderSList(this.value)"></div>
+    <div class="slist" id="slist"></div>
+    <div class="mft"><span id="selcnt" style="margin-right:auto;font-size:12.5px;color:var(--text2)"></span><button class="btn" onclick="closeSelect()">取消</button><button class="btn pri" onclick="confirmSelect()">确定</button></div>
+  </div></div>
+
+  <div class="rpage" id="reportpage" style="display:none">
+    <div class="rpbar">
+      <button class="btn" onclick="backToMain()">‹ 返回对标</button>
+      <h3>企业对标 · 对比报告</h3>
+      <span class="sp"></span>
+      <button class="btn pri" onclick="toast('导出 Excel（原型演示）')">导出 Excel</button>
+    </div>
+    <div class="rbody" id="rbody"><div class="rsheet" id="rsheet"></div></div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+</div>
+
+<script>
+const PYEARS=['2021','2022','2023','2024','2025'];
+const RDYEARS=['2023','2024','2025'];
+const PCAT=['发明','实用新型','外观'];
+const MAX=4;
+const COLORS=['#534AB7','#0F6E56','#BA7517','#D85A30','#992D6B','#3B6D11','#0C447C','#A33D2D','#5F5E5A','#712B13','#27500A','#7A5C00'];
+function mk(id,name,s,mkt,listed,ci){
+  const norm=p=>p==='内蒙'?'内蒙古':p;
+  const provs=mkt.split('、').map(norm);const regions={};[100,72,52].forEach((v,i)=>{if(provs[i])regions[provs[i]]=v});
+  return {id,name,base:false,color:COLORS[ci%COLORS.length],listed,
+    pat:{发明:Math.round(150*s),实用新型:Math.round(100*s),外观:Math.round(28*s)},
+    trend:[110,140,175,205,235].map(v=>Math.round(v*s)),
+    rd:[64000,72000,82000].map(v=>Math.round(v*s)),rdyoy:(10+Math.round(s*6))+'%',
+    bidAmt:+(5.9*s).toFixed(1),bidNum:Math.round(75*s),cust:Math.round(60*s),mkt,regions};
+}
+const CO=[
+ {id:'th',name:'蓝山屯河',base:true,color:'#185FA5',listed:false,
+   pat:{发明:45,实用新型:50,外观:15},trend:[60,72,85,96,110],
+   rd:[4200,5100,6000],rdyoy:'+18%',bidAmt:1.2,bidNum:32,cust:21,mkt:'新疆、内蒙、甘肃',regions:{'新疆':100,'内蒙古':70,'甘肃':55,'青海':30,'陕西':22}},
+ mk('jf','金发科技',1.28,'广东、浙江、福建',true,0),
+ mk('hl','恒力石化',1.0,'江苏、浙江、山东',true,1),
+ mk('wh','万华化学',1.15,'山东、广东、浙江',true,2),
+ mk('tc','彤程新材',0.6,'上海、江苏、广东',true,3),
+ mk('jd','金丹科技',0.5,'河南、山东、江苏',true,4),
+ mk('zl','中粮科技',0.72,'安徽、广西、黑龙江',true,5),
+ mk('dh','丹化科技',0.45,'江苏、内蒙、山西',true,6),
+ mk('hf','华峰集团',0.9,'浙江、重庆、上海',false,7),
+ mk('de','道恩股份',0.55,'山东、江苏、广东',true,8),
+ mk('ch','长鸿高科',0.5,'浙江、宁夏、广东',true,9),
+ mk('lh','联泓新科',0.65,'山东、江苏、浙江',true,10),
+ mk('lj','蓝晶微生物',0.35,'江苏、北京、广东',false,11),
+];
+const INFO={
+ th:{area:'新疆·昌吉',founded:'2010',capital:'12.0 亿元',nature:'国有控股',qual:'高新技术企业',industry:'化学原料和化学制品制造业',main:'PBAT、PBS、BDO'},
+ jf:{area:'广东·广州',founded:'1993',capital:'25.8 亿元',nature:'A股上市',qual:'高新·专精特新',industry:'合成材料制造',main:'PBAT、PBS、PLA、改性塑料'},
+ hl:{area:'江苏·苏州',founded:'2000',capital:'70.4 亿元',nature:'A股上市',qual:'高新技术企业',industry:'精细化工/聚酯',main:'PBAT、聚酯、化纤'},
+ wh:{area:'山东·烟台',founded:'1998',capital:'31.4 亿元',nature:'A股上市',qual:'高新技术企业',industry:'基础化工',main:'PBAT、PLA、BDO、聚氨酯'},
+ tc:{area:'上海',founded:'2008',capital:'5.9 亿元',nature:'A股上市',qual:'高新·专精特新',industry:'橡胶助剂/新材料',main:'PBAT、PLA、改性料'},
+ jd:{area:'河南·郸城',founded:'1997',capital:'4.8 亿元',nature:'A股上市',qual:'高新技术企业',industry:'生物发酵/乳酸',main:'乳酸、丙交酯、PLA'},
+ zl:{area:'安徽·蚌埠',founded:'2006',capital:'18.6 亿元',nature:'A股上市',qual:'高新技术企业',industry:'玉米深加工',main:'PLA、燃料乙醇、淀粉糖'},
+ dh:{area:'江苏·张家港',founded:'1996',capital:'14.2 亿元',nature:'A股上市',qual:'—',industry:'煤化工',main:'BDO、草酸、PBAT'},
+ hf:{area:'浙江·瑞安',founded:'1991',capital:'9.0 亿元',nature:'集团/非上市',qual:'高新技术企业',industry:'聚氨酯/新材料',main:'TPU、氨纶、PBAT'},
+ de:{area:'山东·龙口',founded:'1991',capital:'5.5 亿元',nature:'A股上市',qual:'专精特新',industry:'改性塑料',main:'改性PP、PBAT改性料'},
+ ch:{area:'浙江·宁波',founded:'2010',capital:'5.0 亿元',nature:'A股上市',qual:'专精特新·小巨人',industry:'高分子材料',main:'SEBS、PBAT'},
+ lh:{area:'山东·滕州',founded:'2005',capital:'13.0 亿元',nature:'A股上市',qual:'高新技术企业',industry:'基础化工',main:'EVA、PLA、特种化学品'},
+ lj:{area:'江苏·盐城',founded:'2016',capital:'未披露',nature:'非上市·融资企业',qual:'创新型中小企业',industry:'合成生物',main:'PHA'},
+};
+const inf=c=>INFO[c.id]||{};
+let sel=['th','jf','hl'];
+let mapCo='th';
+let mapChart=null;
+let selbuf=[];
+const get=id=>CO.find(c=>c.id===id);
+const selCo=()=>sel.map(get);
+const patTotal=c=>PCAT.reduce((a,k)=>a+c.pat[k],0);
+function toast(m){const e=document.getElementById('toast');e.textContent=m;e.classList.add('show');clearTimeout(e._t);e._t=setTimeout(()=>e.classList.remove('show'),1900)}
+
+/* chips */
+function renderChips(){
+  document.getElementById('chips').innerHTML=selCo().map(c=>`<span class="chip${c.base?' base':''}"><span class="dot" style="background:${c.color}"></span>${c.name}${c.base?'（基准）':''}${c.base?'':`<span class="x" onclick="removeChip('${c.id}')">✕</span>`}</span>`).join('')+(sel.length<2?'<span style="font-size:12px;color:var(--red);margin-left:6px">请至少选择 1 家对标企业</span>':'');
+}
+function removeChip(id){if(get(id).base){toast('基准企业（屯河）默认保留');return}sel=sel.filter(x=>x!==id);renderAll()}
+
+/* select modal */
+function openSelect(){selbuf=[...sel];document.getElementById('ssearch').value='';renderSList('');document.getElementById('selov').classList.add('show')}
+function closeSelect(){document.getElementById('selov').classList.remove('show')}
+function renderSList(q){
+  q=(q||'').trim();
+  document.getElementById('slist').innerHTML=CO.filter(c=>!q||c.name.includes(q)).map(c=>{
+    const on=selbuf.includes(c.id);const dis=c.base;
+    return `<div class="srow${on?' on':''}${dis?' dis':''}" onclick="${dis?'':`selToggle('${c.id}')`}">
+      <span class="sck">${on?'✓':''}</span>
+      <span class="sdot" style="background:${c.color}"></span>
+      <div class="sinfo"><div class="sname">${c.name}</div><div class="smeta">${c.listed?'上市公司':'非上市'}</div></div>
+      ${c.base?'<span class="stag">基准</span>':''}
+    </div>`;
+  }).join('');
+  document.getElementById('selcnt').textContent=`已选 ${selbuf.filter(x=>x!=='th').length} / ${MAX} 家竞对企业（不含基准屯河）`;
+}
+function selToggle(id){
+  if(selbuf.includes(id)) selbuf=selbuf.filter(x=>x!==id);
+  else{ if(selbuf.filter(x=>x!=='th').length>=MAX){toast('最多对比 4 家竞对企业（不含基准屯河）');return} selbuf.push(id);}
+  renderSList(document.getElementById('ssearch').value);
+}
+function confirmSelect(){
+  const comps=selbuf.filter(x=>x!=='th').slice(0,MAX);
+  sel=['th',...comps];closeSelect();renderAll();
+}
+
+/* charts */
+function legend(list){return `<div class="legend">`+list.map(c=>`<span class="lg"><span class="dot" style="background:${c.color}"></span>${c.name}</span>`).join('')+`</div>`}
+function groupedBar(cats,list,valFn){
+  const W=680,H=300,pl=40,pr=12,pt=16,pb=40,pw=W-pl-pr,ph=H-pt-pb;
+  let max=0;list.forEach(c=>cats.forEach(k=>max=Math.max(max,valFn(c,k))));max=Math.ceil(max/50)*50||10;
+  const gw=pw/cats.length,bw=Math.min(30,(gw-14)/list.length);let g='';
+  for(let t=0;t<=4;t++){const v=max*t/4,y=pt+ph-ph*v/max;g+=`<line x1="${pl}" y1="${y.toFixed(1)}" x2="${W-pr}" y2="${y.toFixed(1)}" stroke="#eeece5"/><text x="${pl-6}" y="${(y+3).toFixed(1)}" font-size="10" fill="#9c9a90" text-anchor="end">${Math.round(v)}</text>`}
+  cats.forEach((k,ci)=>{const gx=pl+gw*ci+(gw-bw*list.length)/2;
+    list.forEach((c,li)=>{const v=valFn(c,k),h=ph*v/max,x=gx+li*bw,y=pt+ph-h;g+=`<rect x="${x.toFixed(1)}" y="${y.toFixed(1)}" width="${(bw-3).toFixed(1)}" height="${h.toFixed(1)}" rx="2" fill="${c.color}"/>`});
+    g+=`<text x="${(pl+gw*ci+gw/2).toFixed(1)}" y="${H-16}" font-size="11" fill="#6b6960" text-anchor="middle">${k}</text>`});
+  return `<svg viewBox="0 0 ${W} ${H}" width="100%">${g}</svg>`;
+}
+function lineChart(list){
+  const W=680,H=300,pl=42,pr=14,pt=16,pb=34,pw=W-pl-pr,ph=H-pt-pb;
+  let max=0;list.forEach(c=>c.trend.forEach(v=>max=Math.max(max,v)));max=Math.ceil(max/50)*50||100;
+  const X=i=>pl+pw*i/(PYEARS.length-1),Y=v=>pt+ph-ph*v/max;let g='';
+  for(let t=0;t<=4;t++){const v=max*t/4,y=Y(v);g+=`<line x1="${pl}" y1="${y.toFixed(1)}" x2="${W-pr}" y2="${y.toFixed(1)}" stroke="#eeece5"/><text x="${pl-6}" y="${(y+3).toFixed(1)}" font-size="10" fill="#9c9a90" text-anchor="end">${Math.round(v)}</text>`}
+  PYEARS.forEach((yr,i)=>g+=`<text x="${X(i).toFixed(1)}" y="${H-12}" font-size="10.5" fill="#6b6960" text-anchor="middle">${yr}</text>`);
+  list.forEach(c=>{let d=c.trend.map((v,i)=>`${X(i).toFixed(1)},${Y(v).toFixed(1)}`).join(' ');g+=`<polyline points="${d}" fill="none" stroke="${c.color}" stroke-width="2.2"/>`;c.trend.forEach((v,i)=>g+=`<circle cx="${X(i).toFixed(1)}" cy="${Y(v).toFixed(1)}" r="3" fill="${c.color}"/>`)});
+  return `<svg viewBox="0 0 ${W} ${H}" width="100%">${g}</svg>`;
+}
+function barChart(list,valFn,unit){
+  const W=680,rowH=40,H=list.length*rowH+16,pl=100,pr=90,pw=W-pl-pr;let max=Math.max(...list.map(valFn))||1;let g='';
+  list.forEach((c,i)=>{const y=10+i*rowH,bw=pw*valFn(c)/max;
+    g+=`<text x="${pl-10}" y="${y+16}" font-size="12" fill="#1a1a18" text-anchor="end">${c.name}</text>`;
+    g+=`<rect x="${pl}" y="${y+3}" width="${bw.toFixed(1)}" height="18" rx="3" fill="${c.color}"/>`;
+    g+=`<text x="${pl+bw+8}" y="${y+16}" font-size="11" fill="#6b6960">${valFn(c).toLocaleString()} ${unit}</text>`});
+  return `<svg viewBox="0 0 ${W} ${H}" width="100%">${g}</svg>`;
+}
+function colhd(list){return list.map(c=>`<th><span style="display:inline-flex;align-items:center;gap:6px"><span style="width:8px;height:8px;border-radius:50%;background:${c.color};display:inline-block"></span>${c.name}${c.base?'·基准':''}</span></th>`).join('')}
+
+function renderView(){
+  const list=selCo();
+  if(list.length<2){document.getElementById('view').innerHTML=`<div class="card" style="grid-column:1/-1;text-align:center;color:var(--text3);padding:60px">请点击"选择对标企业"添加至少 1 家对标企业</div>`;return}
+  const patRows=[...PCAT,'总量'].map(k=>{const fn=c=>k==='总量'?patTotal(c):c.pat[k];const best=Math.max(...list.map(fn));const lb=k==='发明'?'发明专利':k==='实用新型'?'实用新型':k==='外观'?'外观设计':'总量';
+    return `<tr><td class="metric">${lb}</td>`+list.map(c=>`<td class="${fn(c)===best&&list.length>1?'best':''}">${fn(c)}</td>`).join('')+`</tr>`;}).join('');
+  const rdRows=RDYEARS.map((y,i)=>`<tr><td class="metric">${y}年研发投入（万元）</td>`+list.map(c=>`<td>${c.rd[i].toLocaleString()}</td>`).join('')+`</tr>`).join('')+`<tr><td class="metric">同比增速</td>`+list.map(c=>`<td>${c.rdyoy}</td>`).join('')+`</tr>`;
+  const bidRows=[['中标金额（亿元）',c=>c.bidAmt],['中标数量（次）',c=>c.bidNum],['客户数量（家）',c=>c.cust]].map(([m,fn])=>{const best=Math.max(...list.map(fn));return `<tr><td class="metric">${m}</td>`+list.map(c=>`<td class="${fn(c)===best&&list.length>1?'best':''}">${fn(c).toLocaleString()}</td>`).join('')+`</tr>`}).join('')+`<tr><td class="metric">前三市场分布</td>`+list.map(c=>`<td>${c.mkt}</td>`).join('')+`</tr>`;
+  document.getElementById('view').innerHTML=`
+    <div class="card"><h4>专利总量对比</h4><div class="desc">发明/实用新型/外观设计分组对比（件）</div>${groupedBar(PCAT,list,(c,k)=>c.pat[k])}${legend(list)}
+      <table class="cmp"><thead><tr><th>专利类型</th>${colhd(list)}</tr></thead><tbody>${patRows}</tbody></table></div>
+    <div class="card"><h4>近 5 年专利申报趋势</h4><div class="desc">各企业年度专利申报量（件）</div>${lineChart(list)}${legend(list)}</div>
+    <div class="card"><h4>研发投入</h4><div class="desc">2025 年研发投入对比（万元）</div>${barChart(list,c=>c.rd[2],'万元')}
+      <table class="cmp"><thead><tr><th>项目</th>${colhd(list)}</tr></thead><tbody>${rdRows}</tbody></table></div>
+    <div class="card"><h4>市场分析 · 招投标</h4><div class="desc">中标金额对比（亿元）</div>${barChart(list,c=>c.bidAmt,'亿元')}
+      <table class="cmp"><thead><tr><th>项目</th>${colhd(list)}</tr></thead><tbody>${bidRows}</tbody></table></div>
+    <div class="card" style="grid-column:1/-1"><h4>中标区域分布 · 地图</h4><div class="desc">按企业切换查看各自中标区域分布（颜色越深，中标金额/次数越高）；默认展示基准企业屯河</div>
+      <div class="maptoggle" id="maptoggle"></div>
+      <div id="chinamap" style="width:100%;height:400px"></div>
+    </div>
+    <div class="note">图表数字为原型示意，接入真实数据后更新。</div>`;
+  if(!sel.includes(mapCo)) mapCo=sel.includes('th')?'th':sel[0];
+  renderMapToggle();drawMap();
+}
+function renderMapToggle(){
+  const el=document.getElementById('maptoggle');if(!el)return;
+  el.innerHTML=selCo().map(c=>`<button class="mtbtn${c.id===mapCo?' on':''}" data-id="${c.id}" onclick="setMapCo('${c.id}')"><span class="dot" style="background:${c.color}"></span>${c.name}${c.base?'（基准）':''}</button>`).join('');
+}
+function setMapCo(id){mapCo=id;renderMapToggle();drawMap();}
+function drawMap(){
+  const el=document.getElementById('chinamap');if(!el)return;
+  if(!window.echarts||!echarts.getMap||!echarts.getMap('china')){el.innerHTML='<div style="padding:40px;text-align:center;color:var(--text3);font-size:12px">中国地图需联网加载 echarts（cdn），当前未加载成功；正式系统用 echarts geo（china）渲染即可。</div>';return}
+  const c=get(mapCo);const data=Object.entries(c.regions||{}).map(([name,value])=>({name,value}));
+  if(mapChart){try{mapChart.dispose()}catch(e){}}
+  mapChart=echarts.init(el);
+  mapChart.setOption({
+    tooltip:{trigger:'item',formatter:p=>p.name+(p.value?('：'+p.value):'')},
+    visualMap:{min:0,max:100,left:16,bottom:16,text:['高','低'],calculable:true,inRange:{color:['#eef2f6',c.color]}},
+    series:[{name:c.name,type:'map',map:'china',roam:false,zoom:1.15,label:{show:false},itemStyle:{borderColor:'#ffffff',areaColor:'#f3f2ee'},emphasis:{label:{show:true},itemStyle:{areaColor:c.color}},data}]
+  });
+}
+function renderAll(){renderChips();renderView()}
+
+/* report */
+function openReport(){
+  const list=selCo();if(list.length<2){toast('请至少选择 1 家对标企业');return}
+  const names=list.filter(c=>!c.base).map(c=>c.name).join('、');
+  const cmp=(rows)=>`<table class="cmp"><thead><tr><th>项目</th>${list.map(c=>`<th>${c.name}${c.base?'·基准':''}</th>`).join('')}</tr></thead><tbody>${rows.map(([m,fn])=>`<tr><td class="metric">${m}</td>${list.map(c=>`<td>${fn(c)}</td>`).join('')}</tr>`).join('')}</tbody></table>`;
+  document.getElementById('rsheet').innerHTML=`
+    <div class="rmeta">本报告以 <b>蓝山屯河</b> 为基准，对比 <b>${names}</b>　|　时间范围：近 1 年　|　生成时间：2026-07-13</div>
+    <div class="rsec">一、企业基本信息</div>${cmp([['所属地区',c=>inf(c).area],['成立年份',c=>inf(c).founded],['注册资本',c=>inf(c).capital],['企业性质',c=>inf(c).nature],['资质标签',c=>inf(c).qual],['所属行业（国标）',c=>inf(c).industry],['主营产品',c=>inf(c).main]])}
+    <div class="rsec">二、专利对比</div>${cmp([['发明专利',c=>c.pat.发明],['实用新型',c=>c.pat.实用新型],['外观设计',c=>c.pat.外观],['专利总量',c=>patTotal(c)],['近一年新增',c=>c.trend[4]-c.trend[3]]])}
+    <div class="rsec">三、研发投入</div>${cmp([['2025年（万元）',c=>c.rd[2].toLocaleString()],['2024年（万元）',c=>c.rd[1].toLocaleString()],['2023年（万元）',c=>c.rd[0].toLocaleString()],['同比增速',c=>c.rdyoy]])}
+    <div class="rsec">四、市场分析（招投标）</div>${cmp([['中标金额（亿元）',c=>c.bidAmt],['中标数量（次）',c=>c.bidNum],['客户数量（家）',c=>c.cust],['前三市场分布',c=>c.mkt]])}`;
+  document.getElementById('reportpage').style.display='flex';document.getElementById('mainpage').style.display='none';document.getElementById('rbody').scrollTop=0;
+}
+function backToMain(){document.getElementById('reportpage').style.display='none';document.getElementById('mainpage').style.display='flex';}
+
+renderChips();renderView();
+</script>
+</body>
+</html>
