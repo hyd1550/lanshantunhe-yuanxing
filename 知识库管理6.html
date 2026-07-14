@@ -510,8 +510,9 @@ function addFileToList(list,f){
   }
   list.push({id:rid,name:f.name,kind:'pdf',size:fmtSize(f.size)});
 }
-function editAddAttach(){
+function editAddFiles(kind){
   const inp=document.createElement('input');inp.type='file';inp.multiple=true;
+  inp.accept=kind==='img'?'image/*':'.pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx';
   inp.onchange=()=>{if(!S.ue)return;if(!S.ue.attachments)S.ue.attachments=[];[...inp.files].forEach(f=>addFileToList(S.ue.attachments,f));renderModal();};
   inp.click();
 }
@@ -582,12 +583,14 @@ function buildMUpload(){
         <option value="private"${f.vis==='private'?' selected':''}>仅自己可见</option>
       </select></div>
       <div class="fr"><label>上传文件 <span style="color:var(--color-text-danger)">*</span></label>
-        <input type="file" id="upfile" multiple style="display:none" onchange="onPickFile(this)">
-        <div style="display:flex;align-items:center;gap:10px">
-          <button class="btn" style="flex-shrink:0" onclick="document.getElementById('upfile').click()">${I.up} 选择文件</button>
-          <span id="upload-filename" style="font-size:12px;color:${(f.files&&f.files.length)?'var(--color-text-primary)':'var(--color-text-tertiary)'};white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${(f.files&&f.files.length)?(f.files.length>1?'已选 '+f.files.length+' 个文件':f.files[0].name+'（'+f.files[0].size+'）'):'未选择文件'}</span>
+        <input type="file" id="upfile-doc" multiple accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx" style="display:none" onchange="onPickFile(this)">
+        <input type="file" id="upfile-img" multiple accept="image/*" style="display:none" onchange="onPickFile(this)">
+        <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+          <button class="btn" style="flex-shrink:0" onclick="document.getElementById('upfile-doc').click()">${I.up} 上传文档</button>
+          <button class="btn" style="flex-shrink:0" onclick="document.getElementById('upfile-img').click()">${I.up} 上传图片</button>
+          <span id="upload-filename" style="font-size:12px;color:${(f.files&&f.files.length)?'var(--color-text-primary)':'var(--color-text-tertiary)'};white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${(f.files&&f.files.length)?('已选 '+f.files.length+' 个文件'):'未选择文件'}</span>
         </div>
-        <div style="font-size:11px;color:var(--color-text-tertiary);margin-top:5px">支持 PDF、Word、Excel、图片等，可一次多选；Word/Excel 自动转 PDF，多张图片自动合并展示</div>
+        <div style="font-size:11px;color:var(--color-text-tertiary);margin-top:5px">文档：PDF / Word / Excel / PPT（自动转 PDF）；图片：多张自动合并为一组。可分别多次添加</div>
       </div>
     </div>
     <div class="modal-foot">
@@ -632,8 +635,11 @@ function buildMEdit(){
       <div class="fr"><label>文档类型</label><select onchange="S.ue.type=this.value">${S.types.map(t=>`<option${u.type===t?' selected':''}>${t}</option>`).join('')}</select></div>
       <div class="fr"><label>附件（${(u.attachments||[]).length}个）</label>
         <div style="display:flex;flex-direction:column;gap:2px;max-height:190px;overflow-y:auto">${rows||`<div style="font-size:12px;color:var(--color-text-tertiary);padding:6px 2px">暂无附件</div>`}</div>
-        <div class="att-upload" onclick="editAddAttach()">${I.up} 上传文件</div>
-        <div class="att-upload-hint">Word、Excel 上传后自动转为 PDF，多张图片自动合并展示</div>
+        <div style="display:flex;gap:8px">
+          <div class="att-upload" style="flex:1" onclick="editAddFiles('doc')">${I.up} 上传文档</div>
+          <div class="att-upload" style="flex:1" onclick="editAddFiles('img')">${I.up} 上传图片</div>
+        </div>
+        <div class="att-upload-hint">文档：PDF / Word / Excel / PPT，Word、Excel 自动转 PDF；图片：多张自动合并为一组</div>
       </div>
     </div>
     <div class="modal-foot">
@@ -695,15 +701,17 @@ function closeDetail(){S.detailId=null;render()}
 function fmtSize(b){if(b<1024)return b+' B';if(b<1048576)return (b/1024).toFixed(1)+' KB';return (b/1048576).toFixed(1)+' MB'}
 function onPickFile(input){
   const fs=input.files;if(!fs||!fs.length)return;
-  S.uf.files=[...fs].map(f=>({name:f.name,size:fmtSize(f.size)}));
+  if(!S.uf.files)S.uf.files=[];
+  S.uf.files=S.uf.files.concat([...fs].map(f=>({name:f.name,size:fmtSize(f.size)})));
   S.uf.file=S.uf.files[0].name;S.uf.size=S.uf.files[0].size;
   const span=document.getElementById('upload-filename');
-  if(span){span.textContent=S.uf.files.length>1?('已选 '+S.uf.files.length+' 个文件'):(S.uf.file+'（'+S.uf.size+'）');span.style.color='var(--color-text-primary)';}
+  if(span){span.textContent='已选 '+S.uf.files.length+' 个文件';span.style.color='var(--color-text-primary)';}
   if(!S.uf.title.trim()){
     S.uf.title=S.uf.files[0].name.replace(/\.[^.]+$/,'');
     const ti=document.querySelector('.modal input[type=text]');
     if(ti)ti.value=S.uf.title;
   }
+  input.value='';
 }
 function onPickEditFile(input){
   const f=input.files&&input.files[0];if(!f)return;
