@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>工作台首页 - 产业链供应链数智化转型平台</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#f0f2f5;--card:#fff;--primary:#1a6cff;--primary-dark:#0b4ecf;--primary-light:#e8f0ff;
+  --text:#1a1a2e;--text2:#5a607f;--text3:#8b90a0;
+  --border:#e8eaef;--shadow:0 1px 4px rgba(0,0,0,.05);--shadow-lg:0 8px 24px rgba(0,0,0,.08);
+  --green:#10b981;--orange:#f59e0b;--red:#ef4444;--cyan:#06b6d4;--purple:#8b5cf6;
+  --radius:12px;
+}
+html{scroll-behavior:smooth}
+body{font-family:'PingFang SC','Microsoft YaHei','Segoe UI',sans-serif;background:var(--bg);color:var(--text);line-height:1.5;min-height:100vh;-webkit-font-smoothing:antialiased}
+a{color:var(--primary);text-decoration:none}
+button{font-family:inherit;cursor:pointer}
+
+/* ── Layout ── */
+.main{display:flex;flex-direction:column;min-height:100vh}
+
+/* ── Header ── */
+.header{
+  background:#fff;border-bottom:1px solid var(--border);
+  padding:0 28px;height:54px;display:flex;align-items:center;
+  justify-content:space-between;position:sticky;top:0;z-index:50;
+}
+.header-left{display:flex;align-items:center;gap:8px}
+.breadcrumb{display:flex;align-items:center;gap:6px;font-size:13px;color:var(--text3)}
+.breadcrumb svg{width:14px;height:14px;stroke:var(--text3)}
+.breadcrumb .bc-cur{color:var(--text);font-weight:500}
+.header-right{display:flex;align-items:center;gap:12px}
+.header-search{
+  display:flex;align-items:center;gap:8px;
+  background:var(--bg);border:1px solid var(--border);border-radius:8px;
+  padding:7px 14px;width:260px;transition:all .2s;
+}
+.header-search:focus-within{border-color:var(--primary);box-shadow:0 0 0 3px rgba(26,108,255,.1)}
+.header-search input{border:none;background:transparent;outline:none;font-size:12.5px;color:var(--text);width:100%;font-family:inherit}
+.header-search input::placeholder{color:var(--text3)}
+.header-search svg{flex-shrink:0;color:var(--text3);width:15px;height:15px}
+.h-icon-btn{
+  width:36px;height:36px;border-radius:8px;border:1px solid var(--border);
+  background:#fff;display:flex;align-items:center;justify-content:center;
+  cursor:pointer;transition:all .15s;position:relative;
+}
+.h-icon-btn svg{width:18px;height:18px;stroke:var(--text2);fill:none;stroke-width:1.8}
+.h-icon-btn:hover{background:var(--bg);border-color:#d0d5dd}
+.h-dot{position:absolute;top:6px;right:6px;width:7px;height:7px;background:var(--red);border-radius:50%;border:1.5px solid #fff}
+.date-display{font-size:12px;color:var(--text3);white-space:nowrap}
+
+/* ── Content ── */
+.content{padding:22px 28px 36px;flex:1}
+
+/* ── Banner ── */
+.banner{
+  background:linear-gradient(135deg,#1a3a6c 0%,#1a6cff 50%,#6ea8fe 100%);
+  border-radius:var(--radius);padding:24px 30px;margin-bottom:22px;
+  display:flex;align-items:center;justify-content:space-between;
+  position:relative;overflow:hidden;color:#fff;
+}
+.banner::before{
+  content:'';position:absolute;top:-40px;right:-20px;
+  width:260px;height:260px;border-radius:50%;
+  background:rgba(255,255,255,.06);
+}
+.banner::after{
+  content:'';position:absolute;bottom:-60px;right:120px;
+  width:180px;height:180px;border-radius:50%;
+  background:rgba(255,255,255,.04);
+}
+.banner-left{position:relative;z-index:1}
+.banner-left h2{font-size:22px;font-weight:600;margin-bottom:6px}
+.banner-left p{font-size:13.5px;opacity:.85;line-height:1.6}
+.banner-left p strong{color:#fcd34d;font-weight:600;opacity:1}
+.banner-right{position:relative;z-index:1;display:flex;gap:8px;flex-shrink:0}
+.b-btn{
+  display:flex;align-items:center;gap:7px;padding:9px 16px;
+  border-radius:8px;border:1px solid rgba(255,255,255,.25);
+  background:rgba(255,255,255,.12);backdrop-filter:blur(4px);
+  font-size:12.5px;color:#fff;cursor:pointer;transition:all .18s;font-family:inherit;
+}
+.b-btn:hover{background:rgba(255,255,255,.22);border-color:rgba(255,255,255,.4);transform:translateY(-1px)}
+.b-btn svg{width:15px;height:15px;stroke:#fff;fill:none;stroke-width:1.8;flex-shrink:0}
+
+/* ── Stat Cards ── */
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:22px}
+.stat{
+  background:var(--card);border-radius:var(--radius);padding:18px 20px;
+  box-shadow:var(--shadow);border:1px solid var(--border);
+  display:flex;align-items:flex-start;gap:14px;transition:all .22s;cursor:pointer;
+  position:relative;overflow:hidden;
+}
+.stat:hover{transform:translateY(-3px);box-shadow:var(--shadow-lg)}
+.stat-accent{position:absolute;top:0;left:0;width:100%;height:3px}
+.stat-icon{
+  width:46px;height:46px;border-radius:12px;
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;
+}
+.stat-icon svg{width:22px;height:22px;stroke-width:1.8}
+.si-blue{background:linear-gradient(135deg,#dbeafe,#bfdbfe)}.si-blue svg{stroke:#2563eb;fill:none}
+.si-orange{background:linear-gradient(135deg,#fef3c7,#fde68a)}.si-orange svg{stroke:#d97706;fill:none}
+.si-green{background:linear-gradient(135deg,#d1fae5,#a7f3d0)}.si-green svg{stroke:#059669;fill:none}
+.stat-body{flex:1;min-width:0}
+.stat-val{font-size:28px;font-weight:700;line-height:1;letter-spacing:-.5px}
+.stat-label{font-size:12px;color:var(--text3);margin-top:4px}
+.stat-foot{display:flex;align-items:center;gap:4px;margin-top:8px;font-size:11px}
+.stat-foot .arrow{font-weight:600}
+.stat-foot.up{color:var(--green)}.stat-foot.down{color:var(--red)}
+.stat-mini{margin-left:auto;display:flex;align-items:flex-end;gap:2px;height:28px}
+.stat-mini .bar{width:4px;border-radius:2px;background:currentColor;opacity:.2;transition:height .4s}
+.stat-mini .bar.hi{opacity:.5}
+
+/* ── Grid ── */
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:22px}
+
+/* ── Card ── */
+.card{background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);border:1px solid var(--border);overflow:hidden;display:flex;flex-direction:column}
+.card-hd{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:14px 20px;border-bottom:1px solid var(--border);flex-shrink:0;
+}
+.card-title{font-size:14px;font-weight:600;color:var(--text);display:flex;align-items:center;gap:8px}
+.card-title svg{width:17px;height:17px;flex-shrink:0}
+.card-title .cnt{
+  font-size:11px;background:var(--red);color:#fff;padding:1px 8px;
+  border-radius:10px;font-weight:500;min-width:22px;text-align:center;
+}
+.card-more{font-size:12px;color:var(--primary);cursor:pointer;display:flex;align-items:center;gap:4px;font-weight:500;transition:color .15s}
+.card-more:hover{color:var(--primary-dark)}
+.card-more svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2}
+.card-body{padding:12px 20px 16px;flex:1;overflow-y:auto}
+.card-tabs{display:flex;gap:0;border-bottom:1px solid var(--border);padding:0 20px;flex-shrink:0}
+.card-tab{
+  padding:10px 14px;font-size:12.5px;color:var(--text3);cursor:pointer;
+  border-bottom:2px solid transparent;transition:all .15s;font-weight:500;
+}
+.card-tab:hover{color:var(--text2)}
+.card-tab.active{color:var(--primary);border-bottom-color:var(--primary)}
+
+/* ── Message List ── */
+.msg-list{display:flex;flex-direction:column;gap:1px}
+.msg-item{
+  display:flex;align-items:flex-start;gap:12px;padding:11px 10px;
+  border-radius:8px;cursor:pointer;transition:all .15s;
+  border-left:3px solid transparent;
+}
+.msg-item:hover{background:#f5f7fa;border-left-color:var(--primary)}
+.msg-dot{width:8px;height:8px;border-radius:50%;margin-top:6px;flex-shrink:0}
+.msg-dot.d-red{background:var(--red)}.msg-dot.d-orange{background:var(--orange)}
+.msg-dot.d-blue{background:var(--primary)}.msg-dot.d-cyan{background:var(--cyan)}
+.msg-dot.d-purple{background:var(--purple)}.msg-dot.d-green{background:var(--green)}
+.msg-body{flex:1;min-width:0}
+.msg-title{font-size:13px;font-weight:500;color:var(--text);display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.msg-title-text{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex:1;min-width:0}
+.msg-desc{font-size:11.5px;color:var(--text3);margin-top:3px;line-height:1.5;display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical;overflow:hidden}
+.msg-meta{display:flex;align-items:center;gap:6px;flex-shrink:0;margin-top:2px}
+.msg-time{font-size:10.5px;color:var(--text3)}
+.tag{display:inline-flex;align-items:center;font-size:10px;padding:1px 7px;border-radius:4px;font-weight:500;flex-shrink:0;line-height:1.6}
+.tag-yuqing{background:#fef2f2;color:#dc2626;border:1px solid #fecaca}
+.tag-jingdui{background:#fffbeb;color:#b45309;border:1px solid #fde68a}
+.tag-xuqiu{background:#eff6ff;color:#2563eb;border:1px solid #bfdbfe}
+.tag-zhanlue{background:#f5f3ff;color:#7c3aed;border:1px solid #ddd6fe}
+.tag-kesu{background:#ecfdf5;color:#059669;border:1px solid #a7f3d0}
+.tag-zhuanli{background:#f0fdfa;color:#0891b2;border:1px solid #99f6e4}
+.tag-shangbiao{background:#fffbeb;color:#b45309;border:1px solid #fde68a}
+.tag-jiyu{background:#ecfdf5;color:#059669;border:1px solid #a7f3d0}
+.tag-zhengce{background:#f5f3ff;color:#7c3aed;border:1px solid #ddd6fe}
+
+/* ── Todo List ── */
+.todo-list{display:flex;flex-direction:column;gap:1px}
+.todo-item{
+  display:flex;align-items:center;gap:12px;padding:11px 10px;
+  border-radius:8px;cursor:pointer;transition:all .15s;
+}
+.todo-item:hover{background:#f5f7fa}
+.todo-type{font-size:10px;padding:3px 10px;border-radius:5px;font-weight:500;flex-shrink:0;min-width:74px;text-align:center}
+.type-review{background:#f0fdf4;color:#16a34a;border:1px solid #bbf7d0}
+.type-audit{background:#eff6ff;color:#2563eb;border:1px solid #bfdbfe}
+.type-handle{background:#fefce8;color:#a16207;border:1px solid #fef08a}
+.type-brief{background:#f5f3ff;color:#7c3aed;border:1px solid #ddd6fe}
+.todo-body{flex:1;min-width:0}
+.todo-title{font-size:13px;font-weight:500;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.todo-meta{font-size:11px;color:var(--text3);margin-top:3px;display:flex;align-items:center;gap:4px}
+.todo-meta svg{width:12px;height:12px;stroke:var(--text3);fill:none;stroke-width:1.8}
+.todo-actions{display:flex;gap:6px;flex-shrink:0}
+.todo-btn{
+  padding:4px 12px;border-radius:6px;font-size:11px;font-weight:500;
+  border:1px solid;cursor:pointer;transition:all .15s;font-family:inherit;
+}
+.btn-pass{background:#f0fdf4;color:#16a34a;border-color:#86efac}
+.btn-pass:hover{background:#16a34a;color:#fff}
+.btn-view{background:#eff6ff;color:#2563eb;border-color:#93c5fd}
+.btn-view:hover{background:#2563eb;color:#fff}
+
+/* ── Module Grid ── */
+.module-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.module-card{
+  display:flex;flex-direction:column;align-items:center;gap:10px;
+  padding:20px 12px 16px;border-radius:12px;cursor:pointer;
+  transition:all .22s;border:1px solid var(--border);background:#fafbfc;
+}
+.module-card:hover{background:var(--primary-light);border-color:#b8d4ff;transform:translateY(-3px);box-shadow:0 6px 16px rgba(26,108,255,.1)}
+.module-icon{
+  width:48px;height:48px;border-radius:14px;
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:0 3px 8px rgba(0,0,0,.12);
+}
+.module-icon svg{width:24px;height:24px;stroke:#fff;fill:none;stroke-width:1.7}
+.module-name{font-size:13px;font-weight:600;color:var(--text);text-align:center}
+.module-desc{font-size:10.5px;color:var(--text3);text-align:center;line-height:1.4}
+.mi-blue{background:linear-gradient(135deg,#1a6cff,#60a5fa)}
+.mi-cyan{background:linear-gradient(135deg,#0891b2,#22d3ee)}
+.mi-green{background:linear-gradient(135deg,#059669,#34d399)}
+.mi-orange{background:linear-gradient(135deg,#d97706,#fbbf24)}
+.mi-purple{background:linear-gradient(135deg,#7c3aed,#a78bfa)}
+.mi-rose{background:linear-gradient(135deg,#e11d48,#fb7185)}
+.mi-indigo{background:linear-gradient(135deg,#4f46e5,#818cf8)}
+.mi-slate{background:linear-gradient(135deg,#334155,#64748b)}
+
+/* ── Data Overview ── */
+.data-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:14px}
+.data-item{
+  display:flex;flex-direction:column;align-items:center;gap:10px;
+  padding:18px 10px;border-radius:12px;background:#f8fafc;border:1px solid var(--border);
+  transition:all .2s;cursor:default;
+}
+.data-item:hover{background:var(--primary-light);border-color:#c7d9ff}
+.data-icon{
+  width:44px;height:44px;border-radius:12px;
+  display:flex;align-items:center;justify-content:center;
+}
+.data-icon svg{width:22px;height:22px;stroke:#fff;fill:none;stroke-width:1.7}
+.data-val{font-size:24px;font-weight:700;color:var(--text);letter-spacing:-.5px}
+.data-label{font-size:12px;color:var(--text2);font-weight:500;text-align:center}
+
+/* ── Scrollbar ── */
+::-webkit-scrollbar{width:4px;height:4px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:#d1d5db;border-radius:4px}
+::-webkit-scrollbar-thumb:hover{background:#9ca3af}
+
+/* ── Animations ── */
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+@keyframes countUp{from{opacity:0;transform:scale(.8)}to{opacity:1;transform:scale(1)}}
+.anim{animation:fadeUp .45s ease both}
+.anim-d1{animation-delay:.05s}.anim-d2{animation-delay:.1s}
+.anim-d3{animation-delay:.15s}.anim-d4{animation-delay:.2s}
+.anim-d5{animation-delay:.25s}
+.stat-val{animation:countUp .5s ease both;animation-delay:.2s}
+
+/* ── Responsive ── */
+@media(max-width:1280px){
+  .stats{grid-template-columns:repeat(2,1fr)}
+  .grid-2{grid-template-columns:1fr}
+  .module-grid{grid-template-columns:repeat(3,1fr)}
+  .data-grid{grid-template-columns:repeat(3,1fr)}
+}
+@media(max-width:768px){
+  .content{padding:16px}
+  .module-grid{grid-template-columns:repeat(2,1fr)}
+  .data-grid{grid-template-columns:repeat(2,1fr)}
+  .banner-right{display:none}
+}
+</style>
+</head>
+<body>
+
+<div class="main">
+
+  <!-- Header -->
+  <header class="header">
+    <div class="header-left">
+      <div class="breadcrumb">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+        <span class="bc-cur">工作台首页</span>
+      </div>
+    </div>
+    <div class="header-right">
+      <div class="date-display">2026年4月13日 周一</div>
+      <div class="h-icon-btn" title="全屏">
+        <svg viewBox="0 0 24 24"><polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/><line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/></svg>
+      </div>
+    </div>
+  </header>
+
+  <!-- Content -->
+  <div class="content">
+
+    <!-- Banner -->
+    <div class="banner anim">
+      <div class="banner-left">
+        <h2>你好，张工</h2>
+        <p>今日有 <strong>4</strong> 条未读消息，<strong>3</strong> 项待处理事项需要处理<br>平台运行正常，数据同步状态良好</p>
+      </div>
+      <div class="banner-right">
+        <button class="b-btn">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+          提报需求
+        </button>
+      </div>
+    </div>
+
+    <!-- Stats -->
+    <div class="stats">
+      <div class="stat anim anim-d1">
+        <div class="stat-accent" style="background:linear-gradient(90deg,#2563eb,#60a5fa)"></div>
+        <div class="stat-icon si-blue">
+          <svg viewBox="0 0 24 24" fill="none"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+        </div>
+        <div class="stat-body">
+          <div class="stat-val" style="color:#2563eb">4</div>
+          <div class="stat-label">未读消息</div>
+          <div class="stat-foot up"><span class="arrow">&#x25B2;</span> 较昨日 +3</div>
+        </div>
+        <div class="stat-mini" style="color:#2563eb">
+          <div class="bar" style="height:40%"></div><div class="bar" style="height:55%"></div><div class="bar" style="height:35%"></div>
+          <div class="bar" style="height:65%"></div><div class="bar" style="height:50%"></div><div class="bar hi" style="height:80%"></div>
+          <div class="bar hi" style="height:100%"></div>
+        </div>
+      </div>
+      <div class="stat anim anim-d2">
+        <div class="stat-accent" style="background:linear-gradient(90deg,#d97706,#fbbf24)"></div>
+        <div class="stat-icon si-orange">
+          <svg viewBox="0 0 24 24" fill="none"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+        </div>
+        <div class="stat-body">
+          <div class="stat-val" style="color:#d97706">3</div>
+          <div class="stat-label">待处理事项</div>
+          <div class="stat-foot down"><span class="arrow">&#x25BC;</span> 较昨日 -2</div>
+        </div>
+        <div class="stat-mini" style="color:#d97706">
+          <div class="bar hi" style="height:90%"></div><div class="bar hi" style="height:75%"></div><div class="bar" style="height:60%"></div>
+          <div class="bar" style="height:50%"></div><div class="bar" style="height:45%"></div><div class="bar" style="height:40%"></div>
+          <div class="bar" style="height:30%"></div>
+        </div>
+      </div>
+      <div class="stat anim anim-d3">
+        <div class="stat-accent" style="background:linear-gradient(90deg,#059669,#34d399)"></div>
+        <div class="stat-icon si-green">
+          <svg viewBox="0 0 24 24" fill="none"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+        </div>
+        <div class="stat-body">
+          <div class="stat-val" style="color:#059669">27</div>
+          <div class="stat-label">本周已处理</div>
+          <div class="stat-foot up"><span class="arrow">&#x25B2;</span> 完成率 87%</div>
+        </div>
+        <div class="stat-mini" style="color:#059669">
+          <div class="bar" style="height:50%"></div><div class="bar" style="height:60%"></div><div class="bar" style="height:55%"></div>
+          <div class="bar" style="height:70%"></div><div class="bar hi" style="height:80%"></div><div class="bar hi" style="height:90%"></div>
+          <div class="bar hi" style="height:95%"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Messages & Todos -->
+    <div class="grid-2">
+
+      <!-- Messages -->
+      <div class="card anim anim-d3">
+        <div class="card-hd">
+          <div class="card-title">
+            <svg viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="1.8"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+            最新消息 <span class="cnt">4</span>
+          </div>
+          <div class="card-more">查看全部 <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></div>
+        </div>
+        <div class="card-tabs">
+          <div class="card-tab active">全部</div>
+          <div class="card-tab">未读</div>
+          <div class="card-tab">近7天</div>
+        </div>
+        <div class="card-body" style="max-height:320px;padding:8px 14px">
+          <div class="msg-list">
+            <div class="msg-item">
+              <div class="msg-dot d-red"></div>
+              <div class="msg-body">
+                <div class="msg-title"><span class="tag tag-yuqing">舆情预警</span><span class="msg-title-text">监测到可降解材料行业负面舆情</span></div>
+                <div class="msg-desc">近24小时检测到涉及 PBAT / 可降解材料的负面舆情，建议关注核实</div>
+              </div>
+              <div class="msg-meta"><div class="msg-time">10:32</div></div>
+            </div>
+            <div class="msg-item">
+              <div class="msg-dot d-orange"></div>
+              <div class="msg-body">
+                <div class="msg-title"><span class="tag tag-shangbiao">商标侵权预警</span><span class="msg-title-text">发现"屯河"近似商标注册申请</span></div>
+                <div class="msg-desc">监测到与"蓝山屯河"近似的商标注册申请，建议核查处理</div>
+              </div>
+              <div class="msg-meta"><div class="msg-time">09:45</div></div>
+            </div>
+            <div class="msg-item">
+              <div class="msg-dot d-purple"></div>
+              <div class="msg-body">
+                <div class="msg-title"><span class="tag tag-zhengce">政策发布</span><span class="msg-title-text">欧盟《包装和包装废弃物法规》更新</span></div>
+                <div class="msg-desc">欧盟发布新版《包装和包装废弃物法规》修正案草案</div>
+              </div>
+              <div class="msg-meta"><div class="msg-time">08:30</div></div>
+            </div>
+            <div class="msg-item">
+              <div class="msg-dot d-green"></div>
+              <div class="msg-body">
+                <div class="msg-title"><span class="tag tag-jiyu">行业机遇</span><span class="msg-title-text">快递包装领域可降解材料需求上升</span></div>
+                <div class="msg-desc">电商快递"以纸代塑、可降解"持续推进，PBAT/PLA 需求预计上行，存在市场切入机会</div>
+              </div>
+              <div class="msg-meta"><div class="msg-time">昨日</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Todos -->
+      <div class="card anim anim-d4">
+        <div class="card-hd">
+          <div class="card-title">
+            <svg viewBox="0 0 24 24" fill="none" stroke="var(--orange)" stroke-width="1.8"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+            待处理事项 <span class="cnt">3</span>
+          </div>
+          <div class="card-more">查看全部 <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></div>
+        </div>
+        <div class="card-tabs">
+          <div class="card-tab active">全部待办</div>
+          <div class="card-tab">待审核</div>
+          <div class="card-tab">近7天</div>
+        </div>
+        <div class="card-body" style="max-height:320px;padding:8px 14px">
+          <div class="todo-list">
+            <div class="todo-item">
+              <div class="todo-type type-audit">需求审批</div>
+              <div class="todo-body">
+                <div class="todo-title">可堆肥快递袋材料技术需求信息审批</div>
+                <div class="todo-meta">
+                  <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                  李明 · 营销中心 &nbsp;|&nbsp; 今日 08:45
+                </div>
+              </div>
+              <div class="todo-actions">
+                <button class="todo-btn btn-pass">通过</button>
+                <button class="todo-btn btn-view">查看</button>
+              </div>
+            </div>
+            <div class="todo-item">
+              <div class="todo-type type-review">客诉反馈处理</div>
+              <div class="todo-body">
+                <div class="todo-title">TH-BM2025 农用地膜低温韧性客诉反馈处理</div>
+                <div class="todo-meta">
+                  <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                  王丽 · 品控部 &nbsp;|&nbsp; 昨日 17:20
+                </div>
+              </div>
+              <div class="todo-actions">
+                <button class="todo-btn btn-pass">通过</button>
+                <button class="todo-btn btn-view">查看</button>
+              </div>
+            </div>
+            <div class="todo-item">
+              <div class="todo-type type-brief">简报变更申请</div>
+              <div class="todo-body">
+                <div class="todo-title">PBAT 材料技术简报内容变更申请</div>
+                <div class="todo-meta">
+                  <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                  赵强 · 研究院 &nbsp;|&nbsp; 昨日 14:50
+                </div>
+              </div>
+              <div class="todo-actions">
+                <button class="todo-btn btn-pass">通过</button>
+                <button class="todo-btn btn-view">查看</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Module Nav -->
+    <div class="card anim anim-d4" style="margin-bottom:22px">
+      <div class="card-hd">
+        <div class="card-title">
+          <svg viewBox="0 0 24 24" fill="none" stroke="var(--purple)" stroke-width="1.8"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+          功能导航
+        </div>
+      </div>
+      <div class="card-body" style="padding:16px 20px 20px">
+        <div class="module-grid">
+          <div class="module-card">
+            <div class="module-icon mi-blue">
+              <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="4" rx="1"/><rect x="14" y="10" width="7" height="11" rx="1"/><rect x="3" y="13" width="7" height="8" rx="1"/></svg>
+            </div>
+            <div class="module-name">驾驶舱</div>
+            <div class="module-desc">行业趋势 · 运行概况</div>
+          </div>
+          <div class="module-card">
+            <div class="module-icon mi-cyan">
+              <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 2v4m0 12v4m10-10h-4M6 12H2"/></svg>
+            </div>
+            <div class="module-name">产业链洞察</div>
+            <div class="module-desc">全景图 · 环节详情</div>
+          </div>
+          <div class="module-card">
+            <div class="module-icon mi-green">
+              <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/></svg>
+            </div>
+            <div class="module-name">客情洞察</div>
+            <div class="module-desc">市场分析 · 客诉管理</div>
+          </div>
+          <div class="module-card">
+            <div class="module-icon mi-orange">
+              <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+            </div>
+            <div class="module-name">竞对监测</div>
+            <div class="module-desc">竞品 · 价格 · 创新</div>
+          </div>
+          <div class="module-card">
+            <div class="module-icon mi-purple">
+              <svg viewBox="0 0 24 24"><path d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707"/><circle cx="12" cy="12" r="5"/></svg>
+            </div>
+            <div class="module-name">研发创新</div>
+            <div class="module-desc">技术情报 · 专利 · 知识库</div>
+          </div>
+          <div class="module-card">
+            <div class="module-icon mi-rose">
+              <svg viewBox="0 0 24 24"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+            </div>
+            <div class="module-name">战略研判</div>
+            <div class="module-desc">市场风险 · 政策 · 趋势</div>
+          </div>
+          <div class="module-card">
+            <div class="module-icon mi-indigo">
+              <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+            </div>
+            <div class="module-name">解决方案</div>
+            <div class="module-desc">场景案例 · 客诉案例</div>
+          </div>
+          <div class="module-card">
+            <div class="module-icon mi-slate">
+              <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-2.82 1.18V21a2 2 0 0 1-4 0v-.09a1.65 1.65 0 0 0-1.08-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 3.09 15H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 2.36-.73V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06"/></svg>
+            </div>
+            <div class="module-name">系统管理</div>
+            <div class="module-desc">权限配置 · 操作日志</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /content -->
+</div><!-- /main -->
+
+<script>
+document.querySelectorAll('.card-tabs').forEach(tabs=>{
+  tabs.querySelectorAll('.card-tab').forEach(tab=>{
+    tab.addEventListener('click',()=>{
+      tabs.querySelectorAll('.card-tab').forEach(t=>t.classList.remove('active'));
+      tab.classList.add('active');
+    });
+  });
+});
+</script>
+
+</body>
+</html>
