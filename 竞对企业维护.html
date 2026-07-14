@@ -85,31 +85,28 @@ table.t tr:last-child td{border-bottom:none}
 .fr input,.fr select,.fr textarea{width:100%;padding:8px 10px;font-size:13px;border:1px solid var(--border2);border-radius:7px;background:var(--bg);color:var(--text);outline:none;font-family:inherit}
 .toast{position:absolute;bottom:20px;left:50%;transform:translateX(-50%);background:var(--text);color:#fff;padding:8px 16px;border-radius:6px;font-size:12.5px;opacity:0;transition:opacity .2s;pointer-events:none;z-index:99}
 .toast.show{opacity:1}
+.btn.dang{background:#FCEBEB;color:#A32D2D;border-color:#e8c4c4}
+.btn.dang:hover{background:#f7dede}
 </style>
 </head>
 <body>
 <div class="app">
   <div class="tbar">
-    <span class="crumb">工作台 / 数据维护 / </span><b class="crumb"><b>竞对企业维护</b></b>
+    <b class="crumb"><b>竞对企业维护</b></b>
     <span class="sp"></span>
     <span id="rolebox"></span>
   </div>
 
   <div class="tools">
-    <div class="search"><span style="color:var(--text3)">🔍</span><input id="q" placeholder="搜索企业名称 / 信用代码 / 赛道…" oninput="resetPage()"></div>
-    <select class="fsel" id="ftrack" onchange="resetPage()"><option value="">全部赛道</option></select>
-    <select class="fsel" id="ftag" onchange="resetPage()"><option value="">全部标签</option><option>重点竞对</option><option>一般竞对</option></select>
-    <select class="fsel" id="fstat" onchange="resetPage()"><option value="">全部状态</option><option>启用</option><option>停用</option></select>
+    <div class="search"><span style="color:var(--text3)">🔍</span><input id="q" placeholder="搜索企业名称 / 信用代码 / 主营产品…" oninput="resetPage()"></div>
     <span class="sp"></span>
     <span id="adminbtns"></span>
   </div>
 
-  <div class="stats" id="stats"></div>
-
   <div class="tblwrap">
     <table class="t">
       <thead><tr>
-        <th>企业名称</th><th>统一社会信用代码</th><th>所属赛道 / 主营产品</th><th>标签</th><th>状态</th><th>维护人</th><th>更新时间</th><th id="opth">操作</th>
+        <th>企业名称</th><th>统一社会信用代码</th><th>主营产品</th><th>更新时间</th><th id="opth">操作</th>
       </tr></thead>
       <tbody id="tbody"></tbody>
     </table>
@@ -138,6 +135,12 @@ table.t tr:last-child td{border-bottom:none}
     <div class="mft"><span class="sp"></span><button class="btn" onclick="closeEdit()">取消</button><button class="btn pri" onclick="saveEdit()">保存</button></div>
   </div></div>
 
+  <div class="ov" id="delov"><div class="modal" style="width:420px">
+    <div class="mhd"><h3>删除竞对企业</h3><div class="mx" onclick="closeDel()">✕</div></div>
+    <div class="mbody"><p style="font-size:13px;line-height:1.7;color:var(--text2)">确认从竞对库中删除「<b id="delname" style="color:var(--text)"></b>」？<br>删除后该企业将不再进入监测与对标可选范围，且不可恢复。</p></div>
+    <div class="mft"><span class="sp"></span><button class="btn" onclick="closeDel()">取消</button><button class="btn dang" onclick="confirmDel()">确认删除</button></div>
+  </div></div>
+
   <div class="toast" id="toast"></div>
 </div>
 
@@ -162,6 +165,20 @@ const MASTER=[
  {id:'yt',name:'安徽悦泰生物科技有限公司',code:'91340100MA2R000000',track:'PGA·PLA'},
  {id:'bs',name:'巴斯夫（中国）有限公司',code:'913100001320999999',track:'ecoflex（PBAT）·外资'},
  {id:'nm',name:'诺瓦蒙特（Novamont）',code:'—（境外）',track:'Mater-Bi·外资'},
+ {id:'hz',name:'浙江海正生物材料股份有限公司',code:'913310000668900000',track:'PLA·乳酸'},
+ {id:'fy',name:'安徽丰原生物新材料有限公司',code:'913412000578400000',track:'乳酸·PLA'},
+ {id:'gh',name:'深圳光华伟业股份有限公司',code:'914403001234560000',track:'PLA·3D打印耗材'},
+ {id:'jl',name:'内蒙古金晖兆隆高新科技有限公司',code:'911500000987650000',track:'PBAT·丁二酸'},
+ {id:'lc',name:'山东联创新材料有限公司',code:'913715000456780000',track:'PBAT·改性料'},
+ {id:'jj',name:'宁波家联科技股份有限公司',code:'913302001112220000',track:'可降解餐具·制品'},
+ {id:'fl',name:'浙江富岭科技股份有限公司',code:'913310002223330000',track:'可降解餐具·制品'},
+ {id:'md',name:'珠海麦得发生物科技股份有限公司',code:'914404003334440000',track:'PHA·合成生物'},
+ {id:'gy',name:'天津国韵生物材料有限公司',code:'911200004445550000',track:'PHA'},
+ {id:'pl',name:'长春普立思生物科技有限公司',code:'912201005556660000',track:'乳酸·PLA'},
+ {id:'jn',name:'山东巨能金玉米生物工程有限公司',code:'913715006667770000',track:'乳酸·淀粉糖'},
+ {id:'ld',name:'河南龙都天仁生物材料有限公司',code:'914101007778880000',track:'PLA·可降解薄膜'},
+ {id:'wz',name:'苏州王子新材料科技有限公司',code:'913205008889990000',track:'PBAT改性·包装'},
+ {id:'sk',name:'SKC（韩国）',code:'—（境外）',track:'PLA/PBAT·外资'},
 ];
 // 竞对库：初始收录
 let lib=[
@@ -177,20 +194,32 @@ let lib=[
  {id:'lj',tag:'重点竞对',status:'启用',owner:'统一管理员',updated:'2026-07-02',note:'PHA新赛道'},
  {id:'kh',tag:'一般竞对',status:'启用',owner:'统一管理员',updated:'2026-07-05',note:''},
  {id:'bs',tag:'重点竞对',status:'启用',owner:'统一管理员',updated:'2026-07-05',note:'外资对标'},
+ {id:'ch',tag:'一般竞对',status:'启用',owner:'统一管理员',updated:'2026-06-15',note:''},
+ {id:'lh',tag:'一般竞对',status:'启用',owner:'统一管理员',updated:'2026-06-15',note:''},
+ {id:'rf',tag:'一般竞对',status:'启用',owner:'统一管理员',updated:'2026-06-16',note:''},
+ {id:'zw',tag:'一般竞对',status:'启用',owner:'统一管理员',updated:'2026-06-16',note:''},
+ {id:'yt',tag:'一般竞对',status:'启用',owner:'统一管理员',updated:'2026-06-17',note:'PGA方向'},
+ {id:'hz',tag:'重点竞对',status:'启用',owner:'统一管理员',updated:'2026-06-28',note:'PLA龙头'},
+ {id:'fy',tag:'重点竞对',status:'启用',owner:'统一管理员',updated:'2026-06-28',note:'乳酸-PLA一体化'},
+ {id:'gh',tag:'一般竞对',status:'启用',owner:'统一管理员',updated:'2026-06-29',note:''},
+ {id:'jl',tag:'重点竞对',status:'启用',owner:'统一管理员',updated:'2026-06-30',note:'PBAT规模'},
+ {id:'lc',tag:'一般竞对',status:'启用',owner:'统一管理员',updated:'2026-07-01',note:''},
+ {id:'jj',tag:'一般竞对',status:'启用',owner:'统一管理员',updated:'2026-07-01',note:'下游制品'},
+ {id:'fl',tag:'一般竞对',status:'启用',owner:'统一管理员',updated:'2026-07-02',note:'下游制品'},
+ {id:'md',tag:'重点竞对',status:'启用',owner:'统一管理员',updated:'2026-07-03',note:'PHA'},
+ {id:'gy',tag:'一般竞对',status:'启用',owner:'统一管理员',updated:'2026-07-03',note:'PHA'},
+ {id:'pl',tag:'一般竞对',status:'启用',owner:'统一管理员',updated:'2026-07-04',note:''},
+ {id:'ld',tag:'一般竞对',status:'启用',owner:'统一管理员',updated:'2026-07-04',note:''},
 ];
 const M=id=>MASTER.find(m=>m.id===id);
-let addBuf=[],editId=null;
-const pageSize=10;let page=1;
+let addBuf=[],editId=null,delId=null;
+const pageSize=15;let page=1;
 function toast(m){const e=document.getElementById('toast');e.textContent=m;e.classList.add('show');clearTimeout(e._t);e._t=setTimeout(()=>e.classList.remove('show'),1900)}
 
 function renderRole(){
-  document.getElementById('adminbtns').innerHTML=`<button class="btn pri" onclick="openAdd()">＋ 从企业主数据添加</button>`;
+  document.getElementById('adminbtns').innerHTML=`<button class="btn" onclick="toast('导出（原型演示）')">导出</button> <button class="btn pri" onclick="openAdd()">＋ 从企业主数据添加</button>`;
 }
 
-function initTrackFilter(){
-  const tracks=[...new Set(lib.map(x=>M(x.id).track.split('·')[0]))];
-  document.getElementById('ftrack').innerHTML='<option value="">全部赛道</option>'+tracks.map(t=>`<option>${t}</option>`).join('');
-}
 function resetPage(){page=1;render()}
 function gotoPage(p){page=p;render()}
 function renderPager(total,pages){
@@ -199,37 +228,24 @@ function renderPager(total,pages){
 }
 function render(){
   const q=document.getElementById('q').value.trim();
-  const ft=document.getElementById('ftrack').value,fg=document.getElementById('ftag').value,fs=document.getElementById('fstat').value;
   let rows=lib.filter(x=>{const m=M(x.id);
     if(q&&!(m.name.includes(q)||m.code.includes(q)||m.track.includes(q)))return false;
-    if(ft&&!m.track.startsWith(ft))return false;
-    if(fg&&x.tag!==fg)return false;
-    if(fs&&x.status!==fs)return false;
     return true;});
   const total=rows.length,pages=Math.max(1,Math.ceil(total/pageSize));
   if(page>pages)page=pages;if(page<1)page=1;
   const pageRows=rows.slice((page-1)*pageSize,page*pageSize);
   renderPager(total,pages);
   document.getElementById('tbody').innerHTML=pageRows.map(x=>{const m=M(x.id);
-    const ops=role==='admin'
-      ? `<span class="act" onclick="openEdit('${x.id}')">编辑</span>`+(x.status==='启用'?`<span class="act off" onclick="toggle('${x.id}')">停用</span>`:`<span class="act" onclick="toggle('${x.id}')">启用</span>`)
-      : '<span class="muted">—</span>';
+    const ops=`<span class="act" onclick="openEdit('${x.id}')">编辑</span><span class="act off" onclick="askDel('${x.id}')">删除</span>`;
     return `<tr>
       <td class="ename">${m.name}</td>
       <td class="muted">${m.code}</td>
       <td>${m.track}</td>
-      <td><span class="pill ${x.tag==='重点竞对'?'tag-key':'tag-nor'}">${x.tag}</span></td>
-      <td><span class="pill ${x.status==='启用'?'st-on':'st-off'}">${x.status}</span></td>
-      <td>${x.owner}</td>
       <td class="muted">${x.updated}</td>
       <td>${ops}</td>
     </tr>`;
-  }).join('')||`<tr><td colspan="8" style="text-align:center;color:var(--text3);padding:40px">无匹配的竞对企业</td></tr>`;
-  const en=lib.filter(x=>x.status==='启用').length,key=lib.filter(x=>x.tag==='重点竞对'&&x.status==='启用').length;
-  document.getElementById('stats').innerHTML=`
-    <div class="stat"><div class="n">${lib.length}</div><div class="l">竞对企业总数</div></div>
-    <div class="stat"><div class="n">${en}</div><div class="l">启用中（进入监测/对标）</div></div>
-    <div class="stat"><div class="n">${key}</div><div class="l">重点竞对</div></div>`;
+  }).join('')||`<tr><td colspan="5" style="text-align:center;color:var(--text3);padding:40px">无匹配的竞对企业</td></tr>`;
+
 }
 
 /* add */
@@ -246,16 +262,18 @@ function addToggle(id){addBuf.includes(id)?addBuf=addBuf.filter(x=>x!==id):addBu
 function confirmAdd(){if(!addBuf.length){toast('请选择要加入的企业');return}
   const tag=document.getElementById('atag').value;
   addBuf.forEach(id=>lib.push({id,tag,status:'启用',owner:'统一管理员',updated:'今天',note:''}));
-  closeAdd();initTrackFilter();render();toast('已加入 '+addBuf.length+' 家竞对企业');
+  closeAdd();render();toast('已加入 '+addBuf.length+' 家竞对企业');
 }
 /* edit */
 function openEdit(id){editId=id;const x=lib.find(l=>l.id===id);document.getElementById('ename').value=M(id).name;document.getElementById('etag').value=x.tag;document.getElementById('enote').value=x.note||'';document.getElementById('editov').classList.add('show')}
 function closeEdit(){document.getElementById('editov').classList.remove('show')}
 function saveEdit(){const x=lib.find(l=>l.id===editId);x.tag=document.getElementById('etag').value;x.note=document.getElementById('enote').value;x.updated='今天';closeEdit();render();toast('已保存')}
 /* toggle status */
-function toggle(id){const x=lib.find(l=>l.id===id);x.status=x.status==='启用'?'停用':'启用';x.updated='今天';render();toast(x.status==='停用'?'已停用（不再进入监测与可选范围）':'已启用')}
+function askDel(id){delId=id;document.getElementById('delname').textContent=M(id).name;document.getElementById('delov').classList.add('show')}
+function closeDel(){document.getElementById('delov').classList.remove('show')}
+function confirmDel(){lib=lib.filter(x=>x.id!==delId);closeDel();render();toast('已从竞对库删除')}
 
-renderRole();initTrackFilter();render();
+renderRole();render();
 </script>
 </body>
 </html>
