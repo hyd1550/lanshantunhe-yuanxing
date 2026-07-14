@@ -87,6 +87,10 @@ table.t tr:last-child td{border-bottom:none}
 .toast.show{opacity:1}
 .btn.dang{background:#FCEBEB;color:#A32D2D;border-color:#e8c4c4}
 .btn.dang:hover{background:#f7dede}
+.stog.on{color:var(--green)}
+.stog.off2{color:var(--text3)}
+.off-row td{color:var(--text3)}
+.off-row .ename{color:var(--text3);font-weight:400}
 </style>
 </head>
 <body>
@@ -106,7 +110,7 @@ table.t tr:last-child td{border-bottom:none}
   <div class="tblwrap">
     <table class="t">
       <thead><tr>
-        <th>企业名称</th><th>统一社会信用代码</th><th>主营产品</th><th>更新时间</th><th id="opth">操作</th>
+        <th>企业名称</th><th>统一社会信用代码</th><th>主营产品</th><th>加入时间</th><th id="opth">操作</th>
       </tr></thead>
       <tbody id="tbody"></tbody>
     </table>
@@ -119,7 +123,6 @@ table.t tr:last-child td{border-bottom:none}
     <div class="mbody">
       <div class="msearch"><span style="color:var(--text3)">🔍</span><input id="asearch" placeholder="搜索企业主数据…" oninput="renderAdd(this.value)"></div>
       <div class="slist" id="alist"></div>
-      <div class="fr" style="margin-top:12px"><label>标签</label><select id="atag"><option>一般竞对</option><option>重点竞对</option></select></div>
     </div>
     <div class="mft"><span id="acnt" style="margin-right:auto;font-size:12px;color:var(--text3)"></span><button class="btn" onclick="closeAdd()">取消</button><button class="btn pri" onclick="confirmAdd()">加入竞对库</button></div>
   </div></div>
@@ -129,7 +132,6 @@ table.t tr:last-child td{border-bottom:none}
     <div class="mhd"><h3>编辑竞对企业</h3><div class="mx" onclick="closeEdit()">✕</div></div>
     <div class="mbody">
       <div class="fr"><label>企业名称</label><input id="ename" disabled></div>
-      <div class="fr"><label>标签</label><select id="etag"><option>一般竞对</option><option>重点竞对</option></select></div>
       <div class="fr"><label>备注</label><textarea id="enote" rows="2" placeholder="选填"></textarea></div>
     </div>
     <div class="mft"><span class="sp"></span><button class="btn" onclick="closeEdit()">取消</button><button class="btn pri" onclick="saveEdit()">保存</button></div>
@@ -139,6 +141,12 @@ table.t tr:last-child td{border-bottom:none}
     <div class="mhd"><h3>删除竞对企业</h3><div class="mx" onclick="closeDel()">✕</div></div>
     <div class="mbody"><p style="font-size:13px;line-height:1.7;color:var(--text2)">确认从竞对库中删除「<b id="delname" style="color:var(--text)"></b>」？<br>删除后该企业将不再进入监测与对标可选范围，且不可恢复。</p></div>
     <div class="mft"><span class="sp"></span><button class="btn" onclick="closeDel()">取消</button><button class="btn dang" onclick="confirmDel()">确认删除</button></div>
+  </div></div>
+
+  <div class="ov" id="stopov"><div class="modal" style="width:420px">
+    <div class="mhd"><h3>停用竞对企业</h3><div class="mx" onclick="closeStop()">✕</div></div>
+    <div class="mbody"><p style="font-size:13px;line-height:1.7;color:var(--text2)">确认停用「<b id="stopname" style="color:var(--text)"></b>」？<br>停用后该企业将不再进入监测与对标可选范围（数据保留，可再次启用）。</p></div>
+    <div class="mft"><span class="sp"></span><button class="btn" onclick="closeStop()">取消</button><button class="btn dang" onclick="confirmStop()">确认停用</button></div>
   </div></div>
 
   <div class="toast" id="toast"></div>
@@ -212,7 +220,7 @@ let lib=[
  {id:'ld',tag:'一般竞对',status:'启用',owner:'统一管理员',updated:'2026-07-04',note:''},
 ];
 const M=id=>MASTER.find(m=>m.id===id);
-let addBuf=[],editId=null,delId=null;
+let addBuf=[],editId=null,delId=null,stopId=null;
 const pageSize=15;let page=1;
 function toast(m){const e=document.getElementById('toast');e.textContent=m;e.classList.add('show');clearTimeout(e._t);e._t=setTimeout(()=>e.classList.remove('show'),1900)}
 
@@ -231,13 +239,15 @@ function render(){
   let rows=lib.filter(x=>{const m=M(x.id);
     if(q&&!(m.name.includes(q)||m.code.includes(q)||m.track.includes(q)))return false;
     return true;});
+  rows.sort((a,b)=>{const ka=a.updated==='今天'?'9999-99-99':a.updated,kb=b.updated==='今天'?'9999-99-99':b.updated;return kb.localeCompare(ka);});
   const total=rows.length,pages=Math.max(1,Math.ceil(total/pageSize));
   if(page>pages)page=pages;if(page<1)page=1;
   const pageRows=rows.slice((page-1)*pageSize,page*pageSize);
   renderPager(total,pages);
   document.getElementById('tbody').innerHTML=pageRows.map(x=>{const m=M(x.id);
-    const ops=`<span class="act" onclick="openEdit('${x.id}')">编辑</span><span class="act off" onclick="askDel('${x.id}')">删除</span>`;
-    return `<tr>
+    const stAct=x.status==='启用'?`<span class="act" onclick="askStop('${x.id}')">停用</span>`:`<span class="act" onclick="toggleStatus('${x.id}')">启用</span>`;
+    const ops=`${stAct}<span class="act off" onclick="askDel('${x.id}')">删除</span>`;
+    return `<tr class="${x.status==='停用'?'off-row':''}">
       <td class="ename">${m.name}</td>
       <td class="muted">${m.code}</td>
       <td>${m.track}</td>
@@ -260,18 +270,21 @@ function renderAdd(q){q=(q||'').trim();const inlib=new Set(lib.map(x=>x.id));
 }
 function addToggle(id){addBuf.includes(id)?addBuf=addBuf.filter(x=>x!==id):addBuf.push(id);renderAdd(document.getElementById('asearch').value)}
 function confirmAdd(){if(!addBuf.length){toast('请选择要加入的企业');return}
-  const tag=document.getElementById('atag').value;
-  addBuf.forEach(id=>lib.push({id,tag,status:'启用',owner:'统一管理员',updated:'今天',note:''}));
+  addBuf.forEach(id=>lib.push({id,status:'启用',owner:'统一管理员',updated:'今天',note:''}));
   closeAdd();render();toast('已加入 '+addBuf.length+' 家竞对企业');
 }
 /* edit */
-function openEdit(id){editId=id;const x=lib.find(l=>l.id===id);document.getElementById('ename').value=M(id).name;document.getElementById('etag').value=x.tag;document.getElementById('enote').value=x.note||'';document.getElementById('editov').classList.add('show')}
+function openEdit(id){editId=id;const x=lib.find(l=>l.id===id);document.getElementById('ename').value=M(id).name;document.getElementById('enote').value=x.note||'';document.getElementById('editov').classList.add('show')}
 function closeEdit(){document.getElementById('editov').classList.remove('show')}
-function saveEdit(){const x=lib.find(l=>l.id===editId);x.tag=document.getElementById('etag').value;x.note=document.getElementById('enote').value;x.updated='今天';closeEdit();render();toast('已保存')}
+function saveEdit(){const x=lib.find(l=>l.id===editId);x.note=document.getElementById('enote').value;closeEdit();render();toast('已保存')}
 /* toggle status */
 function askDel(id){delId=id;document.getElementById('delname').textContent=M(id).name;document.getElementById('delov').classList.add('show')}
 function closeDel(){document.getElementById('delov').classList.remove('show')}
 function confirmDel(){lib=lib.filter(x=>x.id!==delId);closeDel();render();toast('已从竞对库删除')}
+function toggleStatus(id){const x=lib.find(l=>l.id===id);x.status=x.status==='启用'?'停用':'启用';render();toast(x.status==='停用'?'已停用（不再进入监测/对标）':'已启用');}
+function askStop(id){stopId=id;document.getElementById('stopname').textContent=M(id).name;document.getElementById('stopov').classList.add('show')}
+function closeStop(){document.getElementById('stopov').classList.remove('show')}
+function confirmStop(){const x=lib.find(l=>l.id===stopId);if(x)x.status='停用';closeStop();render();toast('已停用（不再进入监测/对标）')}
 
 renderRole();render();
 </script>
