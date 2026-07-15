@@ -47,7 +47,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'PingFang SC','Microsoft YaHei
 .pg.on{background:var(--blue);color:#fff;border-color:var(--blue)}
 .pg.dis{color:var(--text3);cursor:default;background:var(--bg2)}
 table.t{width:100%;border-collapse:collapse;font-size:12.5px}
-table.t th,table.t td{padding:16px 14px;text-align:left;white-space:nowrap;border-bottom:1px solid var(--border)}
+table.t th,table.t td{padding:16px 22px;text-align:left;white-space:nowrap;border-bottom:1px solid var(--border)}
 table.t thead th{position:sticky;top:0;background:var(--bg2);color:var(--text2);font-weight:600;font-size:11.5px;z-index:1}
 table.t tbody tr:hover{background:var(--bg2)}
 table.t tr:last-child td{border-bottom:none}
@@ -91,6 +91,8 @@ table.t tr:last-child td{border-bottom:none}
 .stog.off2{color:var(--text3)}
 .off-row td{color:var(--text3)}
 .off-row .ename{color:var(--text3);font-weight:400}
+.t .prod{width:440px}
+.prod-in{width:440px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 </style>
 </head>
 <body>
@@ -110,7 +112,7 @@ table.t tr:last-child td{border-bottom:none}
   <div class="tblwrap">
     <table class="t">
       <thead><tr>
-        <th>企业名称</th><th>统一社会信用代码</th><th>主营产品</th><th>加入时间</th><th id="opth">操作</th>
+        <th>企业名称</th><th>统一社会信用代码</th><th class="prod">主营产品</th><th>加入时间</th><th id="opth">操作</th>
       </tr></thead>
       <tbody id="tbody"></tbody>
     </table>
@@ -155,38 +157,38 @@ table.t tr:last-child td{border-bottom:none}
 <script>
 let role='admin';
 const MASTER=[
- {id:'jf',name:'金发科技股份有限公司',code:'914401011922038822',track:'PBAT/PBS/PLA·改性塑料'},
- {id:'hl',name:'恒力石化股份有限公司',code:'9132059479661234X5',track:'PBAT·聚酯·化纤'},
- {id:'wh',name:'万华化学集团股份有限公司',code:'91370600264180542K',track:'PBAT/PLA/BDO·基础化工'},
- {id:'tc',name:'彤程新材料集团股份有限公司',code:'913100006073157XXJ',track:'PBAT/PLA·改性料'},
- {id:'jd',name:'金丹科技股份有限公司',code:'91411625757911423N',track:'乳酸·丙交酯·PLA'},
- {id:'zl',name:'中粮生物科技股份有限公司',code:'91340300148900000X',track:'PLA·燃料乙醇·淀粉糖'},
- {id:'dh',name:'江苏丹化科技有限公司',code:'913205820558766000',track:'BDO·草酸·PBAT'},
- {id:'hf',name:'华峰集团有限公司',code:'913303005584130000',track:'TPU·氨纶·PBAT'},
- {id:'de',name:'山东道恩高分子材料股份有限公司',code:'913706850736000000',track:'改性PP·PBAT改性料'},
- {id:'ch',name:'浙江长鸿高科新材料股份有限公司',code:'913302001234500000',track:'PBAT·SEBS'},
- {id:'lh',name:'联泓新材料科技股份有限公司',code:'913704810567800000',track:'EVA·PLA·特种化学品'},
- {id:'lj',name:'北京蓝晶微生物科技有限公司',code:'91110113MA01ABCDEF',track:'PHA·合成生物'},
- {id:'kh',name:'营口康辉石化有限公司',code:'912108810789000000',track:'PBAT/PBS·膜级'},
- {id:'rf',name:'山东瑞丰高分子材料股份有限公司',code:'913715810456700000',track:'PVC助剂·PBAT'},
- {id:'zw',name:'珠海万通化工有限公司',code:'914404000678900000',track:'PBAT/PBS·改性'},
- {id:'yt',name:'安徽悦泰生物科技有限公司',code:'91340100MA2R000000',track:'PGA·PLA'},
- {id:'bs',name:'巴斯夫（中国）有限公司',code:'913100001320999999',track:'ecoflex（PBAT）·外资'},
- {id:'nm',name:'诺瓦蒙特（Novamont）',code:'—（境外）',track:'Mater-Bi·外资'},
- {id:'hz',name:'浙江海正生物材料股份有限公司',code:'913310000668900000',track:'PLA·乳酸'},
- {id:'fy',name:'安徽丰原生物新材料有限公司',code:'913412000578400000',track:'乳酸·PLA'},
- {id:'gh',name:'深圳光华伟业股份有限公司',code:'914403001234560000',track:'PLA·3D打印耗材'},
- {id:'jl',name:'内蒙古金晖兆隆高新科技有限公司',code:'911500000987650000',track:'PBAT·丁二酸'},
- {id:'lc',name:'山东联创新材料有限公司',code:'913715000456780000',track:'PBAT·改性料'},
- {id:'jj',name:'宁波家联科技股份有限公司',code:'913302001112220000',track:'可降解餐具·制品'},
- {id:'fl',name:'浙江富岭科技股份有限公司',code:'913310002223330000',track:'可降解餐具·制品'},
- {id:'md',name:'珠海麦得发生物科技股份有限公司',code:'914404003334440000',track:'PHA·合成生物'},
- {id:'gy',name:'天津国韵生物材料有限公司',code:'911200004445550000',track:'PHA'},
- {id:'pl',name:'长春普立思生物科技有限公司',code:'912201005556660000',track:'乳酸·PLA'},
- {id:'jn',name:'山东巨能金玉米生物工程有限公司',code:'913715006667770000',track:'乳酸·淀粉糖'},
- {id:'ld',name:'河南龙都天仁生物材料有限公司',code:'914101007778880000',track:'PLA·可降解薄膜'},
- {id:'wz',name:'苏州王子新材料科技有限公司',code:'913205008889990000',track:'PBAT改性·包装'},
- {id:'sk',name:'SKC（韩国）',code:'—（境外）',track:'PLA/PBAT·外资'},
+ {id:'jf',name:'金发科技股份有限公司',code:'914401011922038822',track:'PBAT、PBS、PLA、全生物降解改性料、改性塑料、碳纤维复合材料、特种工程塑料、高性能再生塑料、环保阻燃材料、生物基材料、色母粒、可降解购物袋料、可降解餐具料、可降解地膜料、吹膜级PBAT、注塑级PBAT、医用改性料、汽车用改性塑料、家电用改性塑料'},
+ {id:'hl',name:'恒力石化股份有限公司',code:'9132059479661234X5',track:'PBAT、PBS、聚酯切片、工业长丝、民用长丝、PTA、乙二醇、聚酯薄膜、可降解薄膜、锂电隔膜、功能性薄膜、BOPET、瓶级切片、涤纶短纤、可降解购物袋料、光学基膜、太阳能背板膜、工程塑料'},
+ {id:'wh',name:'万华化学集团股份有限公司',code:'91370600264180542K',track:'PBAT、PLA、BDO、MDI、TDI、TPU、聚氨酯、水性树脂、聚醚多元醇、可降解树脂、特种化学品、ADI、PC、PMMA、SAP高吸水树脂、改性MDI、可降解餐具料、生物基单体、香精香料'},
+ {id:'tc',name:'彤程新材料集团股份有限公司',code:'913100006073157XXJ',track:'PBAT、PLA、可降解改性料、可降解地膜料、橡胶助剂、特种树脂、光刻胶、电子材料、UV固化材料、防焊油墨、可降解购物袋料、吹膜级料、注塑级料、增粘树脂、酚醛树脂、可降解餐具料'},
+ {id:'jd',name:'金丹科技股份有限公司',code:'91411625757911423N',track:'L-乳酸、聚乳酸PLA、丙交酯、乳酸钙、乳酸钠、乳酸酯、可降解餐具料、生物基材料、聚乳酸纤维、乳酸乙酯、聚乳酸薄膜料、聚乳酸注塑料、食品级乳酸、医药级乳酸、聚乳酸母粒、乳酸系列衍生物'},
+ {id:'zl',name:'中粮生物科技股份有限公司',code:'91340300148900000X',track:'PLA、聚乳酸、乳酸、燃料乙醇、淀粉糖、柠檬酸、赖氨酸、生物基化学品、可降解材料、DDGS饲料、聚乳酸餐具料、聚乳酸薄膜料、柠檬酸盐、山梨醇、结晶葡萄糖、麦芽糊精'},
+ {id:'dh',name:'江苏丹化科技有限公司',code:'913205820558766000',track:'BDO、PBAT、草酸、乙二醇、碳酸二甲酯、精细化工品、可降解材料、羰基合成产品、乙醇酸、聚酯多元醇、丁二酸、可降解膜料'},
+ {id:'hf',name:'华峰集团有限公司',code:'913303005584130000',track:'PBAT、TPU、氨纶、己二酸、聚氨酯树脂、聚酯多元醇、鞋用材料、改性料、聚醚、热熔胶、可降解薄膜料、水性聚氨酯、革用树脂'},
+ {id:'de',name:'山东道恩高分子材料股份有限公司',code:'913706850736000000',track:'PBAT改性料、改性PP、TPV、热塑性弹性体、色母粒、医用聚烯烃、可降解母料、注塑改性料、汽车用改性塑料、可降解薄膜料、增韧剂、相容剂、口罩用熔喷料'},
+ {id:'ch',name:'浙江长鸿高科新材料股份有限公司',code:'913302001234500000',track:'PBAT、SEBS、SBS、TPES、热塑性弹性体、可降解薄膜料、改性料、氢化聚合物、可降解购物袋料、可降解餐具料、SIS、医用弹性体、注塑级PBAT'},
+ {id:'lh',name:'联泓新材料科技股份有限公司',code:'913704810567800000',track:'PLA、EVA、聚丙烯、特种环氧、电子材料、可降解材料、精细化学品、太阳能封装料、超高分子量聚乙烯、DMTO产品、甲醇制烯烃、聚乳酸改性料'},
+ {id:'lj',name:'北京蓝晶微生物科技有限公司',code:'91110113MA01ABCDEF',track:'PHA、聚羟基脂肪酸酯、合成生物材料、生物基单体、可降解制品、PHA改性料、PHA母粒、PHA薄膜料、PHA纤维料、生物基化学品'},
+ {id:'kh',name:'营口康辉石化有限公司',code:'912108810789000000',track:'PBAT、PBS、BOPET、功能性薄膜、可降解膜、聚酯切片、光学膜、可降解购物袋料、镀铝基膜、太阳能背板基膜、瓶级切片、涤纶工业丝'},
+ {id:'rf',name:'山东瑞丰高分子材料股份有限公司',code:'913715810456700000',track:'PBAT、PVC加工助剂、ACR、抗冲改性剂、MBS、可降解改性料、发泡调节剂、加工改性剂、可降解薄膜料、色母粒、注塑级料'},
+ {id:'zw',name:'珠海万通化工有限公司',code:'914404000678900000',track:'PBAT、PBS改性料、色母粒、可降解餐具料、吹膜料、注塑料、流延膜料、可降解购物袋料、可降解地膜料、填充母粒、功能母粒'},
+ {id:'yt',name:'安徽悦泰生物科技有限公司',code:'91340100MA2R000000',track:'PGA、PLA、聚乙醇酸、可降解缝合线料、生物医用材料、可降解薄膜料、聚乳酸改性料、生物基单体、可降解餐具料'},
+ {id:'bs',name:'巴斯夫（中国）有限公司',code:'913100001320999999',track:'ecoflex（PBAT）、ecovio、生物降解树脂、工程塑料、聚氨酯、分散体、特性化学品、颜料助剂、催化剂、涂料树脂、维生素、聚酰胺、可降解餐具料'},
+ {id:'nm',name:'诺瓦蒙特（Novamont）',code:'—（境外）',track:'Mater-Bi、生物降解树脂、生物基单体、可堆肥材料、生物基增塑剂、生物基润滑剂、生物基除草剂、可降解购物袋料'},
+ {id:'hz',name:'浙江海正生物材料股份有限公司',code:'913310000668900000',track:'PLA、聚乳酸、丙交酯、乳酸、可降解改性料、生物医用材料、聚乳酸纤维料、聚乳酸薄膜料、聚乳酸注塑料、聚乳酸餐具料、聚乳酸母粒、可堆肥制品'},
+ {id:'fy',name:'安徽丰原生物新材料有限公司',code:'913412000578400000',track:'乳酸、聚乳酸PLA、丙交酯、氨基酸、聚乳酸纤维、可降解餐具料、生物基化学品、维生素、聚乳酸薄膜料、聚乳酸注塑料、结晶葡萄糖、糠醛、生物基单体'},
+ {id:'gh',name:'深圳光华伟业股份有限公司',code:'914403001234560000',track:'PLA、3D打印耗材、聚乳酸改性料、可降解母粒、生物基材料、热熔胶、聚乳酸薄膜料、聚乳酸注塑料、可降解餐具料、生物基包装材料'},
+ {id:'jl',name:'内蒙古金晖兆隆高新科技有限公司',code:'911500000987650000',track:'PBAT、丁二酸、生物降解母料、可降解膜料、改性料、顺酐、可降解购物袋料、可降解地膜料、注塑级PBAT、吹膜级PBAT'},
+ {id:'lc',name:'山东联创新材料有限公司',code:'913715000456780000',track:'PBAT、改性料、色母粒、可降解吹膜料、注塑料、流延料、可降解购物袋料、可降解餐具料、填充母粒、功能母粒'},
+ {id:'jj',name:'宁波家联科技股份有限公司',code:'913302001112220000',track:'可降解餐具、纸浆模塑、塑料餐具、PLA制品、日用塑料制品、吸管、外卖餐盒、刀叉勺、可降解购物袋、水杯、餐盘'},
+ {id:'fl',name:'浙江富岭科技股份有限公司',code:'913310002223330000',track:'可降解餐具、塑料餐具、PLA刀叉勺、吸管、日用塑料制品、外卖餐盒、纸吸管、可降解杯、餐盘、搅拌棒、打包盒'},
+ {id:'md',name:'珠海麦得发生物科技股份有限公司',code:'914404003334440000',track:'PHA、聚羟基脂肪酸酯、合成生物材料、可降解制品、生物基单体、PHA母粒、PHA薄膜料、PHA注塑料、PHA纤维料、可降解餐具料'},
+ {id:'gy',name:'天津国韵生物材料有限公司',code:'911200004445550000',track:'PHA、聚羟基丁酸酯、生物基材料、可降解制品、发酵产品、PHA母粒、PHA薄膜料、可降解餐具料、生物基单体'},
+ {id:'pl',name:'长春普立思生物科技有限公司',code:'912201005556660000',track:'乳酸、聚乳酸PLA、丙交酯、可降解餐具料、生物基化学品、聚乳酸纤维、聚乳酸薄膜料、聚乳酸注塑料、乳酸盐、聚乳酸母粒'},
+ {id:'jn',name:'山东巨能金玉米生物工程有限公司',code:'913715006667770000',track:'乳酸、L-乳酸、淀粉糖、结晶葡萄糖、麦芽糖浆、生物基化学品、山梨醇、麦芽糊精、果葡糖浆、变性淀粉、乳酸盐'},
+ {id:'ld',name:'河南龙都天仁生物材料有限公司',code:'914101007778880000',track:'PLA、聚乳酸、可降解薄膜、地膜料、改性料、可降解购物袋料、餐具料、吹膜级料、注塑级料、可降解垃圾袋料、母粒'},
+ {id:'wz',name:'苏州王子新材料科技有限公司',code:'913205008889990000',track:'PBAT改性料、包装制品、色母粒、可降解包装膜、注塑料、缓冲包装、可降解购物袋料、可降解餐具料、气泡膜、缠绕膜、快递包装材料'},
+ {id:'sk',name:'SKC（韩国）',code:'—（境外）',track:'PLA、PBAT、生物降解薄膜、光学膜、聚酯薄膜、化工材料、半导体材料、二次电池铜箔、可降解购物袋料、功能性薄膜'},
 ];
 // 竞对库：初始收录
 let lib=[
@@ -250,7 +252,7 @@ function render(){
     return `<tr class="${x.status==='停用'?'off-row':''}">
       <td class="ename">${m.name}</td>
       <td class="muted">${m.code}</td>
-      <td>${m.track}</td>
+      <td class="prod"><div class="prod-in" title="${m.track}">${m.track}</div></td>
       <td class="muted">${x.updated}</td>
       <td>${ops}</td>
     </tr>`;
@@ -264,7 +266,7 @@ function closeAdd(){document.getElementById('addov').classList.remove('show')}
 function renderAdd(q){q=(q||'').trim();const inlib=new Set(lib.map(x=>x.id));
   document.getElementById('alist').innerHTML=MASTER.filter(m=>!inlib.has(m.id)&&(!q||m.name.includes(q)||m.track.includes(q))).map(m=>{
     const on=addBuf.includes(m.id);
-    return `<div class="srow${on?' on':''}" onclick="addToggle('${m.id}')"><span class="sck">${on?'✓':''}</span><div class="sinfo"><div class="sname">${m.name}</div><div class="smeta">${m.track} ｜ ${m.code}</div></div></div>`;
+    return `<div class="srow${on?' on':''}" onclick="addToggle('${m.id}')"><span class="sck">${on?'✓':''}</span><div class="sinfo"><div class="sname">${m.name}</div><div class="smeta">${m.code}</div></div></div>`;
   }).join('')||'<div style="padding:20px;text-align:center;color:var(--text3);font-size:12px">主数据中暂无可添加的企业</div>';
   document.getElementById('acnt').textContent=`已选 ${addBuf.length} 家`;
 }
