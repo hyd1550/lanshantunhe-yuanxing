@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>产业链节点标注（覆盖度维护）</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#ffffff;--bg2:#f7f6f3;--bg3:#f0efe9;--border:#e2e0da;--border2:#c8c6bc;
+  --text:#1a1a18;--text2:#6b6960;--text3:#9c9a90;--blue:#185FA5;--blue-bg:#E6F1FB;
+  --amber:#8A5A0B;--amber-bg:#FAEEDA;--green:#27500A;--green-bg:#EAF3DE;--teal:#0F6E56;--teal-bg:#E1F5EE;--red:#A32D2D;}
+html,body{height:100%}
+body{font-family:-apple-system,BlinkMacSystemFont,'PingFang SC','Microsoft YaHei',sans-serif;font-size:13px;color:var(--text);background:var(--bg2)}
+.app{width:1660px;height:990px;background:var(--bg2);display:flex;flex-direction:column;overflow:hidden;position:relative}
+.tbar{flex-shrink:0;height:50px;display:flex;align-items:center;gap:10px;padding:0 22px;background:var(--bg);border-bottom:1px solid var(--border)}
+.ttl{font-size:15px;font-weight:600}.sp{flex:1}
+.roview{font-size:12px;color:var(--amber);background:var(--amber-bg);border-radius:99px;padding:4px 12px}
+.tools{flex-shrink:0;display:flex;align-items:center;gap:10px;padding:14px 22px 6px;flex-wrap:wrap}
+.lb{font-size:12px;color:var(--text2)}
+.fsel{height:36px;padding:0 10px;border:1px solid var(--border2);border-radius:7px;background:var(--bg);font-family:inherit;font-size:12.5px;color:var(--text)}
+.search{display:flex;align-items:center;gap:8px;height:36px;padding:0 12px;border:1px solid var(--border2);border-radius:7px;background:var(--bg);width:220px}
+.search input{border:none;outline:none;flex:1;font-size:13px;font-family:inherit;background:transparent;color:var(--text)}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:8px 14px;font-size:12.5px;border:1px solid var(--border2);border-radius:7px;background:var(--bg);color:var(--text);cursor:pointer;font-family:inherit;font-weight:500;white-space:nowrap}
+.btn:hover{background:var(--bg2)}.btn.pri{background:var(--blue);color:#fff;border-color:var(--blue)}.btn.pri:hover{opacity:.9}.mini{padding:5px 9px;font-size:11.5px}
+.legend{flex-shrink:0;display:flex;align-items:center;gap:16px;padding:4px 22px 8px;font-size:12px;color:var(--text2);flex-wrap:wrap}
+.lgi{display:flex;align-items:center;gap:6px}.dot{width:12px;height:12px;border-radius:3px}
+.d-s{background:#bf5f22}.d-e{background:#788620}.d-f{background:#0F6E56}.d-n{background:#c8c6bc}.d-u{background:#fff;border:1.4px dashed var(--border2)}
+.stats{flex-shrink:0;display:flex;gap:12px;padding:2px 22px 10px}
+.stat{background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:9px 16px;min-width:92px}
+.stat .n{font-size:19px;font-weight:600}.stat .l{font-size:11px;color:var(--text3);margin-top:2px}
+.batbar{display:none;align-items:center;gap:10px;margin:0 22px 10px;padding:9px 14px;background:var(--blue-bg);border:1px solid #bcd8f2;border-radius:9px;font-size:12.5px}
+.batbar.show{display:flex}
+.tblwrap{flex:1;overflow:auto;margin:0 22px 14px;border:1px solid var(--border);border-radius:10px;background:var(--bg)}
+table.t{width:100%;border-collapse:collapse;font-size:12.5px}
+table.t th,table.t td{padding:9px 16px;text-align:left;white-space:nowrap;border-bottom:1px solid var(--border)}
+table.t thead th{position:sticky;top:0;background:var(--bg2);color:var(--text2);font-weight:600;font-size:11.5px;z-index:2}
+table.t tbody tr.node:hover{background:var(--bg2)}
+.grp td{background:#efeee9;font-weight:600;color:var(--text2);cursor:pointer;font-size:12px;position:sticky;z-index:1}
+.gtoggle{display:inline-block;width:14px;color:var(--text3)}.gcount{color:var(--text3);font-weight:400;margin-left:6px;font-size:11px}
+.nname{font-weight:500}
+.isel{height:30px;padding:0 8px;border:1px solid var(--border2);border-radius:6px;background:var(--bg);font-family:inherit;font-size:12px;cursor:pointer;font-weight:500}
+.i-强链{background:var(--amber-bg);color:var(--amber);border-color:#e6cfa0}
+.i-延链{background:var(--green-bg);color:var(--green);border-color:#c4d9a8}
+.i-补链{background:var(--teal-bg);color:var(--teal);border-color:#a8d8c8}
+.i-不涉及{background:var(--bg3);color:var(--text3)}
+.psel{height:30px;padding:0 8px;border:1px solid var(--border2);border-radius:6px;background:var(--bg);font-family:inherit;font-size:12px;color:var(--text)}
+td.ic{border-left:4px solid transparent}
+.bl-强链{border-left-color:#bf5f22 !important}.bl-延链{border-left-color:#788620 !important}.bl-补链{border-left-color:#0F6E56 !important}.bl-不涉及{border-left-color:#c8c6bc !important}
+.toast{position:absolute;bottom:20px;left:50%;transform:translateX(-50%);background:var(--text);color:#fff;padding:8px 16px;border-radius:6px;font-size:12.5px;opacity:0;transition:opacity .2s;pointer-events:none;z-index:99}
+.toast.show{opacity:1}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="tbar">
+    <span class="ttl">产业链节点标注（覆盖度维护）</span><span class="sp"></span>
+  </div>
+  <div class="tools">
+    <span class="lb">产业链</span>
+    <select class="fsel" id="chainsel" style="width:220px" onchange="switchChain()"></select>
+    <div class="search"><span style="color:var(--text3)">🔍</span><input id="q" placeholder="搜索节点名称…" oninput="render()"></div>
+    <span class="lb">覆盖类别</span>
+    <select class="fsel" id="ffilter" onchange="render()">
+      <option value="">全部</option><option>强链</option><option>延链</option><option>补链</option><option>不涉及</option><option value="__un">未标注</option>
+    </select>
+    <button class="btn mini" onclick="expandAll(true)">展开全部</button>
+    <button class="btn mini" onclick="expandAll(false)">收起全部</button>
+    <span class="sp"></span>
+    <button class="btn" onclick="doImport()">⬆ 导入</button>
+    <button class="btn" onclick="doExport()">⬇ 导出</button>
+    <button class="btn pri" onclick="save()">保存</button>
+  </div>
+  <div class="legend">
+    <span class="lb" style="color:var(--text3)">覆盖类别图例：</span>
+    <span class="lgi"><span class="dot d-s"></span>强链</span>
+    <span class="lgi"><span class="dot d-e"></span>延链</span>
+    <span class="lgi"><span class="dot d-f"></span>补链</span>
+    <span class="lgi"><span class="dot d-n"></span>不涉及</span>
+    <span class="lgi"><span class="dot d-u"></span>未标注</span>
+    <span class="sp"></span>
+    <span class="lb" style="color:var(--text3)">覆盖类别、竞争地位由统一管理员人工标注</span>
+  </div>
+  <div class="stats" id="stats"></div>
+  <div class="batbar" id="batbar">
+    <span>已选 <b id="seln">0</b> 个节点，批量设为：</span>
+    <span class="lb">覆盖类别</span>
+    <select class="isel" id="bintent"><option value="">—</option><option>强链</option><option>延链</option><option>补链</option><option>不涉及</option></select>
+    <span class="lb">竞争地位</span>
+    <select class="psel" id="bpos"><option value="">—</option><option>领先</option><option>一般</option><option>空白</option></select>
+    <button class="btn pri" onclick="applyBatch()">应用</button>
+    <button class="btn" onclick="clearSel()">取消选择</button>
+  </div>
+  <div class="tblwrap">
+    <table class="t">
+      <thead><tr>
+        <th style="width:34px"><input type="checkbox" id="ckall" onclick="toggleAll(this)"></th>
+        <th>节点名称（同一产品仅一行）</th>
+        <th style="width:150px">竞争地位</th>
+        <th style="width:190px">覆盖类别（着色）</th>
+      </tr></thead>
+      <tbody id="tbody"></tbody>
+    </table>
+  </div>
+  <div class="toast" id="toast"></div>
+</div>
+<script>
+const CHAINS=[{"id": "main", "name": "① 生物可降解材料（主链）", "levels": ["路线", "原料", "工艺", "中间产物", "终产物", "应用"], "nodes": [{"lv": "路线", "name": "石油基路线（煤基/石油基）", "pos": "领先", "intent": "强链"}, {"lv": "路线", "name": "生物基路线", "pos": "空白", "intent": "不涉及"}, {"lv": "原料", "name": "煤炭", "pos": "-", "intent": "不涉及"}, {"lv": "原料", "name": "石油 / 石脑油", "pos": "-", "intent": "不涉及"}, {"lv": "原料", "name": "植物基 / 动物基原料", "pos": "空白", "intent": "不涉及"}, {"lv": "工艺", "name": "甲醇合成", "pos": "领先", "intent": "强链"}, {"lv": "工艺", "name": "电石炉熔炼", "pos": "领先", "intent": "强链"}, {"lv": "工艺", "name": "Reppe 法合成（BDO）", "pos": "领先", "intent": "强链"}, {"lv": "工艺", "name": "酯化 / 酯交换（PBS/PBAT）", "pos": "领先", "intent": "强链"}, {"lv": "工艺", "name": "甲醇制烯烃（MTO）", "pos": "-", "intent": "不涉及"}, {"lv": "工艺", "name": "聚合反应（PLA/PGA）", "pos": "空白", "intent": "补链"}, {"lv": "中间产物", "name": "合成气", "pos": "一般", "intent": "延链"}, {"lv": "中间产物", "name": "甲醇", "pos": "领先", "intent": "强链"}, {"lv": "中间产物", "name": "电石", "pos": "领先", "intent": "强链"}, {"lv": "中间产物", "name": "乙炔", "pos": "一般", "intent": "强链"}, {"lv": "中间产物", "name": "甲醛", "pos": "-", "intent": "不涉及"}, {"lv": "中间产物", "name": "1,4-丁炔二醇（BYD）", "pos": "一般", "intent": "延链"}, {"lv": "中间产物", "name": "1,4-丁二醇（BDO）", "pos": "领先", "intent": "强链"}, {"lv": "中间产物", "name": "草酸二甲酯（DMO）", "pos": "空白", "intent": "不涉及"}, {"lv": "中间产物", "name": "精对苯二甲酸（PTA）", "pos": "空白", "intent": "延链"}, {"lv": "中间产物", "name": "己二酸（AA）", "pos": "空白", "intent": "延链"}, {"lv": "中间产物", "name": "乳酸单体", "pos": "空白", "intent": "补链"}, {"lv": "中间产物", "name": "乙交酯（GA）", "pos": "空白", "intent": "补链"}, {"lv": "中间产物", "name": "ε-己内酯", "pos": "空白", "intent": "补链"}, {"lv": "终产物", "name": "PBS（聚丁二酸丁二醇酯）", "pos": "领先", "intent": "强链"}, {"lv": "终产物", "name": "PBAT（己二酸/对苯二甲酸丁二酯）", "pos": "领先", "intent": "强链"}, {"lv": "终产物", "name": "PBSA", "pos": "一般", "intent": "强链"}, {"lv": "终产物", "name": "PBST", "pos": "一般", "intent": "强链"}, {"lv": "终产物", "name": "PBSC", "pos": "空白", "intent": "补链"}, {"lv": "终产物", "name": "PLA（聚乳酸）", "pos": "空白", "intent": "补链"}, {"lv": "终产物", "name": "PHA（聚羟基脂肪酸酯）", "pos": "空白", "intent": "补链"}, {"lv": "终产物", "name": "PCL（聚己内酯）", "pos": "空白", "intent": "补链"}, {"lv": "终产物", "name": "PGA（聚乙醇酸）", "pos": "空白", "intent": "补链"}, {"lv": "终产物", "name": "PPC（聚碳酸亚丙酯）", "pos": "空白", "intent": "不涉及"}, {"lv": "终产物", "name": "PEF（聚呋喃二甲酸乙二醇酯）", "pos": "空白", "intent": "不涉及"}, {"lv": "应用", "name": "可降解地膜 / 农膜", "pos": "-", "intent": "延链"}, {"lv": "应用", "name": "一次性软包装 / 包装膜", "pos": "-", "intent": "延链"}, {"lv": "应用", "name": "一次性餐饮具", "pos": "-", "intent": ""}, {"lv": "应用", "name": "纤维与无纺布制品", "pos": "-", "intent": "补链"}, {"lv": "应用", "name": "3D打印线材", "pos": "-", "intent": "不涉及"}, {"lv": "应用", "name": "医用 / 缓释材料", "pos": "-", "intent": "不涉及"}]}, {"id": "muy", "name": "② 母婴用品", "levels": ["原材料", "改性工艺", "改性料", "加工工艺", "中间材料", "应用组件", "终端产品", "销售应用"], "nodes": [{"lv": "原材料", "name": "生物可降解材料", "pos": "领先", "intent": "强链"}, {"lv": "原材料", "name": "PBS", "pos": "领先", "intent": "强链"}, {"lv": "原材料", "name": "PBAT", "pos": "领先", "intent": "强链"}, {"lv": "原材料", "name": "PLA", "pos": "空白", "intent": "补链"}, {"lv": "原材料", "name": "PHA", "pos": "空白", "intent": "补链"}, {"lv": "改性工艺", "name": "共混 / 填充 / 交联 / 生物相容性改性", "pos": "一般", "intent": "延链"}, {"lv": "改性料", "name": "可降解纺丝 / 纺布专用料", "pos": "一般", "intent": "延链"}, {"lv": "改性料", "name": "可降解吹膜 / 流延专用料", "pos": "一般", "intent": "延链"}, {"lv": "改性料", "name": "可降解注塑专用料 / 改性料", "pos": "一般", "intent": "延链"}, {"lv": "改性料", "name": "可降解发泡 / 挤出专用料", "pos": "-", "intent": "补链"}, {"lv": "加工工艺", "name": "熔融纺丝", "pos": "空白", "intent": "补链"}, {"lv": "加工工艺", "name": "热轧加固 / 水刺加固", "pos": "空白", "intent": "补链"}, {"lv": "加工工艺", "name": "熔融流延", "pos": "-", "intent": "延链"}, {"lv": "加工工艺", "name": "注塑成型 / 吸塑成型", "pos": "-", "intent": ""}, {"lv": "加工工艺", "name": "发泡成型", "pos": "-", "intent": ""}, {"lv": "中间材料", "name": "无纺布（婴儿级/医用级）", "pos": "空白", "intent": "补链"}, {"lv": "中间材料", "name": "可降解薄膜", "pos": "-", "intent": "延链"}, {"lv": "中间材料", "name": "可降解发泡型材", "pos": "-", "intent": "补链"}, {"lv": "中间材料", "name": "可降解发泡卷材", "pos": "-", "intent": "补链"}, {"lv": "应用组件", "name": "护脐贴内层 / 基材", "pos": "-", "intent": "不涉及"}, {"lv": "应用组件", "name": "隔尿垫 / 护理垫表层", "pos": "-", "intent": "不涉及"}, {"lv": "应用组件", "name": "尿布湿面层 / 底膜", "pos": "-", "intent": "不涉及"}, {"lv": "应用组件", "name": "奶瓶盖子 / 把手", "pos": "-", "intent": "不涉及"}, {"lv": "应用组件", "name": "玩具主体 / 配件", "pos": "-", "intent": "不涉及"}, {"lv": "终端产品", "name": "婴儿护脐贴", "pos": "-", "intent": "不涉及"}, {"lv": "终端产品", "name": "护理垫 / 隔尿垫", "pos": "-", "intent": "不涉及"}, {"lv": "终端产品", "name": "尿布湿", "pos": "-", "intent": "不涉及"}, {"lv": "终端产品", "name": "奶瓶 / 婴儿车 / 玩具", "pos": "-", "intent": "不涉及"}, {"lv": "终端产品", "name": "婴儿爬行垫", "pos": "-", "intent": "不涉及"}, {"lv": "销售应用", "name": "线上渠道", "pos": "-", "intent": "不涉及"}, {"lv": "销售应用", "name": "线下渠道", "pos": "-", "intent": "不涉及"}]}, {"id": "ryp", "name": "③ 日用消费品", "levels": ["原材料", "改性工艺", "改性料", "加工工艺", "中间材料", "应用类型", "终端产品", "销售应用"], "nodes": [{"lv": "原材料", "name": "生物可降解材料", "pos": "领先", "intent": "强链"}, {"lv": "原材料", "name": "PBS", "pos": "领先", "intent": "强链"}, {"lv": "原材料", "name": "PBAT", "pos": "领先", "intent": "强链"}, {"lv": "原材料", "name": "PLA", "pos": "空白", "intent": "补链"}, {"lv": "原材料", "name": "PHA", "pos": "空白", "intent": "补链"}, {"lv": "改性工艺", "name": "共混 / 填充 / 交联 / 生物相容性改性", "pos": "一般", "intent": "延链"}, {"lv": "改性料", "name": "可降解纺丝 / 纺布专用料", "pos": "一般", "intent": "延链"}, {"lv": "改性料", "name": "可降解注塑专用料 / 改性料", "pos": "一般", "intent": "延链"}, {"lv": "改性料", "name": "食品接触级注塑专用料", "pos": "一般", "intent": "延链"}, {"lv": "加工工艺", "name": "熔融纺丝 / 编织", "pos": "空白", "intent": "补链"}, {"lv": "加工工艺", "name": "注塑成型 / 吸塑成型", "pos": "-", "intent": ""}, {"lv": "加工工艺", "name": "吹膜 / 流延", "pos": "-", "intent": "延链"}, {"lv": "加工工艺", "name": "涂覆（淋膜）", "pos": "-", "intent": "不涉及"}, {"lv": "中间材料", "name": "可降解水刺 / 热风 / 热轧无纺布", "pos": "空白", "intent": "补链"}, {"lv": "中间材料", "name": "可降解薄膜", "pos": "-", "intent": "延链"}, {"lv": "中间材料", "name": "可降解纤维", "pos": "-", "intent": "补链"}, {"lv": "应用类型", "name": "一次性清洁 / 护理用品", "pos": "-", "intent": "补链"}, {"lv": "应用类型", "name": "美容美妆", "pos": "-", "intent": "不涉及"}, {"lv": "应用类型", "name": "餐饮具", "pos": "-", "intent": "延链"}, {"lv": "应用类型", "name": "户外用品 / 家居 / 文具", "pos": "-", "intent": "不涉及"}, {"lv": "终端产品", "name": "湿巾 / 棉柔巾", "pos": "-", "intent": "不涉及"}, {"lv": "终端产品", "name": "吸管 / 刀叉勺 / 餐盒", "pos": "-", "intent": "延链"}, {"lv": "终端产品", "name": "牙刷 / 梳子", "pos": "-", "intent": "不涉及"}, {"lv": "终端产品", "name": "面膜基布 / 化妆棉", "pos": "-", "intent": "不涉及"}, {"lv": "销售应用", "name": "线上 / 线下 / 特殊渠道", "pos": "-", "intent": "不涉及"}]}, {"id": "bz", "name": "④ 包装", "levels": ["原材料", "改性工艺", "改性料", "加工工艺", "中间材料", "应用类型", "终端产品", "销售应用"], "nodes": [{"lv": "原材料", "name": "生物可降解材料", "pos": "领先", "intent": "强链"}, {"lv": "原材料", "name": "PBAT", "pos": "领先", "intent": "强链"}, {"lv": "原材料", "name": "PBS", "pos": "一般", "intent": "强链"}, {"lv": "原材料", "name": "PLA", "pos": "空白", "intent": "补链"}, {"lv": "原材料", "name": "PHA", "pos": "空白", "intent": "补链"}, {"lv": "改性工艺", "name": "共混 / 填充 / 交联改性", "pos": "一般", "intent": "延链"}, {"lv": "改性料", "name": "可降解专用料 / 改性料", "pos": "一般", "intent": "延链"}, {"lv": "改性料", "name": "功能化改性料（阻隔/增韧等）", "pos": "-", "intent": "补链"}, {"lv": "加工工艺", "name": "成型 / 加工工艺", "pos": "空白", "intent": ""}, {"lv": "加工工艺", "name": "纺粘 / 熔喷 / 吹膜", "pos": "空白", "intent": "补链"}, {"lv": "中间材料", "name": "中间材料（膜 / 纤维 / 型材）", "pos": "-", "intent": "补链"}, {"lv": "应用类型", "name": "包装制品", "pos": "-", "intent": ""}, {"lv": "终端产品", "name": "快递缓冲包装", "pos": "-", "intent": "不涉及"}, {"lv": "终端产品", "name": "食品包装膜 / 保鲜膜", "pos": "-", "intent": "不涉及"}, {"lv": "终端产品", "name": "可降解餐盒 / 托盘", "pos": "-", "intent": "不涉及"}, {"lv": "终端产品", "name": "购物袋 / 连卷袋", "pos": "-", "intent": "不涉及"}, {"lv": "销售应用", "name": "销售渠道", "pos": "-", "intent": "不涉及"}]}, {"id": "ny", "name": "⑤ 农业园艺", "levels": ["原材料", "改性工艺", "改性料", "加工工艺", "中间材料", "应用类型", "终端产品", "销售应用"], "nodes": [{"lv": "原材料", "name": "生物可降解材料", "pos": "领先", "intent": "强链"}, {"lv": "原材料", "name": "PBAT", "pos": "领先", "intent": "强链"}, {"lv": "原材料", "name": "PBS", "pos": "一般", "intent": "强链"}, {"lv": "原材料", "name": "PLA", "pos": "空白", "intent": "补链"}, {"lv": "原材料", "name": "PHA", "pos": "空白", "intent": "补链"}, {"lv": "改性工艺", "name": "共混 / 填充 / 交联改性", "pos": "一般", "intent": "延链"}, {"lv": "改性料", "name": "可降解专用料 / 改性料", "pos": "一般", "intent": "延链"}, {"lv": "改性料", "name": "功能化改性料（阻隔/增韧等）", "pos": "-", "intent": "补链"}, {"lv": "加工工艺", "name": "成型 / 加工工艺", "pos": "空白", "intent": ""}, {"lv": "加工工艺", "name": "纺粘 / 熔喷 / 吹膜", "pos": "空白", "intent": "补链"}, {"lv": "中间材料", "name": "中间材料（膜 / 纤维 / 型材）", "pos": "-", "intent": "补链"}, {"lv": "应用类型", "name": "农用制品", "pos": "-", "intent": ""}, {"lv": "终端产品", "name": "可降解地膜", "pos": "-", "intent": "不涉及"}, {"lv": "终端产品", "name": "育苗钵 / 花盆", "pos": "-", "intent": "不涉及"}, {"lv": "终端产品", "name": "缓释肥包膜", "pos": "-", "intent": "不涉及"}, {"lv": "终端产品", "name": "绳网 / 诱虫板", "pos": "-", "intent": "不涉及"}, {"lv": "销售应用", "name": "销售渠道", "pos": "-", "intent": "不涉及"}]}, {"id": "fz", "name": "⑥ 纺织纤维与鞋服", "levels": ["原材料", "改性工艺", "改性料", "加工工艺", "中间材料", "应用类型", "终端产品", "销售应用"], "nodes": [{"lv": "原材料", "name": "生物可降解材料", "pos": "领先", "intent": "强链"}, {"lv": "原材料", "name": "PBAT", "pos": "领先", "intent": "强链"}, {"lv": "原材料", "name": "PBS", "pos": "一般", "intent": "强链"}, {"lv": "原材料", "name": "PLA", "pos": "空白", "intent": "补链"}, {"lv": "原材料", "name": "PHA", "pos": "空白", "intent": "补链"}, {"lv": "改性工艺", "name": "共混 / 填充 / 交联改性", "pos": "一般", "intent": "延链"}, {"lv": "改性料", "name": "可降解专用料 / 改性料", "pos": "一般", "intent": "延链"}, {"lv": "改性料", "name": "功能化改性料（阻隔/增韧等）", "pos": "-", "intent": "补链"}, {"lv": "加工工艺", "name": "成型 / 加工工艺", "pos": "空白", "intent": ""}, {"lv": "加工工艺", "name": "纺粘 / 熔喷 / 吹膜", "pos": "空白", "intent": "补链"}, {"lv": "中间材料", "name": "中间材料（膜 / 纤维 / 型材）", "pos": "-", "intent": "补链"}, {"lv": "应用类型", "name": "纺织制品", "pos": "-", "intent": ""}, {"lv": "终端产品", "name": "可降解纤维 / 长丝", "pos": "-", "intent": "不涉及"}, {"lv": "终端产品", "name": "面料 / 无纺布", "pos": "-", "intent": "不涉及"}, {"lv": "终端产品", "name": "鞋材 / 鞋垫", "pos": "-", "intent": "不涉及"}, {"lv": "终端产品", "name": "填充絮片", "pos": "-", "intent": "不涉及"}, {"lv": "销售应用", "name": "销售渠道", "pos": "-", "intent": "不涉及"}]}, {"id": "yl", "name": "⑦ 一次性医用耗材", "levels": ["原材料", "改性工艺", "改性料", "加工工艺", "中间材料", "应用类型", "终端产品", "销售应用"], "nodes": [{"lv": "原材料", "name": "生物可降解材料", "pos": "领先", "intent": "强链"}, {"lv": "原材料", "name": "PBAT", "pos": "领先", "intent": "强链"}, {"lv": "原材料", "name": "PBS", "pos": "一般", "intent": "强链"}, {"lv": "原材料", "name": "PLA", "pos": "空白", "intent": "补链"}, {"lv": "原材料", "name": "PHA", "pos": "空白", "intent": "补链"}, {"lv": "改性工艺", "name": "共混 / 填充 / 交联改性", "pos": "一般", "intent": "延链"}, {"lv": "改性料", "name": "可降解专用料 / 改性料", "pos": "一般", "intent": "延链"}, {"lv": "改性料", "name": "功能化改性料（阻隔/增韧等）", "pos": "-", "intent": "补链"}, {"lv": "加工工艺", "name": "成型 / 加工工艺", "pos": "空白", "intent": ""}, {"lv": "加工工艺", "name": "纺粘 / 熔喷 / 吹膜", "pos": "空白", "intent": "补链"}, {"lv": "中间材料", "name": "中间材料（膜 / 纤维 / 型材）", "pos": "-", "intent": "补链"}, {"lv": "应用类型", "name": "医用制品", "pos": "-", "intent": ""}, {"lv": "终端产品", "name": "手术衣 / 口罩", "pos": "-", "intent": "不涉及"}, {"lv": "终端产品", "name": "医用敷料 / 无纺布", "pos": "-", "intent": "不涉及"}, {"lv": "终端产品", "name": "可吸收缝合线", "pos": "-", "intent": "不涉及"}, {"lv": "终端产品", "name": "药物缓释载体", "pos": "-", "intent": "不涉及"}, {"lv": "销售应用", "name": "销售渠道", "pos": "-", "intent": "不涉及"}]}, {"id": "dy", "name": "⑧ 3D打印", "levels": ["原材料", "改性工艺", "改性料", "加工工艺", "中间材料", "应用类型", "终端产品", "销售应用"], "nodes": [{"lv": "原材料", "name": "生物可降解材料", "pos": "领先", "intent": "强链"}, {"lv": "原材料", "name": "PBAT", "pos": "领先", "intent": "强链"}, {"lv": "原材料", "name": "PBS", "pos": "一般", "intent": "强链"}, {"lv": "原材料", "name": "PLA", "pos": "空白", "intent": "补链"}, {"lv": "原材料", "name": "PHA", "pos": "空白", "intent": "补链"}, {"lv": "改性工艺", "name": "共混 / 填充 / 交联改性", "pos": "一般", "intent": "延链"}, {"lv": "改性料", "name": "可降解专用料 / 改性料", "pos": "一般", "intent": "延链"}, {"lv": "改性料", "name": "功能化改性料（阻隔/增韧等）", "pos": "-", "intent": "补链"}, {"lv": "加工工艺", "name": "成型 / 加工工艺", "pos": "空白", "intent": ""}, {"lv": "加工工艺", "name": "纺粘 / 熔喷 / 吹膜", "pos": "空白", "intent": "补链"}, {"lv": "中间材料", "name": "中间材料（膜 / 纤维 / 型材）", "pos": "-", "intent": "补链"}, {"lv": "应用类型", "name": "打印耗材", "pos": "-", "intent": ""}, {"lv": "终端产品", "name": "3D打印线材（FDM）", "pos": "-", "intent": "不涉及"}, {"lv": "终端产品", "name": "柔性打印耗材", "pos": "-", "intent": "不涉及"}, {"lv": "终端产品", "name": "打印结构件 / 手办", "pos": "-", "intent": "不涉及"}, {"lv": "销售应用", "name": "销售渠道", "pos": "-", "intent": "不涉及"}]}, {"id": "fs", "name": "⑨ 防沙环保", "levels": ["原材料", "改性工艺", "改性料", "加工工艺", "中间材料", "应用类型", "终端产品", "销售应用"], "nodes": [{"lv": "原材料", "name": "生物可降解材料", "pos": "领先", "intent": "强链"}, {"lv": "原材料", "name": "PBAT", "pos": "领先", "intent": "强链"}, {"lv": "原材料", "name": "PBS", "pos": "一般", "intent": "强链"}, {"lv": "原材料", "name": "PLA", "pos": "空白", "intent": "补链"}, {"lv": "原材料", "name": "PHA", "pos": "空白", "intent": "补链"}, {"lv": "改性工艺", "name": "共混 / 填充 / 交联改性", "pos": "一般", "intent": "延链"}, {"lv": "改性料", "name": "可降解专用料 / 改性料", "pos": "一般", "intent": "延链"}, {"lv": "改性料", "name": "功能化改性料（阻隔/增韧等）", "pos": "-", "intent": "补链"}, {"lv": "加工工艺", "name": "成型 / 加工工艺", "pos": "空白", "intent": ""}, {"lv": "加工工艺", "name": "纺粘 / 熔喷 / 吹膜", "pos": "空白", "intent": "补链"}, {"lv": "中间材料", "name": "中间材料（膜 / 纤维 / 型材）", "pos": "-", "intent": "补链"}, {"lv": "应用类型", "name": "生态材料", "pos": "-", "intent": ""}, {"lv": "终端产品", "name": "沙障 / 固沙网", "pos": "-", "intent": "不涉及"}, {"lv": "终端产品", "name": "生态袋 / 植生毯", "pos": "-", "intent": "不涉及"}, {"lv": "终端产品", "name": "护坡 / 绿化材料", "pos": "-", "intent": "不涉及"}, {"lv": "销售应用", "name": "销售渠道", "pos": "-", "intent": "不涉及"}]}, {"id": "ql", "name": "⑩ 轻量化应用", "levels": ["原材料", "改性工艺", "改性料", "加工工艺", "中间材料", "应用类型", "终端产品", "销售应用"], "nodes": [{"lv": "原材料", "name": "生物可降解材料", "pos": "领先", "intent": "强链"}, {"lv": "原材料", "name": "PBAT", "pos": "领先", "intent": "强链"}, {"lv": "原材料", "name": "PBS", "pos": "一般", "intent": "强链"}, {"lv": "原材料", "name": "PLA", "pos": "空白", "intent": "补链"}, {"lv": "原材料", "name": "PHA", "pos": "空白", "intent": "补链"}, {"lv": "改性工艺", "name": "共混 / 填充 / 交联改性", "pos": "一般", "intent": "延链"}, {"lv": "改性料", "name": "可降解专用料 / 改性料", "pos": "一般", "intent": "延链"}, {"lv": "改性料", "name": "功能化改性料（阻隔/增韧等）", "pos": "-", "intent": "补链"}, {"lv": "加工工艺", "name": "成型 / 加工工艺", "pos": "空白", "intent": ""}, {"lv": "加工工艺", "name": "纺粘 / 熔喷 / 吹膜", "pos": "空白", "intent": "补链"}, {"lv": "中间材料", "name": "中间材料（膜 / 纤维 / 型材）", "pos": "-", "intent": "补链"}, {"lv": "应用类型", "name": "轻量化制品", "pos": "-", "intent": ""}, {"lv": "终端产品", "name": "发泡缓冲材料", "pos": "-", "intent": "不涉及"}, {"lv": "终端产品", "name": "汽车内饰件", "pos": "-", "intent": "不涉及"}, {"lv": "终端产品", "name": "轻量化结构件", "pos": "-", "intent": "不涉及"}, {"lv": "终端产品", "name": "无人机 / 文创件", "pos": "-", "intent": "不涉及"}, {"lv": "销售应用", "name": "销售渠道", "pos": "-", "intent": "不涉及"}]}, {"id": "ym", "name": "⑪ 渔牧业", "levels": ["原材料", "改性工艺", "改性料", "加工工艺", "中间材料", "应用类型", "终端产品", "销售应用"], "nodes": [{"lv": "原材料", "name": "生物可降解材料", "pos": "领先", "intent": "强链"}, {"lv": "原材料", "name": "PBAT", "pos": "领先", "intent": "强链"}, {"lv": "原材料", "name": "PBS", "pos": "一般", "intent": "强链"}, {"lv": "原材料", "name": "PLA", "pos": "空白", "intent": "补链"}, {"lv": "原材料", "name": "PHA", "pos": "空白", "intent": "补链"}, {"lv": "改性工艺", "name": "共混 / 填充 / 交联改性", "pos": "一般", "intent": "延链"}, {"lv": "改性料", "name": "可降解专用料 / 改性料", "pos": "一般", "intent": "延链"}, {"lv": "改性料", "name": "功能化改性料（阻隔/增韧等）", "pos": "-", "intent": "补链"}, {"lv": "加工工艺", "name": "成型 / 加工工艺", "pos": "空白", "intent": ""}, {"lv": "加工工艺", "name": "纺粘 / 熔喷 / 吹膜", "pos": "空白", "intent": "补链"}, {"lv": "中间材料", "name": "中间材料（膜 / 纤维 / 型材）", "pos": "-", "intent": "补链"}, {"lv": "应用类型", "name": "渔用制品", "pos": "-", "intent": ""}, {"lv": "终端产品", "name": "海洋可降解渔具", "pos": "-", "intent": "不涉及"}, {"lv": "终端产品", "name": "网具 / 网箱", "pos": "-", "intent": "不涉及"}, {"lv": "终端产品", "name": "育苗容器 / 附着基", "pos": "-", "intent": "不涉及"}, {"lv": "销售应用", "name": "销售渠道", "pos": "-", "intent": "不涉及"}]}, {"id": "dz", "name": "⑫ 电子产品", "levels": ["原材料", "改性工艺", "改性料", "加工工艺", "中间材料", "应用类型", "终端产品", "销售应用"], "nodes": [{"lv": "原材料", "name": "生物可降解材料", "pos": "领先", "intent": "强链"}, {"lv": "原材料", "name": "PBAT", "pos": "领先", "intent": "强链"}, {"lv": "原材料", "name": "PBS", "pos": "一般", "intent": "强链"}, {"lv": "原材料", "name": "PLA", "pos": "空白", "intent": "补链"}, {"lv": "原材料", "name": "PHA", "pos": "空白", "intent": "补链"}, {"lv": "改性工艺", "name": "共混 / 填充 / 交联改性", "pos": "一般", "intent": "延链"}, {"lv": "改性料", "name": "可降解专用料 / 改性料", "pos": "一般", "intent": "延链"}, {"lv": "改性料", "name": "功能化改性料（阻隔/增韧等）", "pos": "-", "intent": "补链"}, {"lv": "加工工艺", "name": "成型 / 加工工艺", "pos": "空白", "intent": ""}, {"lv": "加工工艺", "name": "纺粘 / 熔喷 / 吹膜", "pos": "空白", "intent": "补链"}, {"lv": "中间材料", "name": "中间材料（膜 / 纤维 / 型材）", "pos": "-", "intent": "补链"}, {"lv": "应用类型", "name": "电子配套", "pos": "-", "intent": ""}, {"lv": "终端产品", "name": "电子包装膜", "pos": "-", "intent": "不涉及"}, {"lv": "终端产品", "name": "缓冲内托 / 托盘", "pos": "-", "intent": "不涉及"}, {"lv": "终端产品", "name": "可降解外壳件", "pos": "-", "intent": "不涉及"}, {"lv": "终端产品", "name": "柔性电子基材", "pos": "-", "intent": "不涉及"}, {"lv": "销售应用", "name": "销售渠道", "pos": "-", "intent": "不涉及"}]}];
+let ci=0, sel=new Set(), collapsed=new Set();
+function cur(){return CHAINS[ci];}
+function initSel(){const s=document.getElementById('chainsel');s.innerHTML='';CHAINS.forEach((c,i)=>{const o=document.createElement('option');o.value=i;o.textContent=c.name+'（'+c.nodes.length+'）';s.appendChild(o);});}
+function switchChain(){ci=+document.getElementById('chainsel').value;sel.clear();collapsed.clear();render();}
+function match(n){const q=(document.getElementById('q').value||'').trim();const f=document.getElementById('ffilter').value;if(q&&n.name.indexOf(q)<0)return false;if(f==='__un')return !n.intent;if(f&&n.intent!==f)return false;return true;}
+function key(idx){return cur().id+':'+idx;}
+function setIntent(idx,v){cur().nodes[idx].intent=v;render();}
+function setPos(idx,v){cur().nodes[idx].pos=v;}
+function ckrow(idx,cb){if(cb.checked)sel.add(key(idx));else sel.delete(key(idx));updBat();}
+function toggleAll(cb){cur().nodes.forEach((n,idx)=>{if(match(n)){if(cb.checked)sel.add(key(idx));else sel.delete(key(idx));}});render();}
+function clearSel(){sel.clear();render();}
+function toggleGrp(lv){if(collapsed.has(lv))collapsed.delete(lv);else collapsed.add(lv);render();}
+function expandAll(x){collapsed.clear();if(!x)cur().levels.forEach(l=>collapsed.add(l));render();}
+function applyBatch(){const iv=document.getElementById('bintent').value,pv=document.getElementById('bpos').value;sel.forEach(k=>{const a=k.split(':'),cid=a[0],idx=+a[1];if(cid===cur().id){if(iv)cur().nodes[idx].intent=iv;if(pv)cur().nodes[idx].pos=pv;}});toast('已批量更新 '+sel.size+' 个节点');render();}
+function updBat(){const cnt=[...sel].filter(k=>k.split(':')[0]===cur().id).length;document.getElementById('seln').textContent=cnt;document.getElementById('batbar').classList.toggle('show',cnt>0);}
+function stats(){const ns=cur().nodes,c={强链:0,延链:0,补链:0,不涉及:0,un:0};ns.forEach(n=>{if(n.intent)c[n.intent]++;else c.un++;});const done=ns.length-c.un;const rows=[['节点总数',ns.length],['已标注',done],['未标注',c.un],['强链',c.强链],['延链',c.延链],['补链',c.补链],['不涉及',c.不涉及]];document.getElementById('stats').innerHTML=rows.map(x=>'<div class="stat"><div class="n">'+x[1]+'</div><div class="l">'+x[0]+'</div></div>').join('');}
+function render(){
+  stats();
+  const tb=document.getElementById('tbody');tb.innerHTML='';
+  const ns=cur().nodes;
+  cur().levels.forEach(lv=>{
+    const items=ns.map((n,idx)=>({n,idx})).filter(o=>o.n.lv===lv&&match(o.n));
+    if(!items.length)return;
+    const isCol=collapsed.has(lv);
+    const gr=document.createElement('tr');gr.className='grp';
+    gr.innerHTML='<td colspan="4" onclick="toggleGrp(\''+lv+'\')"><span class="gtoggle">'+(isCol?'▸':'▾')+'</span>'+lv+'<span class="gcount">'+items.length+' 个环节</span></td>';
+    tb.appendChild(gr);
+    if(isCol)return;
+    items.forEach(o=>{
+      const n=o.n,idx=o.idx,tr=document.createElement('tr');tr.className='node';
+      const opts=['强链','延链','补链','不涉及'].map(v=>'<option '+(n.intent===v?'selected':'')+'>'+v+'</option>').join('');
+      const posopts=['-','领先','一般','空白'].map(v=>'<option '+(n.pos===v?'selected':'')+'>'+v+'</option>').join('');
+      const checked=sel.has(key(idx))?'checked':'';
+      tr.innerHTML='<td><input type="checkbox" '+checked+' onclick="ckrow('+idx+',this)"></td>'+
+        '<td class="ic '+(n.intent?'bl-'+n.intent:'')+'"><span class="nname">'+n.name+'</span></td>'+
+        '<td><select class="psel" onchange="setPos('+idx+',this.value)">'+posopts+'</select></td>'+
+        '<td><select class="isel '+(n.intent?'i-'+n.intent:'')+'" onchange="setIntent('+idx+',this.value)"><option value="" '+(!n.intent?'selected':'')+'>未标注</option>'+opts+'</select></td>';
+      tb.appendChild(tr);
+    });
+  });
+  const vis=cur().nodes.map((n,idx)=>({n,idx})).filter(o=>match(o.n));
+  document.getElementById('ckall').checked=vis.length>0&&vis.every(o=>sel.has(key(o.idx)));
+  updBat();
+}
+function save(){toast('已保存标注（原型演示）');}
+function doExport(){toast('导出当前产业链标注表（原型演示）');}
+function doImport(){toast('从模板导入标注（原型演示）');}
+let tt;function toast(m){const t=document.getElementById('toast');t.textContent=m;t.classList.add('show');clearTimeout(tt);tt=setTimeout(()=>t.classList.remove('show'),1800);}
+initSel();render();
+</script>
+</body>
+</html>
