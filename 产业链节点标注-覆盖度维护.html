@@ -65,7 +65,6 @@ td.ic{border-left:4px solid transparent}
     <button class="btn mini" onclick="expandAll(true)">展开全部</button>
     <button class="btn mini" onclick="expandAll(false)">收起全部</button>
     <span class="sp"></span>
-    <button class="btn" onclick="doImport()">⬆ 导入</button>
     <button class="btn" onclick="doExport()">⬇ 导出</button>
     <button class="btn pri" onclick="save()">保存</button>
   </div>
@@ -76,8 +75,6 @@ td.ic{border-left:4px solid transparent}
     <span class="lgi"><span class="dot d-f"></span>补链</span>
     <span class="lgi"><span class="dot d-n"></span>不涉及</span>
     <span class="lgi"><span class="dot d-u"></span>未标注</span>
-    <span class="sp"></span>
-    <span class="lb" style="color:var(--text3)">覆盖类别、竞争地位由统一管理员人工标注</span>
   </div>
   <div class="stats" id="stats"></div>
   <div class="batbar" id="batbar">
@@ -150,7 +147,6 @@ function render(){
 }
 function save(){toast('已保存标注（原型演示）');}
 function doExport(){toast('导出当前产业链标注表（原型演示）');}
-function doImport(){toast('从模板导入标注（原型演示）');}
 let tt;function toast(m){const t=document.getElementById('toast');t.textContent=m;t.classList.add('show');clearTimeout(tt);tt=setTimeout(()=>t.classList.remove('show'),1800);}
 initSel();render();
 </script>
