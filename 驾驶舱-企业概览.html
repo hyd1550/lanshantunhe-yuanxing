@@ -286,6 +286,9 @@ html,body{width:100%;height:100%;font-family:'PingFang SC','Microsoft YaHei',san
   font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1;z-index:5}
 .s-modal-close:hover{background:rgba(255,80,120,.2);color:#fff;border-color:#ff6b8a}
 .s-modal-body{flex:1;overflow:auto;padding:14px 24px 20px;min-height:0}
+.drill-row{cursor:pointer;transition:background .15s}
+.drill-row:hover{background:rgba(58,212,255,.10)}
+.drill-arrow{color:#3ad4ff;font-size:12px;margin-left:4px}
 .s-search{display:flex;align-items:center;gap:8px;padding:6px 0 12px;flex-shrink:0;flex-wrap:wrap}
 .s-search input{flex:1;max-width:320px;background:rgba(15,35,65,.6);border:1px solid rgba(60,160,200,.25);
   border-radius:3px;padding:6px 10px;font-size:12.5px;color:#cfe2f8;outline:none}
@@ -648,6 +651,15 @@ table.s-tbl tbody tr:hover{background:rgba(30,110,140,.22);box-shadow:inset 3px 
         <div class="s-modal-body" id="expoBody"></div>
       </div>
     </div>
+
+    <!-- 出口产品明细（月份 / 国家 下钻） -->
+    <div class="s-modal" id="expoProdModal">
+      <div class="s-modal-pnl">
+        <button class="s-modal-close" onclick="closeM('expoProdModal')">×</button>
+        <div class="s-modal-hd"><div class="h1" id="expoProdTitle">出口产品明细</div></div>
+        <div class="s-modal-body" id="expoProdBody"></div>
+      </div>
+    </div>
     <!-- 专利列表 -->
     <div class="s-modal" id="patListModal">
       <div class="s-modal-pnl">
@@ -734,7 +746,7 @@ const mtblData=[
 ];
 function renderMtbl(){
   const rows=currentPeriod==='half'?mtblData.slice(0,6):mtblData;
-  document.getElementById('mtblBody').innerHTML=rows.map(r=>'<tr><td>'+r.m+'</td><td class="amt">'+r.v.toLocaleString()+'</td></tr>').join('');
+  document.getElementById('mtblBody').innerHTML=rows.map(r=>'<tr class="drill-row" title="点击查看该月各品类出口明细" onclick="openExpoProdMonth(\''+r.m+'\','+r.v+')"><td>'+r.m+' <span class="drill-arrow">›</span></td><td class="amt">'+r.v.toLocaleString()+'</td></tr>').join('');
 }
 renderMtbl();
 
@@ -754,18 +766,18 @@ renderRiskTbl();
 
 // ══════════════ 出口国家/地区弹窗 ══════════════
 const expoCountries=[
-  {country:'美国',       amount:1820, qty:1620},
-  {country:'德国',       amount:1620, qty:1450},
-  {country:'日本',       amount:1380, qty:1230},
-  {country:'韩国',       amount:1180, qty:1080},
-  {country:'泰国',       amount:980,  qty:920 },
-  {country:'越南',       amount:920,  qty:880 },
-  {country:'印度尼西亚', amount:820,  qty:780 },
-  {country:'马来西亚',   amount:680,  qty:640 },
-  {country:'法国',       amount:540,  qty:480 },
-  {country:'意大利',     amount:420,  qty:380 },
-  {country:'巴西',       amount:340,  qty:320 },
-  {country:'澳大利亚',   amount:220,  qty:200 }
+  {country:'乌兹别克斯坦', amount:2680, qty:3520},
+  {country:'哈萨克斯坦',   amount:2120, qty:2780},
+  {country:'印度',         amount:1640, qty:2150},
+  {country:'意大利',       amount:1180, qty:1420},
+  {country:'土耳其',       amount:860,  qty:1060},
+  {country:'巴基斯坦',     amount:720,  qty:940 },
+  {country:'越南',         amount:480,  qty:620 },
+  {country:'马来西亚',     amount:420,  qty:540 },
+  {country:'荷兰',         amount:320,  qty:380 },
+  {country:'俄罗斯',       amount:260,  qty:330 },
+  {country:'塔吉克斯坦',   amount:180,  qty:240 },
+  {country:'其他/未知',    amount:60,   qty:80  }
 ];
 document.getElementById('expoCountryCell').addEventListener('click',()=>{
   const totalAmt=expoCountries.reduce((a,c)=>a+c.amount,0);
@@ -778,8 +790,8 @@ document.getElementById('expoCountryCell').addEventListener('click',()=>{
         '<th style="width:30%;text-align:right">出口数量（吨）</th>'+
       '</tr></thead><tbody>'+
       expoCountries.map(c=>(
-        '<tr>'+
-          '<td style="color:#dbeaff;font-weight:600">'+c.country+'</td>'+
+        '<tr class="drill-row" title="点击查看该国各品类出口明细" onclick="openExpoProdCountry(\''+c.country+'\','+c.amount+')">'+
+          '<td style="color:#dbeaff;font-weight:600">'+c.country+' <span class="drill-arrow">›</span></td>'+
           '<td style="text-align:right;color:#3ad4ff;font-family:DIN,Arial;font-weight:700">'+c.amount.toLocaleString()+'</td>'+
           '<td style="text-align:right;color:#42d29a;font-family:DIN,Arial;font-weight:700">'+c.qty.toLocaleString()+'</td>'+
         '</tr>'
@@ -788,6 +800,81 @@ document.getElementById('expoCountryCell').addEventListener('click',()=>{
       '<div style="margin-top:14px;padding:10px 14px;background:rgba(15,55,75,.4);border:1px solid rgba(60,160,200,.18);border-radius:4px;font-size:12px;color:#a8c4e0">合计：金额 <b style="color:#3ad4ff;font-family:DIN,Arial;font-size:14px;margin:0 4px">'+totalAmt.toLocaleString()+'</b> 万元；数量 <b style="color:#42d29a;font-family:DIN,Arial;font-size:14px;margin:0 4px">'+totalQty.toLocaleString()+'</b> 吨；覆盖 <b style="color:#3ad4ff;font-family:DIN,Arial;font-size:14px;margin:0 4px">'+expoCountries.length+'</b> 个国家/地区</div>';
   openM('expoModal');
 });
+
+/* ══════════════ 出口产品品类下钻（月份 / 国家）══════════════
+   品类按海关 HS 编码归类：390761/390769→PET，390311→EPS，390791/390770→PBT，
+   390799→PBAT及其他饱和聚酯，290539→BDO，390729/290949→PTMEG */
+const EXPO_PRODUCTS=[
+  {name:'PET（瓶级切片 TH-102/104/105）', hs:'390761/390769', share:.72,  price:7000},
+  {name:'EPS（可发性聚苯乙烯 EPS-F 系列）', hs:'390311',        share:.11,  price:8000},
+  {name:'PBT（TH6082/6100/6110）',        hs:'390791/390770', share:.06,  price:8500},
+  {name:'PBAT（TH801T）',                  hs:'390799',        share:.05,  price:9500},
+  {name:'其他饱和聚酯',                     hs:'390799',        share:.04,  price:8000},
+  {name:'BDO（1,4-丁二醇）',                hs:'290539',        share:.015, price:7500},
+  {name:'PTMEG（TH1000）',                 hs:'390729/290949', share:.005, price:13000}
+];
+function __hs(s){let x=2166136261;for(let i=0;i<s.length;i++){x^=s.charCodeAt(i);x=Math.imul(x,16777619)}return (x>>>0)/4294967295}
+function splitExpoProducts(total, seed){
+  var arr=EXPO_PRODUCTS.map(function(p,i){ return {name:p.name,hs:p.hs,price:p.price,w:p.share*(0.7+__hs(seed+'#'+i)*0.6)}; });
+  var sw=arr.reduce(function(a,b){return a+b.w},0);
+  return arr.map(function(p){ var amt=total*p.w/sw; return {name:p.name,hs:p.hs,amt:amt,qty:amt*10000/p.price}; })
+            .sort(function(a,b){return b.amt-a.amt});
+}
+var __expoCtx=null;
+function renderExpoProd(){
+  var ctx=__expoCtx; if(!ctx) return;
+  var total=ctx.total, seed=ctx.label, sub='';
+  if(ctx.type==='month'){
+    var sel=document.getElementById('expoProdCountry');
+    var cv=sel?sel.value:'';
+    if(cv){
+      var tot=expoCountries.reduce(function(a,b){return a+b.amount},0);
+      var cc=expoCountries.filter(function(x){return x.country===cv})[0];
+      if(cc){ total=ctx.total*(cc.amount/tot); seed=ctx.label+'@'+cv; sub=' · '+cv; }
+    }
+  }
+  var list=splitExpoProducts(total,seed);
+  var sumA=list.reduce(function(a,b){return a+b.amt},0), sumQ=list.reduce(function(a,b){return a+b.qty},0);
+  var filter='';
+  if(ctx.type==='month'){
+    filter='<div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">'+
+      '<span style="font-size:13px;color:#a8c4e0">按国家/地区筛选</span>'+
+      '<select id="expoProdCountry" onchange="renderExpoProd()" style="height:32px;padding:0 10px;background:#0d1a2e;color:#dbeaff;border:1px solid rgba(80,180,210,.35);border-radius:4px;font-size:13px;font-family:inherit;min-width:180px">'+
+        '<option value="">全部国家/地区</option>'+
+        expoCountries.map(function(c){return '<option value="'+c.country+'"'+(ctx.country===c.country?' selected':'')+'>'+c.country+'</option>'}).join('')+
+      '</select>'+
+      (sub?'<span style="font-size:12px;color:#3ad4ff">当前：'+sub.replace(' · ','')+'</span>':'')+
+    '</div>';
+  }
+  document.getElementById('expoProdBody').innerHTML = filter+
+    '<table class="s-tbl">'+
+      '<thead><tr>'+
+        '<th style="width:34%">产品品类</th>'+
+        '<th style="width:14%">HS 编码</th>'+
+        '<th style="width:18%;text-align:right">出口金额（万元）</th>'+
+        '<th style="width:18%;text-align:right">出口量（吨）</th>'+
+        '<th style="width:16%;text-align:right">金额占比</th>'+
+      '</tr></thead><tbody>'+
+      list.map(function(p){return '<tr>'+
+        '<td style="color:#dbeaff;font-weight:600">'+p.name+'</td>'+
+        '<td style="color:#7fa3c8;font-family:DIN,Arial;font-size:12px">'+p.hs+'</td>'+
+        '<td style="text-align:right;color:#3ad4ff;font-family:DIN,Arial;font-weight:700">'+p.amt.toLocaleString(undefined,{maximumFractionDigits:0})+'</td>'+
+        '<td style="text-align:right;color:#42d29a;font-family:DIN,Arial;font-weight:700">'+p.qty.toLocaleString(undefined,{maximumFractionDigits:0})+'</td>'+
+        '<td style="text-align:right;color:#a8c4e0;font-family:DIN,Arial">'+(sumA?(p.amt/sumA*100).toFixed(1):'0.0')+'%</td>'+
+      '</tr>'}).join('')+
+      '</tbody></table>'+
+    '<div style="margin-top:14px;padding:10px 14px;background:rgba(15,55,75,.4);border:1px solid rgba(60,160,200,.18);border-radius:4px;font-size:12px;color:#a8c4e0">合计：金额 <b style="color:#3ad4ff;font-family:DIN,Arial;font-size:14px;margin:0 4px">'+sumA.toLocaleString(undefined,{maximumFractionDigits:0})+'</b> 万元；出口量 <b style="color:#42d29a;font-family:DIN,Arial;font-size:14px;margin:0 4px">'+sumQ.toLocaleString(undefined,{maximumFractionDigits:0})+'</b> 吨；共 <b style="color:#3ad4ff;font-family:DIN,Arial;font-size:14px;margin:0 4px">'+list.length+'</b> 个品类</div>';
+}
+function openExpoProdMonth(label, total){
+  __expoCtx={type:'month',label:label,total:total,country:''};
+  document.getElementById('expoProdTitle').textContent=label+' — 各品类出口明细';
+  renderExpoProd(); openM('expoProdModal');
+}
+function openExpoProdCountry(country, total){
+  __expoCtx={type:'country',label:country,total:total,country:country};
+  document.getElementById('expoProdTitle').textContent=country+' — 各品类出口明细';
+  renderExpoProd(); openM('expoProdModal');
+}
 
 // ══════════════ 专利数据（含详情字段，参照 数智化平台原型/技术情报洞察-专利查询.html） ══════════════
 const patentData=[
