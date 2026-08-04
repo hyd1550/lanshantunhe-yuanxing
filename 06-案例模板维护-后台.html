@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="UTF-8"><title>案例模板维护</title>
+<style>*{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#fff;--bg2:#f5f7fa;--bg3:#eef1f5;--border:#e4e8ee;--border2:#cfd6e0;
+ --text:#1d2129;--text2:#5b6472;--text3:#98a1af;--blue:#1B62C4;--blue-bg:#EAF2FE;
+ --green:#0F7B4A;--green-bg:#E6F6EE;--amber:#8A5A0B;--amber-bg:#FDF2DE;--red:#C0392B;--red-bg:#FDECEA}
+html,body{height:100%}
+body{font-family:-apple-system,BlinkMacSystemFont,'PingFang SC','Microsoft YaHei',sans-serif;font-size:13px;color:var(--text);background:var(--bg2)}
+.app{width:1660px;height:990px;display:flex;flex-direction:column;overflow:hidden;position:relative;background:var(--bg2)}
+.tbar{flex-shrink:0;height:48px;display:flex;align-items:center;gap:10px;padding:0 22px;background:var(--bg);border-bottom:1px solid var(--border)}
+.tbar .bar{width:3px;height:15px;background:var(--blue);border-radius:2px}
+.ttl{font-size:15px;font-weight:600}.sp{flex:1}
+.tip{font-size:12px;color:var(--amber);background:var(--amber-bg);border-radius:99px;padding:4px 12px}
+.main{flex:1;display:flex;overflow:hidden}
+
+/* ── 左：场景列表 ── */
+.left{width:264px;flex-shrink:0;background:var(--bg);border-right:1px solid var(--border);display:flex;flex-direction:column}
+.lh{padding:13px 14px 10px;border-bottom:1px solid var(--border)}
+.lh .r1{display:flex;align-items:center;gap:8px;margin-bottom:9px}
+.lh .n{font-size:13.5px;font-weight:600}
+.lh .cnt{font-size:11.5px;color:var(--text3)}
+.srch{width:100%;height:32px;padding:0 10px;border:1px solid var(--border2);border-radius:6px;font-family:inherit;font-size:12.5px;outline:none}
+.srch:focus{border-color:var(--blue)}
+.llist{flex:1;overflow-y:auto;padding:7px}
+.si{padding:9px 46px 9px 11px;border-radius:7px;cursor:pointer;margin-bottom:3px;border:1px solid transparent;position:relative}
+.si:hover{background:var(--bg2)}
+.si.on{background:var(--blue-bg);border-color:#c5dcfa}
+.si .r1{display:flex;align-items:center;gap:6px}
+.si .nm{font-size:12.5px;font-weight:500;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.si .sub{font-size:11px;color:var(--text3);margin-top:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.si .ops{position:absolute;right:10px;top:50%;transform:translateY(-50%);display:none;gap:10px;align-items:center}
+.si:hover .ops{display:flex}
+.si .ops i{font-style:normal;font-size:11.5px;color:var(--text2);cursor:pointer;white-space:nowrap}
+.si .ops i:hover{color:var(--blue)}
+.si .ops i.d:hover{color:var(--red)}
+.lf{padding:9px;border-top:1px solid var(--border)}
+
+/* ── 右：结构编辑器 ── */
+.right{flex:1;overflow-y:auto;padding:0 22px 26px;min-width:0}
+.wrap{max-width:1240px;margin:0 auto}
+.btn{display:inline-flex;align-items:center;gap:5px;padding:7px 14px;font-size:12.5px;border:1px solid var(--border2);border-radius:6px;background:var(--bg);color:var(--text);cursor:pointer;font-family:inherit;font-weight:500;white-space:nowrap}
+.btn:hover{background:var(--bg2)}
+.btn.pri{background:var(--blue);color:#fff;border-color:var(--blue)}.btn.pri:hover{opacity:.9}
+.btn.sm{padding:5px 10px;font-size:12px}
+.btn.blk{width:100%;justify-content:center}
+.btn.dash{border-style:dashed;color:var(--text2);background:#fafbfc}
+.btn.dash:hover{border-color:var(--blue);color:var(--blue)}
+.pill{font-size:11px;padding:2px 9px;border-radius:99px;font-weight:500;white-space:nowrap;display:inline-block}
+.p-on{background:var(--green-bg);color:var(--green)}
+.p-off{background:var(--bg3);color:var(--text3)}
+
+.hbar{position:sticky;top:0;z-index:20;background:var(--bg2);padding:16px 0 12px}
+.hbar .in{display:flex;align-items:center;gap:11px;background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:12px 16px}
+.hbar h2{font-size:16px;font-weight:600}
+.hbar .cnt{font-size:12px;color:var(--text3)}
+.note{font-size:12px;color:var(--text2);background:var(--blue-bg);border-left:3px solid var(--blue);border-radius:4px;padding:9px 13px;line-height:1.7;margin-bottom:13px}
+
+.sec{background:var(--bg);border:1px solid var(--border);border-radius:10px;margin-bottom:13px;overflow:hidden}
+.sec-hd{display:flex;align-items:center;gap:9px;padding:11px 15px;background:#fafbfc;border-bottom:1px solid var(--border)}
+.sec-hd .bar{width:3px;height:14px;background:var(--blue);border-radius:2px;flex-shrink:0}
+.sec-hd .sn{font-size:13.5px;font-weight:600;cursor:text;padding:2px 6px;border-radius:4px;border:1px solid transparent;outline:none}
+.sec-hd .sn:hover{background:var(--blue-bg);border-color:#c5dcfa}
+.sec-hd .sn:focus{background:#fff;border-color:var(--blue)}
+.sec-hd .sp2{flex:1}
+.ico{width:26px;height:26px;border-radius:6px;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;font-size:13px;color:var(--text2);border:1px solid transparent}
+.ico:hover{background:var(--bg3);color:var(--text)}
+.ico.d:hover{background:var(--red-bg);color:var(--red)}
+.sec-bd{padding:15px 16px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px 24px}
+
+.fl{position:relative;border:1px dashed transparent;border-radius:7px;padding:7px 8px;transition:.12s;min-width:0}
+.fl:hover{border-color:#bcd4f2;background:#fbfdff}
+.fl.full{grid-column:1/-1}
+.fl.fix:hover{border-color:transparent;background:transparent}
+.fl label{display:block;font-size:12.5px;color:var(--text2);margin-bottom:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;padding-right:70px}
+.fl .req{color:var(--red);margin-right:3px}
+.fl .hint{color:var(--text3);font-size:11.5px}
+.fl .ipt{width:100%;height:34px;border:1px solid var(--border2);border-radius:6px;background:#fafbfc}
+.fl .tar{width:100%;height:70px;border:1px solid var(--border2);border-radius:6px;background:#fafbfc}
+.fl .upl{border:1.5px dashed var(--border2);border-radius:7px;padding:13px;text-align:center;color:var(--text3);font-size:12.5px;background:#fafbfc}
+.fl .ims{display:flex;gap:8px;margin-top:8px}
+.fl .ims i{width:96px;height:66px;border-radius:5px;background:linear-gradient(135deg,#dde6f2,#c9d8ea)}
+.fl .tools{position:absolute;top:-9px;right:6px;display:none;gap:2px;background:var(--bg);border:1px solid var(--border2);border-radius:6px;padding:2px;box-shadow:0 2px 6px rgba(0,0,0,.07);z-index:5}
+.fl:hover .tools{display:flex}
+.fl .tools b{width:22px;height:22px;border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:11.5px;font-weight:400;color:var(--text2);cursor:pointer}
+.fl .tools b:hover{background:var(--bg3);color:var(--text)}
+.fl .tools b.d:hover{background:var(--red-bg);color:var(--red)}
+.fl .badge{position:absolute;bottom:8px;right:10px;font-size:10.5px;color:var(--text3);background:var(--bg3);border-radius:99px;padding:1px 7px;display:none}
+.fl:hover .badge{display:block}
+.sec-empty{text-align:center;color:var(--text3);padding:26px 0;font-size:12.5px}
+
+.mask{position:absolute;inset:0;background:rgba(29,33,41,.42);display:none;align-items:center;justify-content:center;z-index:60}
+.mask.show{display:flex}
+.mod{width:480px;background:var(--bg);border-radius:11px;overflow:hidden;box-shadow:0 12px 40px rgba(0,0,0,.18)}
+.mod.wide{width:560px}
+.mod-hd{padding:14px 18px;border-bottom:1px solid var(--border);font-size:14px;font-weight:600;display:flex;align-items:center}
+.mod-hd .x{margin-left:auto;cursor:pointer;color:var(--text3);font-size:17px;line-height:1}
+.mod-bd{padding:17px 18px;max-height:520px;overflow-y:auto}
+.mod-ft{padding:12px 18px;border-top:1px solid var(--border);display:flex;gap:9px;justify-content:flex-end;background:#fafbfc}
+.fr{margin-bottom:14px}.fr:last-child{margin-bottom:0}
+.fr>label{display:block;font-size:12.5px;color:var(--text2);margin-bottom:6px}
+.fr .req{color:var(--red);margin-right:3px}
+.fr input[type=text],.fr select,.fr input[type=number]{width:100%;padding:8px 11px;font-size:13px;border:1px solid var(--border2);border-radius:6px;outline:none;font-family:inherit;background:var(--bg)}
+.fr input:focus,.fr select:focus{border-color:var(--blue)}
+.fr select:disabled{background:var(--bg3);color:var(--text3);cursor:not-allowed}
+.ck{display:flex;align-items:center;gap:7px;font-size:12.5px;color:var(--text);cursor:pointer;margin-bottom:0}
+.ck input{width:15px;height:15px;cursor:pointer}
+.sub2{font-size:11.5px;color:var(--text3);margin-top:5px;line-height:1.6}
+.sub2.ind{padding-left:22px}
+.mwarn{background:var(--amber-bg);border-left:3px solid #dfa63c;border-radius:4px;padding:10px 13px;color:#7a5210;line-height:1.75;font-size:12.5px}
+.toast{position:absolute;bottom:22px;left:50%;transform:translateX(-50%);background:#1d2129;color:#fff;padding:9px 17px;border-radius:6px;font-size:12.5px;opacity:0;transition:opacity .2s;pointer-events:none;z-index:99;max-width:760px;text-align:center}
+.toast.show{opacity:1}
+.empty{text-align:center;color:var(--text3);padding:70px 0;font-size:13px;background:var(--bg);border:1px solid var(--border);border-radius:10px}
+</style></head><body>
+<div class="app">
+  <div class="tbar"><span class="bar"></span><span class="ttl">案例模板维护</span>
+  </div>
+
+  <div class="main">
+    <div class="left">
+      <div class="lh">
+        <div class="r1"><span class="n">应用场景</span><span class="cnt" id="scCnt"></span></div>
+        <input class="srch" id="scQ" placeholder="搜索场景名称" oninput="renderScenes()">
+      </div>
+      <div class="llist" id="scList"></div>
+      <div class="lf"><button class="btn dash blk" onclick="openScene(-1)">＋ 新建应用场景</button></div>
+    </div>
+    <div class="right"><div class="wrap" id="rightArea"></div></div>
+  </div>
+
+  <div class="mask" id="mScene"><div class="mod">
+    <div class="mod-hd"><span id="scTtl">新建应用场景</span><span class="x" onclick="close_('mScene')">×</span></div>
+    <div class="mod-bd">
+      <div class="fr"><label><span class="req">*</span>场景名称</label><input type="text" id="scName" placeholder="如：农业园艺（农膜）"></div>
+      <div class="fr"><label>场景说明</label><input type="text" id="scDesc" placeholder="选填，用于后台识别"></div>
+      <div class="fr"><label>状态</label><select id="scStatus"><option>启用</option><option>停用</option></select>
+        <div class="sub2">停用后，该场景不再出现在「新增案例」的应用场景下拉中，已发布案例不受影响。</div></div>
+    </div>
+    <div class="mod-ft"><button class="btn" onclick="close_('mScene')">取消</button><button class="btn pri" onclick="saveScene()">确定</button></div>
+  </div></div>
+
+  <div class="mask" id="mItem"><div class="mod wide">
+    <div class="mod-hd"><span id="itTtl">新增指标项</span><span class="x" onclick="close_('mItem')">×</span></div>
+    <div class="mod-bd">
+      <div class="fr"><label><span class="req">*</span>指标项名称</label><input type="text" id="itName" placeholder="如：农膜型号（牌号）">
+        <div class="sub2">改名不影响已录入案例的内容——数据按指标项 ID 存储，与名称无关。</div></div>
+      <div class="fr"><label><span class="req">*</span>指标类型</label>
+        <select id="itType" onchange="syncItemForm()">
+          <option>文本</option><option>多段文本</option><option>图片</option><option>文件</option>
+        </select>
+        <div class="sub2" id="itTypeHint"></div>
+        <div class="sub2" id="itTypeLock" style="color:var(--amber);display:none"></div>
+      </div>
+      <div class="fr"><label>排序</label><input type="number" id="itOrder" min="1" value="1">
+        <div class="sub2">数字越小越靠前，前台按此顺序展示；也可在编辑器中用 ↑↓ 直接调序。</div></div>
+      <div class="fr"><label class="ck"><input type="checkbox" id="itReq"> 设为必填项</label></div>
+      <div class="fr" id="itShowWrap"><label class="ck"><input type="checkbox" id="itShow" checked> 在前台显示标题</label>
+        <div class="sub2 ind">勾选：详情页显示为「指标项名称 ＋ 内容」；<br>不勾选：仅显示正文、不显示名称（用于案例背景、方案说明等整段正文）。</div>
+      </div>
+    </div>
+    <div class="mod-ft"><button class="btn" onclick="close_('mItem')">取消</button><button class="btn pri" onclick="saveItem()">确定</button></div>
+  </div></div>
+
+  <div class="mask" id="mConfirm"><div class="mod">
+    <div class="mod-hd"><span id="cfTtl">确认</span><span class="x" onclick="close_('mConfirm')">×</span></div>
+    <div class="mod-bd" id="cfBody"></div>
+    <div class="mod-ft" id="cfFoot"></div>
+  </div></div>
+
+  <div class="toast" id="toast"></div>
+</div>
+<script>
+/* ════════ 数据结构（每个场景一套模板）════════
+   场景 → 栏目[] → 指标项[名称, 类型, 必填, 显示标题, 已用于N条案例] */
+const T=(n,t,r,s,used)=>[n,t,!!r,s!==false,used||0];
+const SCENES=[
+ {name:'农业园艺（农膜）',desc:'地膜、棚膜等农用薄膜应用案例',status:'启用',cases:12,by:'张管理员',at:'2025-10-08 09:15',sections:[
+   {n:'方案图片',items:[T('上传图片','图片',false,true,12)]},
+   {n:'案例概述',items:[T('案例背景说明','多段文本',false,false,9)]},
+   {n:'农膜产品信息',items:[T('农膜型号（牌号）','文本',true,true,12),T('材质','文本',false,true,12),
+     T('厚度','文本',false,true,12),T('透光率','文本',false,true,11),T('保温性','文本',false,true,10),
+     T('流滴性','文本',false,true,9),T('消雾性','文本',false,true,0),
+     T('覆盖方式','文本',false,true,12),T('使用周期','文本',false,true,12)]},
+   {n:'适配土壤信息',items:[T('地形','文本',false,true,12),T('土种类型','文本',false,true,12),
+     T('土壤酸碱度（PH值）范围','文本',false,true,10),T('有机质含量','文本',false,true,8),
+     T('土壤质地','文本',false,true,9),T('肥力状况','文本',false,true,7)]},
+   {n:'作物信息',items:[T('作物品种','文本',true,true,12),T('生育期','文本',false,true,11),
+     T('种植密度','文本',false,true,10),T('主要栽培管理措施','多段文本',false,true,9)]},
+   {n:'气候环境参数',items:[T('年平均气温','文本',false,true,9),T('极端高温/低温','文本',false,true,8),
+     T('年降水量','文本',false,true,9),T('日照时数','文本',false,true,7),T('主要风向','文本',false,true,6)]},
+   {n:'应用效果',items:[T('效果描述','多段文本',false,true,12),T('检测报告','文件',false,true,8)]}
+ ]},
+ {name:'包装产业',desc:'食品包装、快递袋等',status:'启用',cases:8,by:'张管理员',at:'2025-09-02 10:20',sections:[
+   {n:'方案图片',items:[T('上传图片','图片',false,true,8)]},
+   {n:'包装产品信息',items:[T('产品型号','文本',true,true,8),T('材质','文本',false,true,8),
+     T('规格尺寸','文本',false,true,8),T('厚度','文本',false,true,7),
+     T('承重','文本',false,true,6),T('降解周期','文本',false,true,8)]},
+   {n:'应用效果',items:[T('效果描述','多段文本',false,true,8),T('检测报告','文件',false,true,5)]}
+ ]},
+ {name:'母婴用品',desc:'',status:'启用',cases:5,by:'张管理员',at:'2025-08-14 15:33',sections:[
+   {n:'方案图片',items:[T('上传图片','图片',false,true,5)]},
+   {n:'产品信息',items:[T('产品型号','文本',true,true,5),T('材质','文本',false,true,5),
+     T('安全等级','文本',false,true,5),T('适用月龄','文本',false,true,4)]}
+ ]},
+ {name:'日用消费品',desc:'',status:'启用',cases:6,by:'张管理员',at:'2025-08-14 15:41',sections:[
+   {n:'方案图片',items:[T('上传图片','图片',false,true,6)]},
+   {n:'产品信息',items:[T('产品型号','文本',true,true,6),T('材质','文本',false,true,6),T('规格','文本',false,true,5)]}
+ ]},
+ {name:'纺织纤维与鞋服',desc:'',status:'启用',cases:3,by:'张管理员',at:'2025-07-30 09:12',sections:[
+   {n:'方案图片',items:[T('上传图片','图片',false,true,3)]},
+   {n:'纤维产品信息',items:[T('纤维规格','文本',true,true,3),T('强度','文本',false,true,3),T('回潮率','文本',false,true,2)]}
+ ]},
+ {name:'一次性医用耗材',desc:'',status:'启用',cases:2,by:'张管理员',at:'2025-07-18 14:05',sections:[
+   {n:'方案图片',items:[T('上传图片','图片',false,true,2)]},
+   {n:'医用产品信息',items:[T('产品型号','文本',true,true,2),T('灭菌方式','文本',false,true,2),T('医用等级','文本',false,true,2)]}
+ ]},
+ {name:'3D打印',desc:'',status:'启用',cases:1,by:'张管理员',at:'2025-07-02 11:26',sections:[
+   {n:'方案图片',items:[T('上传图片','图片',false,true,1)]},
+   {n:'打印耗材信息',items:[T('线材直径','文本',true,true,1),T('打印温度','文本',false,true,1)]}
+ ]},
+ {name:'防沙环保',desc:'',status:'启用',cases:2,by:'张管理员',at:'2025-06-25 16:48',sections:[
+   {n:'方案图片',items:[T('上传图片','图片',false,true,2)]},
+   {n:'生态材料信息',items:[T('规格','文本',true,true,2),T('降解周期','文本',false,true,2)]}
+ ]},
+ {name:'轻量化应用',desc:'',status:'启用',cases:0,by:'—',at:'—',sections:[]},
+ {name:'渔牧业',desc:'',status:'启用',cases:1,by:'张管理员',at:'2025-06-09 10:31',sections:[
+   {n:'方案图片',items:[T('上传图片','图片',false,true,1)]},
+   {n:'渔用制品信息',items:[T('规格','文本',true,true,1),T('海水降解性','文本',false,true,1)]}
+ ]},
+ {name:'电子产品',desc:'',status:'启用',cases:0,by:'—',at:'—',sections:[]},
+ {name:'卫生用具',desc:'已暂停对外收集',status:'停用',cases:0,by:'—',at:'—',sections:[]}
+];
+
+let cur=0, editScene=-1, editItemPos=null;
+let tt;function toast(m){const t=document.getElementById('toast');t.textContent=m;t.classList.add('show');clearTimeout(tt);tt=setTimeout(()=>t.classList.remove('show'),2900)}
+const esc=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;');
+const close_=id=>document.getElementById(id).classList.remove('show');
+const open_=id=>document.getElementById(id).classList.add('show');
+const S=()=>SCENES[cur];
+const nItems=s=>s.sections.reduce((a,x)=>a+x.items.length,0);
+function now(){const d=new Date(),p=n=>String(n).padStart(2,'0');
+  return d.getFullYear()+'-'+p(d.getMonth()+1)+'-'+p(d.getDate())+' '+p(d.getHours())+':'+p(d.getMinutes())}
+function confirmBox(title,body,okText,okFn,danger){
+  document.getElementById('cfTtl').textContent=title;
+  document.getElementById('cfBody').innerHTML=body;
+  document.getElementById('cfFoot').innerHTML=
+    '<button class="btn" onclick="close_(\'mConfirm\')">取消</button>'+
+    '<button class="btn pri" id="cfOk"'+(danger?' style="background:var(--red);border-color:var(--red)"':'')+'>'+okText+'</button>';
+  document.getElementById('cfOk').onclick=function(){close_('mConfirm');okFn()};
+  open_('mConfirm');
+}
+
+/* ════════ 左：场景 ════════ */
+function renderScenes(){
+  const q=(document.getElementById('scQ').value||'').trim();
+  document.getElementById('scCnt').textContent='共 '+SCENES.length+' 个';
+  const html=SCENES.map(function(s,i){
+    if(q&&s.name.indexOf(q)<0) return '';
+    return '<div class="si '+(i===cur?'on':'')+'" onclick="pickScene('+i+')">'+
+      '<div class="r1"><span class="nm">'+esc(s.name)+'</span>'+
+        (s.status==='停用'?'<span class="pill p-off">停用</span>':'')+'</div>'+
+      '<div class="sub">'+(s.sections.length?'':'<span style="color:var(--amber)">尚未配置内容</span>')+'</div>'+
+      '<div class="ops"><i class="d" onclick="event.stopPropagation();delScene('+i+')">删除</i></div></div>';
+  }).join('');
+  document.getElementById('scList').innerHTML=html||'<div style="text-align:center;color:var(--text3);padding:26px 0;font-size:12.5px">无匹配场景</div>';
+}
+function pickScene(i){cur=i;renderScenes();render();document.querySelector('.right').scrollTop=0}
+function openScene(i){
+  editScene=i;
+  document.getElementById('scTtl').textContent=i<0?'新建应用场景':'编辑应用场景';
+  document.getElementById('scName').value=i<0?'':SCENES[i].name;
+  document.getElementById('scDesc').value=i<0?'':(SCENES[i].desc||'');
+  document.getElementById('scStatus').value=i<0?'启用':SCENES[i].status;
+  open_('mScene');
+}
+function saveScene(){
+  const n=document.getElementById('scName').value.trim();
+  if(!n){toast('请填写场景名称');return}
+  const d=document.getElementById('scDesc').value.trim(), st=document.getElementById('scStatus').value;
+  if(editScene<0){SCENES.push({name:n,desc:d,status:st,cases:0,by:'张管理员',at:now(),sections:[]});cur=SCENES.length-1;toast('场景已创建，请为其配置栏目与指标项')}
+  else{Object.assign(SCENES[editScene],{name:n,desc:d,status:st});toast('场景已保存')}
+  close_('mScene');renderScenes();render();
+}
+function delScene(i){
+  const s=SCENES[i];
+  // ── 有案例：不可删除，引导改为停用 ──
+  if(s.cases>0){
+    const canOff = s.status==='启用';
+    confirmBox('无法删除应用场景',
+      '<div style="font-size:13px;line-height:1.8;margin-bottom:11px">应用场景「<b>'+esc(s.name)+'</b>」下已有 <b>'+s.cases+' 条案例</b>，不可删除。</div>'+
+      '<div class="mwarn">删除场景会一并删除其栏目与指标项，导致这 '+s.cases+' 条案例失去展示结构。<br>'+
+      (canOff
+        ? '如该场景不再使用，请改为<b>停用</b>——停用后不再出现在「新增案例」的场景下拉中，已有案例仍可正常查看。'
+        : '该场景当前已是<b>停用</b>状态，不再出现在「新增案例」的场景下拉中，已有案例仍可正常查看。')+'</div>',
+      canOff?'改为停用':'我知道了',
+      function(){ if(canOff){s.status='停用';renderScenes();render();toast('已将「'+s.name+'」改为停用')} });
+    return;
+  }
+  // ── 无案例：可删除 ──
+  confirmBox('删除应用场景',
+    '<div style="font-size:13px;line-height:1.8;margin-bottom:11px">确认删除应用场景「<b>'+esc(s.name)+'</b>」？</div>'+
+    '<div class="mwarn">'+(s.sections.length
+      ? '该场景下的 '+s.sections.length+' 个栏目与全部指标项将一并删除。'
+      : '该场景尚未配置内容。')+
+      '因尚无案例引用，删除后不影响任何已有数据。</div>',
+    '确认删除',
+    function(){SCENES.splice(i,1);if(cur>=SCENES.length)cur=Math.max(0,SCENES.length-1);renderScenes();render();toast('场景已删除')},true);
+}
+
+/* ════════ 右：结构编辑器 ════════ */
+function fieldHTML(it,si,ii){
+  const name=it[0],type=it[1],req=it[2],show=it[3],used=it[4];
+  const lab='<label>'+(req?'<span class="req">*</span>':'')+esc(name)+
+    (type==='多段文本'&&!show?' <span class="hint">（前台不显示此标题）</span>':'')+'</label>';
+  const tools='<div class="tools">'+
+    '<b onclick="moveItem('+si+','+ii+',-1)" title="上移">↑</b>'+
+    '<b onclick="moveItem('+si+','+ii+',1)" title="下移">↓</b>'+
+    '<b onclick="openItem('+si+','+ii+')" title="编辑">✎</b>'+
+    '<b class="d" onclick="delItem('+si+','+ii+')" title="删除">✕</b></div>';
+  const badge='<span class="badge">'+esc(type)+(req?' · 必填':'')+'</span>';
+  let ctrl,full=false;
+  if(type==='图片'){full=true;ctrl='<div class="upl">点击上传图片，支持 jpg / png，可上传多张</div><div class="ims"><i></i><i></i><i></i></div>'}
+  else if(type==='文件'){full=true;ctrl='<div class="upl">点击上传文件，支持 word / pdf / excel 等格式</div>'}
+  else if(type==='多段文本'){full=true;ctrl='<div class="tar"></div>'}
+  else ctrl='<div class="ipt"></div>';
+  return '<div class="fl'+(full?' full':'')+'">'+tools+lab+ctrl+badge+'</div>';
+}
+
+function render(){
+  const s=S(), host=document.getElementById('rightArea');
+  if(!s){host.innerHTML='<div class="empty">请先新建应用场景</div>';return}
+  host.innerHTML=
+    '<div class="hbar"><div class="in">'+
+      '<h2>'+esc(s.name)+'</h2>'+
+      (s.status==='停用'?'<span class="pill p-off">场景已停用</span>':'<span class="pill p-on">启用中</span>')+
+      '<span style="flex:1"></span>'+
+      '<button class="btn" onclick="openScene('+cur+')">编辑场景</button>'+
+      '<button class="btn pri" onclick="saveAll()">保存</button>'+
+    '</div></div>'+
+    '<div class="sec"><div class="sec-hd"><span class="bar" style="background:var(--text3)"></span>'+
+      '<span style="font-size:13.5px;font-weight:600">基本信息</span><span class="sp2"></span>'+
+      '<span style="font-size:11.5px;color:var(--text3)">系统固定栏目，不可编辑</span></div>'+
+      '<div class="sec-bd"><div class="grid">'+
+        '<div class="fl fix"><label><span class="req">*</span>案例标题</label><div class="ipt"></div></div>'+
+        '<div class="fl fix"><label><span class="req">*</span>应用场景</label><div class="ipt"></div></div>'+
+        '<div class="fl fix"><label>产品名称</label><div class="ipt"></div></div>'+
+        '<div class="fl fix"><label>上传人</label><div class="ipt"></div></div>'+
+        '<div class="fl fix full"><label>摘要</label><div class="tar" style="height:56px"></div></div>'+
+      '</div></div></div>'+
+    s.sections.map(function(sec,si){
+      return '<div class="sec"><div class="sec-hd"><span class="bar"></span>'+
+        '<span class="sn" contenteditable="true" spellcheck="false" onblur="renameSec('+si+',this.textContent)">'+esc(sec.n)+'</span>'+
+        '<span class="sp2"></span>'+
+        '<button class="btn sm" onclick="openItem('+si+',-1)">＋ 增加指标项</button>'+
+        '<span class="ico" onclick="moveSec('+si+',-1)" title="上移栏目">↑</span>'+
+        '<span class="ico" onclick="moveSec('+si+',1)" title="下移栏目">↓</span>'+
+        '<span class="ico d" onclick="delSec('+si+')" title="删除栏目">🗑</span></div>'+
+      '<div class="sec-bd">'+(sec.items.length
+        ?'<div class="grid">'+sec.items.map(function(it,ii){return fieldHTML(it,si,ii)}).join('')+'</div>'
+        :'<div class="sec-empty">该栏目下还没有指标项，点击右上角「＋ 增加指标项」添加</div>')+
+      '</div></div>';
+    }).join('')+
+    (s.sections.length?'':'<div class="empty" style="margin-bottom:13px">该场景尚未配置内容，点击下方按钮新增第一个栏目</div>')+
+    '<button class="btn dash blk" style="padding:13px" onclick="addSec()">＋ 增加栏目</button>';
+}
+function saveAll(){const s=S();s.at=now();s.by='张管理员';render();
+  toast('已保存，「新增案例」页选择该场景时即按此结构展示')}
+
+/* ── 栏目 ── */
+function addSec(){S().sections.push({n:'新栏目',items:[]});render();
+  setTimeout(function(){const ns=document.querySelectorAll('.sn');if(ns.length)ns[ns.length-1].focus()},60)}
+function renameSec(si,v){const n=(v||'').trim();if(!n){render();return}S().sections[si].n=n}
+function delSec(si){
+  const sec=S().sections[si], used=sec.items.filter(function(i){return i[4]>0}).length;
+  confirmBox('删除栏目',
+    '<div style="font-size:13px;line-height:1.8;margin-bottom:11px">确认删除栏目「<b>'+esc(sec.n)+'</b>」？其下 '+sec.items.length+' 个指标项将一并删除。</div>'+
+    (used?'<div class="mwarn">其中 <b>'+used+' 个指标项</b>已被案例填写，删除后这些内容将不再展示。</div>'
+         :'<div class="mwarn">这些指标项均未被案例填写，删除后不影响已有数据。</div>'),
+    '确认删除',function(){S().sections.splice(si,1);renderScenes();render();toast('栏目已删除')},true);
+}
+function moveSec(si,d){const a=S().sections,j=si+d;if(j<0||j>=a.length)return;const x=a[si];a[si]=a[j];a[j]=x;render()}
+
+/* ── 指标项 ── */
+function moveItem(si,ii,d){const a=S().sections[si].items,j=ii+d;if(j<0||j>=a.length)return;const x=a[ii];a[ii]=a[j];a[j]=x;render()}
+function delItem(si,ii){
+  const it=S().sections[si].items[ii];
+  confirmBox('删除指标项',
+    '<div style="font-size:13px;line-height:1.8;margin-bottom:11px">确认删除「<b>'+esc(it[0])+'</b>」？</div>'+
+    (it[4]>0?'<div class="mwarn">已有 <b>'+it[4]+' 条</b>案例填写了该指标项，删除后这些内容将不再展示。</div>'
+            :'<div class="mwarn">该指标项尚未被任何案例填写，删除后不影响已有数据。</div>'),
+    '确认删除',function(){S().sections[si].items.splice(ii,1);renderScenes();render();toast('指标项已删除')},true);
+}
+function syncItemForm(){
+  const ty=document.getElementById('itType').value;
+  const hints={'文本':'单行输入，前台以「名称：内容」两列展示。',
+    '多段文本':'多行输入，前台整行通栏展示，可用下方开关控制是否显示标题。',
+    '图片':'可上传多张，前台以图廊展示，支持点击放大。',
+    '文件':'可上传 word / pdf / excel 等附件，前台提供预览与下载。'};
+  document.getElementById('itTypeHint').textContent=hints[ty]||'';
+  document.getElementById('itShowWrap').style.display=(ty==='多段文本')?'':'none';
+}
+function openItem(si,ii){
+  editItemPos=[si,ii];
+  const isNew=ii<0, it=isNew?['','文本',false,true,0]:S().sections[si].items[ii];
+  document.getElementById('itTtl').textContent=(isNew?'新增':'编辑')+'指标项 · '+S().sections[si].n;
+  document.getElementById('itName').value=it[0]||'';
+  document.getElementById('itType').value=it[1]||'文本';
+  document.getElementById('itOrder').value=isNew?S().sections[si].items.length+1:ii+1;
+  document.getElementById('itReq').checked=!!it[2];
+  document.getElementById('itShow').checked=(it[3]!==false);
+  const lock=document.getElementById('itTypeLock'), tsel=document.getElementById('itType');
+  if(!isNew&&it[4]>0){tsel.disabled=true;lock.style.display='';
+    lock.textContent='该指标项已被 '+it[4]+' 条案例填写，类型不可更改（改类型会导致已存内容无法解析）。';}
+  else{tsel.disabled=false;lock.style.display='none'}
+  syncItemForm();open_('mItem');
+}
+function saveItem(){
+  const nm=document.getElementById('itName').value.trim();
+  if(!nm){toast('请填写指标项名称');return}
+  const ty=document.getElementById('itType').value;
+  const rq=document.getElementById('itReq').checked;
+  const sh=(ty==='多段文本')?document.getElementById('itShow').checked:true;
+  const ord=Math.max(1,parseInt(document.getElementById('itOrder').value||'1',10));
+  const si=editItemPos[0], ii=editItemPos[1], arr=S().sections[si].items;
+  if(ii<0) arr.push([nm,ty,rq,sh,0]);
+  else{const it=arr[ii];it[0]=nm;it[1]=ty;it[2]=rq;it[3]=sh}
+  const from=(ii<0)?arr.length-1:ii, to=Math.min(ord-1,arr.length-1);
+  if(to!==from){const x=arr.splice(from,1)[0];arr.splice(to,0,x)}
+  close_('mItem');renderScenes();render();toast(ii<0?'指标项已添加':'指标项已保存');
+}
+
+renderScenes();render();
+</script></body></html>

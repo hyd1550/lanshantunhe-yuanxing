@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="UTF-8"><title>新增/编辑案例</title>
+<style>*{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#fff;--bg2:#f5f7fa;--bg3:#eef1f5;--border:#e4e8ee;--border2:#cfd6e0;
+ --text:#1d2129;--text2:#5b6472;--text3:#98a1af;--blue:#1B62C4;--blue-bg:#EAF2FE;
+ --green:#0F7B4A;--green-bg:#E6F6EE;--amber:#8A5A0B;--amber-bg:#FDF2DE;--red:#C0392B;--red-bg:#FDECEA}
+html,body{height:100%}
+body{font-family:-apple-system,BlinkMacSystemFont,'PingFang SC','Microsoft YaHei',sans-serif;font-size:13px;color:var(--text);background:var(--bg2)}
+.app{width:1660px;height:990px;display:flex;flex-direction:column;overflow:hidden;position:relative;background:var(--bg2)}
+.tbar{flex-shrink:0;height:48px;display:flex;align-items:center;gap:10px;padding:0 22px;background:var(--bg);border-bottom:1px solid var(--border)}
+.tbar .bar{width:3px;height:15px;background:var(--blue);border-radius:2px}
+.ttl{font-size:15px;font-weight:600}.sp{flex:1}
+.tip{font-size:12px;color:var(--amber);background:var(--amber-bg);border-radius:99px;padding:4px 12px}
+.tools{flex-shrink:0;display:flex;align-items:center;gap:10px;padding:14px 22px 8px;flex-wrap:wrap;background:var(--bg);border-bottom:1px solid var(--border)}
+.lb{font-size:12.5px;color:var(--text2);white-space:nowrap}
+.fsel,.finp{height:34px;padding:0 10px;border:1px solid var(--border2);border-radius:6px;background:var(--bg);font-family:inherit;font-size:12.5px;color:var(--text);outline:none}
+.finp{width:230px}
+.btn{display:inline-flex;align-items:center;gap:5px;padding:8px 15px;font-size:12.5px;border:1px solid var(--border2);border-radius:6px;background:var(--bg);color:var(--text);cursor:pointer;font-family:inherit;font-weight:500;white-space:nowrap}
+.btn:hover{background:var(--bg2)}
+.btn.pri{background:var(--blue);color:#fff;border-color:var(--blue)}.btn.pri:hover{opacity:.9}
+.btn.sm{padding:5px 10px;font-size:12px}
+.btn.dang{background:var(--red-bg);color:var(--red);border-color:#f0c8c3}
+.body{flex:1;overflow-y:auto;padding:16px 22px}
+.pill{font-size:11px;padding:2px 9px;border-radius:99px;font-weight:500;white-space:nowrap}
+.p-on{background:var(--green-bg);color:var(--green)}
+.p-draft{background:var(--amber-bg);color:var(--amber)}
+.p-off{background:var(--bg3);color:var(--text3)}
+.p-scene{background:var(--blue-bg);color:var(--blue)}
+table.t{width:100%;border-collapse:collapse;font-size:12.5px;background:var(--bg);border-radius:8px;overflow:hidden}
+table.t th,table.t td{padding:11px 14px;text-align:left;border-bottom:1px solid var(--border)}
+table.t thead th{background:#fafbfc;color:var(--text2);font-weight:600;font-size:11.5px;white-space:nowrap}
+table.t tbody tr:hover{background:#fafbfd}
+table.t tr:last-child td{border-bottom:none}
+.act{color:var(--blue);cursor:pointer;margin-right:12px;font-size:12.5px}
+.act:hover{text-decoration:underline}
+.act.del{color:var(--red)}.act.off{color:var(--text2)}
+.pager{display:flex;align-items:center;gap:6px;margin-top:14px;font-size:12.5px}
+.pg-info{color:var(--text3);margin-right:auto}
+.pg{min-width:30px;height:30px;padding:0 9px;display:inline-flex;align-items:center;justify-content:center;border:1px solid var(--border2);border-radius:6px;background:var(--bg);cursor:pointer}
+.pg:hover{border-color:var(--blue);color:var(--blue)}
+.pg.on{background:var(--blue);color:#fff;border-color:var(--blue)}
+.pg.dis{color:var(--text3);cursor:default;background:var(--bg2)}
+.toast{position:absolute;bottom:22px;left:50%;transform:translateX(-50%);background:#1d2129;color:#fff;padding:9px 17px;border-radius:6px;font-size:12.5px;opacity:0;transition:opacity .2s;pointer-events:none;z-index:99}
+.toast.show{opacity:1}
+.note{font-size:12px;color:var(--text2);background:var(--blue-bg);border-left:3px solid var(--blue);border-radius:4px;padding:9px 13px;line-height:1.6;margin-bottom:14px}
+.form-wrap{max-width:1120px;margin:0 auto}
+.card{background:var(--bg);border:1px solid var(--border);border-radius:10px;margin-bottom:14px;overflow:hidden}
+.card-hd{display:flex;align-items:center;gap:8px;padding:12px 16px;background:#fafbfc;border-bottom:1px solid var(--border)}
+.card-hd .bar{width:3px;height:14px;background:var(--blue);border-radius:2px}
+.card-hd .n{font-size:13.5px;font-weight:600}
+.card-hd .lock{font-size:11.5px;color:var(--text3);margin-left:auto}
+.card-bd{padding:16px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:14px 26px}
+.fr label{display:block;font-size:12.5px;color:var(--text2);margin-bottom:6px}
+.fr .req{color:var(--red);margin-right:3px}
+.fr input,.fr select,.fr textarea{width:100%;padding:8px 11px;font-size:13px;border:1px solid var(--border2);border-radius:6px;background:var(--bg);color:var(--text);outline:none;font-family:inherit}
+.fr input:focus,.fr textarea:focus,.fr select:focus{border-color:var(--blue)}
+.fr textarea{resize:vertical;min-height:74px;line-height:1.6}
+.full{grid-column:1/-1}
+.up{border:1.5px dashed var(--border2);border-radius:8px;padding:16px;text-align:center;color:var(--text3);font-size:12.5px;cursor:pointer;background:#fafbfc}
+.up:hover{border-color:var(--blue);color:var(--blue)}
+.imgs{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px}
+.imgs .im{width:126px;height:88px;border-radius:6px;background:linear-gradient(135deg,#dde6f2,#c9d8ea);display:flex;align-items:center;justify-content:center;color:#7f93ad;font-size:11.5px;position:relative}
+.imgs .im b{position:absolute;top:-6px;right:-6px;width:18px;height:18px;border-radius:50%;background:var(--red);color:#fff;font-size:11px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-weight:400}
+.foot{position:sticky;bottom:0;background:var(--bg);border-top:1px solid var(--border);padding:12px 22px;display:flex;gap:10px;justify-content:center;margin:0 -22px -16px}
+.tarea-plain{background:#fafbfc}</style></head><body>
+<div class="app">
+  <div class="tbar"><span class="bar"></span><span class="ttl">新增案例</span>
+  </div>
+  <div class="body">
+    <div class="form-wrap">
+      <div class="note">选择「应用场景」后，系统自动带出该场景的标准栏目与指标项，直接填写即可。</div>
+
+      <div class="card">
+        <div class="card-hd"><span class="bar"></span><span class="n">基本信息</span></div>
+        <div class="card-bd"><div class="grid">
+          <div class="fr"><label><span class="req">*</span>案例标题</label><input id="ttl" placeholder="如：新疆昌吉-7801系列-地膜-玉米栽培应用案例"></div>
+          <div class="fr"><label><span class="req">*</span>应用场景</label>
+            <select id="scene" onchange="renderTpl()"><option value="">请选择应用场景</option><option>农业园艺（农膜）</option><option>包装产业</option><option>母婴用品</option><option>日用消费品</option><option>纺织纤维与鞋服</option><option>一次性医用耗材</option><option>3D打印</option><option>防沙环保</option><option>轻量化应用</option><option>渔牧业</option><option>电子产品</option></select></div>
+          <div class="fr"><label>产品名称</label><input placeholder="如：7801-系列-MF-2023"></div>
+          <div class="fr"><label>上传人</label><input value="王某" readonly style="background:#fafbfc;color:var(--text2)"></div>
+          <div class="fr full"><label>摘要</label><textarea placeholder="用 1-2 句话概括该案例的应用效果，将展示在案例库列表中（限 200 字）"></textarea></div>
+        </div></div>
+      </div>
+
+      <div id="tplArea"></div>
+      <div id="emptyTip" class="card"><div class="card-bd" style="text-align:center;color:var(--text3);padding:48px 0;font-size:13px">请先选择应用场景，系统将自动带出对应的填写栏目</div></div>
+
+      <div class="foot">
+        <button class="btn" onclick="toast('已保存为草稿，可在「场景案例上传记录」中继续编辑')">保存草稿</button>
+        <button class="btn pri" onclick="toast('已发布，案例将展示在场景化案例库中')">发布</button>
+        <button class="btn" onclick="toast('已取消')">取消</button>
+      </div>
+    </div>
+  </div>
+  <div class="toast" id="toast"></div>
+</div>
+<script>
+const TPL={"农业园艺（农膜）": [{"n": "方案图片", "items": [["上传图片", "图片", false, true]]}, {"n": "案例概述", "items": [["案例背景说明", "多段文本", false, false]]}, {"n": "农膜产品信息", "items": [["农膜型号（牌号）", "文本", true, true], ["材质", "文本", false, true], ["厚度", "文本", false, true], ["透光率", "文本", false, true], ["保温性", "文本", false, true], ["流滴性", "文本", false, true], ["消雾性", "文本", false, true], ["覆盖方式", "文本", false, true], ["使用周期", "文本", false, true]]}, {"n": "适配土壤信息", "items": [["地形", "文本", false, true], ["土种类型", "文本", false, true], ["土壤酸碱度（PH值）范围", "文本", false, true], ["有机质含量", "文本", false, true], ["土壤质地", "文本", false, true], ["肥力状况", "文本", false, true]]}, {"n": "作物信息", "items": [["作物品种", "文本", true, true], ["生育期", "文本", false, true], ["种植密度", "文本", false, true], ["主要栽培管理措施", "多段文本", false, true]]}, {"n": "气候环境参数", "items": [["年平均气温", "文本", false, true], ["极端高温/低温", "文本", false, true], ["年降水量", "文本", false, true], ["日照时数", "文本", false, true], ["主要风向", "文本", false, true]]}, {"n": "应用效果", "items": [["效果描述", "多段文本", false, true], ["检测报告", "文件", false, true]]}], "包装产业": [{"n": "方案图片", "items": [["上传图片", "图片", false, true]]}, {"n": "包装产品信息", "items": [["产品型号", "文本", true, true], ["材质", "文本", false, true], ["规格尺寸", "文本", false, true], ["厚度", "文本", false, true], ["承重", "文本", false, true], ["降解周期", "文本", false, true]]}, {"n": "应用效果", "items": [["效果描述", "多段文本", false, true], ["检测报告", "文件", false, true]]}], "母婴用品": [{"n": "方案图片", "items": [["上传图片", "图片", false, true]]}, {"n": "产品信息", "items": [["产品型号", "文本", true, true], ["材质", "文本", false, true], ["安全等级", "文本", false, true], ["适用月龄", "文本", false, true]]}], "日用消费品": [{"n": "方案图片", "items": [["上传图片", "图片", false, true]]}, {"n": "产品信息", "items": [["产品型号", "文本", true, true], ["材质", "文本", false, true], ["规格", "文本", false, true]]}]};
+let tt;function toast(m){const t=document.getElementById('toast');t.textContent=m;t.classList.add('show');clearTimeout(tt);tt=setTimeout(()=>t.classList.remove('show'),2000)}
+function field(it){
+  const [name,type,req,showTitle]=it;
+  const lab='<label>'+(req?'<span class="req">*</span>':'')+name+'</label>';
+  if(type==='图片') return '<div class="fr full">'+lab+
+    '<div class="up" onclick="toast(\'选择图片（原型演示）\')">＋ 点击上传图片，支持 jpg/png，可上传多张</div>'+
+    '<div class="imgs"><div class="im">方案图 1<b>×</b></div><div class="im">方案图 2<b>×</b></div><div class="im">方案图 3<b>×</b></div></div></div>';
+  if(type==='文件') return '<div class="fr full">'+lab+
+    '<div class="up" onclick="toast(\'选择文件（原型演示）\')">＋ 点击上传文件，支持 word、pdf、excel 等格式</div></div>';
+  if(type==='多段文本') return '<div class="fr full">'+
+    (showTitle?lab:'<label style="color:var(--text3)">'+name+'（此标题仅用于录入引导，前台不展示）</label>')+
+    '<textarea'+(showTitle?'':' class="tarea-plain" style="min-height:96px"')+' placeholder="请输入'+name+(showTitle?'':'，前台将作为一段通栏正文展示')+'"></textarea></div>';
+  return '<div class="fr">'+lab+'<input placeholder="请输入'+name+'"></div>';
+}
+function renderTpl(){
+  const sc=document.getElementById('scene').value;
+  const secs=TPL[sc];
+  const area=document.getElementById('tplArea'), empty=document.getElementById('emptyTip');
+  if(!sc){area.innerHTML='';empty.style.display='';return}
+  empty.style.display='none';
+  if(!secs){area.innerHTML='<div class="card"><div class="card-bd" style="text-align:center;color:var(--text3);padding:40px 0">该应用场景尚未配置模板，请联系统一管理员在「案例模板维护」中配置</div></div>';return}
+  area.innerHTML=secs.map(s=>
+    '<div class="card"><div class="card-hd"><span class="bar"></span><span class="n">'+s.n+'</span>'+
+    '</div>'+
+    '<div class="card-bd"><div class="grid">'+s.items.map(field).join('')+'</div></div></div>').join('');
+}
+</script></body></html>

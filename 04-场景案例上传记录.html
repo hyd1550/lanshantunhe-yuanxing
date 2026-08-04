@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="UTF-8"><title>场景案例上传记录</title>
+<style>*{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#fff;--bg2:#f5f7fa;--bg3:#eef1f5;--border:#e4e8ee;--border2:#cfd6e0;
+ --text:#1d2129;--text2:#5b6472;--text3:#98a1af;--blue:#1B62C4;--blue-bg:#EAF2FE;
+ --green:#0F7B4A;--green-bg:#E6F6EE;--amber:#8A5A0B;--amber-bg:#FDF2DE;--red:#C0392B;--red-bg:#FDECEA}
+html,body{height:100%}
+body{font-family:-apple-system,BlinkMacSystemFont,'PingFang SC','Microsoft YaHei',sans-serif;font-size:13px;color:var(--text);background:var(--bg2)}
+.app{width:1660px;height:990px;display:flex;flex-direction:column;overflow:hidden;position:relative;background:var(--bg2)}
+.tbar{flex-shrink:0;height:48px;display:flex;align-items:center;gap:10px;padding:0 22px;background:var(--bg);border-bottom:1px solid var(--border)}
+.tbar .bar{width:3px;height:15px;background:var(--blue);border-radius:2px}
+.ttl{font-size:15px;font-weight:600}.sp{flex:1}
+.tip{font-size:12px;color:var(--amber);background:var(--amber-bg);border-radius:99px;padding:4px 12px}
+.tools{flex-shrink:0;display:flex;align-items:center;gap:10px;padding:14px 22px 8px;flex-wrap:wrap;background:var(--bg);border-bottom:1px solid var(--border)}
+.lb{font-size:12.5px;color:var(--text2);white-space:nowrap}
+.fsel,.finp{height:34px;padding:0 10px;border:1px solid var(--border2);border-radius:6px;background:var(--bg);font-family:inherit;font-size:12.5px;color:var(--text);outline:none}
+.finp{width:230px}
+.btn{display:inline-flex;align-items:center;gap:5px;padding:8px 15px;font-size:12.5px;border:1px solid var(--border2);border-radius:6px;background:var(--bg);color:var(--text);cursor:pointer;font-family:inherit;font-weight:500;white-space:nowrap}
+.btn:hover{background:var(--bg2)}
+.btn.pri{background:var(--blue);color:#fff;border-color:var(--blue)}.btn.pri:hover{opacity:.9}
+.btn.sm{padding:5px 10px;font-size:12px}
+.btn.dang{background:var(--red-bg);color:var(--red);border-color:#f0c8c3}
+.body{flex:1;overflow-y:auto;padding:16px 22px}
+.pill{font-size:11px;padding:2px 9px;border-radius:99px;font-weight:500;white-space:nowrap}
+.p-on{background:var(--green-bg);color:var(--green)}
+.p-draft{background:var(--amber-bg);color:var(--amber)}
+.p-off{background:var(--bg3);color:var(--text3)}
+.p-scene{background:var(--blue-bg);color:var(--blue)}
+table.t{width:100%;border-collapse:collapse;font-size:12.5px;background:var(--bg);border-radius:8px;overflow:hidden}
+table.t th,table.t td{padding:15px 14px;text-align:left;border-bottom:1px solid var(--border);line-height:1.6}
+table.t thead th{background:#fafbfc;color:var(--text2);font-weight:600;font-size:11.5px;white-space:nowrap;padding:12px 14px}
+table.t tbody tr:hover{background:#fafbfd}
+table.t tr:last-child td{border-bottom:none}
+.act{color:var(--blue);cursor:pointer;margin-right:12px;font-size:12.5px}
+.act:hover{text-decoration:underline}
+.act.del{color:var(--red)}.act.off{color:var(--text2)}
+.pager{display:flex;align-items:center;gap:6px;margin-top:14px;font-size:12.5px}
+.pg-info{color:var(--text3);margin-right:auto}
+.pg{min-width:30px;height:30px;padding:0 9px;display:inline-flex;align-items:center;justify-content:center;border:1px solid var(--border2);border-radius:6px;background:var(--bg);cursor:pointer}
+.pg:hover{border-color:var(--blue);color:var(--blue)}
+.pg.on{background:var(--blue);color:#fff;border-color:var(--blue)}
+.pg.dis{color:var(--text3);cursor:default;background:var(--bg2)}
+.toast{position:absolute;bottom:22px;left:50%;transform:translateX(-50%);background:#1d2129;color:#fff;padding:9px 17px;border-radius:6px;font-size:12.5px;opacity:0;transition:opacity .2s;pointer-events:none;z-index:99}
+.toast.show{opacity:1}
+.note{font-size:12px;color:var(--text2);background:var(--blue-bg);border-left:3px solid var(--blue);border-radius:4px;padding:9px 13px;line-height:1.6;margin-bottom:14px}
+.tabs{display:flex;gap:4px;border-bottom:1px solid var(--border);margin-bottom:14px;background:var(--bg);border-radius:8px 8px 0 0;padding:0 8px}
+.tb{padding:11px 16px;font-size:13px;color:var(--text2);cursor:pointer;border-bottom:2px solid transparent;display:flex;align-items:center;gap:7px;white-space:nowrap}
+.tb:hover{color:var(--text)}
+.tb.on{color:var(--blue);border-bottom-color:var(--blue);font-weight:600}
+.tb .c{font-size:11.5px;background:var(--bg3);color:var(--text2);border-radius:99px;padding:1px 8px;font-weight:500}
+.tb.on .c{background:var(--blue-bg);color:var(--blue)}
+.mask{position:absolute;inset:0;background:rgba(29,33,41,.42);display:none;align-items:center;justify-content:center;z-index:60}
+.mask.show{display:flex}
+.mod{width:560px;background:var(--bg);border-radius:11px;overflow:hidden;box-shadow:0 12px 40px rgba(0,0,0,.18)}
+.mod-hd{padding:14px 18px;border-bottom:1px solid var(--border);font-size:14px;font-weight:600;display:flex;align-items:center;gap:9px}
+.mod-hd .x{margin-left:auto;cursor:pointer;color:var(--text3);font-size:18px;line-height:1}
+.mod-hd .x:hover{color:var(--text)}
+.mod-bd{padding:17px 18px;max-height:470px;overflow-y:auto;font-size:12.5px;line-height:1.75}
+.mod-ft{padding:12px 18px;border-top:1px solid var(--border);display:flex;gap:9px;justify-content:flex-end;background:#fafbfc}
+.kv{display:grid;grid-template-columns:96px 1fr;gap:9px 12px}
+.kv .k{color:var(--text2)}
+.kv .v{color:var(--text)}
+.msum{background:#fafbfc;border-left:3px solid var(--border2);border-radius:4px;padding:10px 13px;margin:13px 0;line-height:1.8;color:var(--text2)}
+.mwarn{background:var(--amber-bg);border-left:3px solid #dfa63c;border-radius:4px;padding:10px 13px;color:#7a5210;line-height:1.75}
+.mdang{background:var(--red-bg);border-left:3px solid #e08e84;border-radius:4px;padding:10px 13px;color:var(--red);line-height:1.75}</style></head><body>
+<div class="app">
+  <div class="tbar"><span class="bar"></span><span class="ttl">场景案例上传记录</span>
+  </div>
+  <div class="tools">
+    <span class="lb">应用场景</span>
+    <select class="fsel" id="fsc" onchange="render()" style="width:170px"><option value="">全部场景</option><option>农业园艺（农膜）</option><option>包装产业</option><option>母婴用品</option><option>日用消费品</option><option>纺织纤维与鞋服</option><option>一次性医用耗材</option><option>3D打印</option><option>防沙环保</option><option>轻量化应用</option><option>渔牧业</option><option>电子产品</option></select>
+    <span class="lb">关键字</span>
+    <input class="finp" id="q" placeholder="案例名称 / 产品名称" oninput="render()">
+    <button class="btn pri" onclick="render()">搜索</button>
+    <button class="btn" onclick="reset()">重置</button>
+  </div>
+  <div class="body">
+    <div style="margin-bottom:12px"><button class="btn pri" onclick="toast('跳转到「新增/编辑案例」页，可选择应用场景后按模板填写')">＋ 新增案例</button></div>
+    <div class="tabs" id="tabs"></div>
+    <div id="list"></div>
+    <div class="pager" id="pager"></div>
+  </div>
+  <div class="mask" id="mask"><div class="mod">
+    <div class="mod-hd"><span id="mTtl">标题</span><span class="x" onclick="closeM()">×</span></div>
+    <div class="mod-bd" id="mBody"></div>
+    <div class="mod-ft" id="mFoot"></div>
+  </div></div>
+  <div class="toast" id="toast"></div>
+</div>
+<script>
+const CASES=[{"id": 1, "t": "新疆昌吉-7801系列-地膜-加工番茄覆膜案例", "sc": "农业园艺（农膜）", "p": "7801-系列-MF-2023", "u": "王某", "d": "2026-05-28", "st": "已发布", "sum": "加工番茄膜下滴灌覆盖，出苗整齐度提升，采收期地表残膜基本消解，免去人工回收工序。", "meta": {"区域": "新疆·昌吉", "作物品种": "番茄-石红21", "土种类型": "灌淤土", "地形": "平原"}}, {"id": 2, "t": "新疆昌吉-7801系列-地膜-玉米栽培应用案例", "sc": "农业园艺（农膜）", "p": "7801-系列-MF-2023", "u": "王某", "d": "2026-05-12", "st": "已发布", "sum": "采用全膜双垄沟播覆盖方式，配合膜下滴灌技术，玉米生育期 180 天，亩产较普通地膜提升 8.5%，地膜 300 天完成降解。", "meta": {"区域": "新疆·昌吉", "作物品种": "玉米-先玉335", "土种类型": "黄绵土", "地形": "高原"}}, {"id": 3, "t": "浙江杭州-可降解生鲜自封袋-商超应用案例", "sc": "包装产业", "p": "7086型自封袋", "u": "赵某", "d": "2026-05-06", "st": "已发布", "sum": "生鲜区自助包装场景，低温环境下柔韧性保持良好，冷藏 7 天无脆化开裂。", "meta": {"区域": "浙江·杭州", "规格尺寸": "250×350mm", "降解周期": "180天"}}, {"id": 4, "t": "甘肃张掖-7801系列-地膜-马铃薯覆膜案例", "sc": "农业园艺（农膜）", "p": "7801-系列-MF-2023", "u": "王某", "d": "2026-04-28", "st": "已发布", "sum": "针对西北干旱区设计，保温性与耐候性达 180 天以上，马铃薯出苗率提升明显，残膜可自然降解、无需回收。", "meta": {"区域": "甘肃·张掖", "作物品种": "马铃薯-青薯9号", "土种类型": "灰钙土", "地形": "平原"}}, {"id": 5, "t": "江苏苏州-可降解无纺布购物袋应用案例", "sc": "纺织纤维与鞋服", "p": "TH-FB-2025", "u": "周某", "d": "2026-04-22", "st": "已发布", "sum": "纺粘无纺布手提袋，承重 8kg 无撕裂，替代传统 PP 无纺布袋，已在商超会员渠道推广。", "meta": {"区域": "江苏·苏州", "纤维规格": "25g/m²", "强度": "≥60N"}}, {"id": 6, "t": "广东广州-可降解婴儿隔尿垫基材案例", "sc": "母婴用品", "p": "TH-NW-2025", "u": "李某", "d": "2026-04-15", "st": "已发布", "sum": "隔尿垫底膜替代 PE 材质，透气性提升，通过婴幼儿接触安全检测。", "meta": {"区域": "广东·广州", "安全等级": "母婴级", "适用月龄": "0-2岁"}}, {"id": 7, "t": "云南曲靖-7803系列-地膜-烟草种植案例", "sc": "农业园艺（农膜）", "p": "7803-系列-MF-2024", "u": "李某", "d": "2026-04-10", "st": "已发布", "sum": "高原红壤区烟草覆膜应用，透光率与流滴性满足高湿环境要求，降解周期与烟草生长周期匹配良好。", "meta": {"区域": "云南·曲靖", "作物品种": "烟草-K326", "土种类型": "红壤", "地形": "山地"}}, {"id": 8, "t": "上海-可降解一次性手术衣基材应用案例", "sc": "一次性医用耗材", "p": "TH-MD-2025", "u": "李某", "d": "2026-04-02", "st": "已发布", "sum": "手术衣非关键区基材，环氧乙烷灭菌后性能稳定，符合 YY/T 0506 相关要求。", "meta": {"区域": "上海", "灭菌方式": "环氧乙烷", "医用等级": "Ⅱ类"}}, {"id": 9, "t": "广东深圳-PLA改性3D打印线材应用案例", "sc": "3D打印", "p": "TH-3D-2025", "u": "周某", "d": "2026-03-26", "st": "已发布", "sum": "教育与手办打印场景，翘边率明显下降，打印表面光洁度优于普通 PLA 线材。", "meta": {"区域": "广东·深圳", "线材直径": "1.75mm", "打印温度": "195-215℃"}}, {"id": 10, "t": "山东寿光-可降解购物袋-商超应用案例", "sc": "包装产业", "p": "7081型购物袋", "u": "赵某", "d": "2026-03-22", "st": "已发布", "sum": "替代传统 PE 购物袋，承重 5kg 无破损，符合 GB/T 38082 标准，商超反馈良好。", "meta": {"区域": "山东·潍坊", "规格尺寸": "320×450mm", "降解周期": "180天"}}, {"id": 11, "t": "内蒙古阿拉善-可降解沙障带应用案例", "sc": "防沙环保", "p": "TH-SD-2025", "u": "王某", "d": "2026-03-18", "st": "已发布", "sum": "流动沙丘固沙试验，铺设两年后仍保持结构完整，第三年逐步降解，无需人工清除。", "meta": {"区域": "内蒙古·阿拉善", "规格": "宽30cm×高40cm", "降解周期": "36个月"}}, {"id": 12, "t": "福建厦门-可降解一次性餐盒应用案例", "sc": "日用消费品", "p": "TH-CP-2025", "u": "周某", "d": "2026-03-11", "st": "已发布", "sum": "外卖热食场景，95℃ 热汤盛装不变形，已在本地连锁餐饮试点投用。", "meta": {"区域": "福建·厦门", "规格": "750ml", "材质": "PBAT/PLA/淀粉基"}}, {"id": 13, "t": "江苏南通-可降解快递包装袋应用案例", "sc": "包装产业", "p": "7085型快递袋", "u": "赵某", "d": "2026-03-05", "st": "已发布", "sum": "电商快递场景，抗撕裂性能提升，适配自动化分拣设备，已在区域快递网点批量投用。", "meta": {"区域": "江苏·南通", "规格尺寸": "280×420mm", "降解周期": "180天"}}, {"id": 14, "t": "山东威海-可降解养殖网衣应用案例", "sc": "渔牧业", "p": "TH-FN-2025", "u": "李某", "d": "2026-02-27", "st": "已发布", "sum": "近海养殖网箱试验，海水环境下 18 个月保持强度，退役后自然降解，减少海洋塑料残留。", "meta": {"区域": "山东·威海", "规格": "网目20mm", "海水降解性": "24个月"}}, {"id": 15, "t": "广东东莞-可降解湿巾基材应用案例", "sc": "母婴用品", "p": "TH-NW-2025", "u": "李某", "d": "2026-02-18", "st": "已发布", "sum": "母婴级无纺布基材，通过食品接触级检测，柔软度与湿强度满足婴儿湿巾要求。", "meta": {"区域": "广东·东莞", "安全等级": "母婴级", "适用月龄": "0-3岁"}}, {"id": 16, "t": "宁夏中卫-7802系列-地膜-枸杞种植案例", "sc": "农业园艺（农膜）", "p": "7802-系列-MF-2024", "u": "王某", "d": "2026-02-12", "st": "已发布", "sum": "枸杞园行间覆盖，抑草效果与黑色 PE 膜相当，采果季后无需揭膜回收。", "meta": {"区域": "宁夏·中卫", "作物品种": "枸杞-宁杞7号", "土种类型": "灰钙土", "地形": "平原"}}, {"id": 17, "t": "浙江绍兴-可降解涤纶替代短纤应用案例", "sc": "纺织纤维与鞋服", "p": "TH-FB-2025", "u": "周某", "d": "2026-02-05", "st": "已发布", "sum": "针刺非织造毡材，用于一次性拖鞋面料，成本与手感达到量产要求。", "meta": {"区域": "浙江·绍兴", "纤维规格": "2.2dtex×51mm", "强度": "≥3.5cN/dtex"}}, {"id": 18, "t": "河南郑州-可降解垃圾分类袋应用案例（草稿）", "sc": "包装产业", "p": "7088型垃圾袋", "u": "赵某", "d": "2026-01-28", "st": "草稿", "sum": "（草稿）厨余垃圾袋社区试点，湿强度与堆肥降解数据采集中。", "meta": {"区域": "河南·郑州", "规格尺寸": "450×500mm", "降解周期": "90天"}}, {"id": 19, "t": "浙江义乌-可降解吸管-餐饮渠道应用案例", "sc": "日用消费品", "p": "TH-ST-2025", "u": "周某", "d": "2026-01-20", "st": "已发布", "sum": "耐温型结晶吸管，热饮场景不软化，已在连锁茶饮门店推广使用。", "meta": {"区域": "浙江·金华", "规格": "直径12mm", "材质": "PBAT/PLA"}}, {"id": 20, "t": "北京-可降解医用敷料背衬应用案例", "sc": "一次性医用耗材", "p": "TH-MD-2025", "u": "李某", "d": "2026-01-14", "st": "已发布", "sum": "创可贴与敷料背衬替代 PE 膜，透湿量满足要求，辐照灭菌后性能无明显衰减。", "meta": {"区域": "北京", "灭菌方式": "辐照", "医用等级": "Ⅱ类"}}, {"id": 21, "t": "内蒙古赤峰-7802系列-地膜-向日葵案例（草稿）", "sc": "农业园艺（农膜）", "p": "7802-系列-MF-2024", "u": "王某", "d": "2026-01-08", "st": "草稿", "sum": "（草稿）内蒙古东部风沙区向日葵覆膜试验，抗风性能测试中。", "meta": {"区域": "内蒙古·赤峰", "作物品种": "向日葵-三瑞3号", "土种类型": "栗钙土", "地形": "平原"}}, {"id": 22, "t": "甘肃民勤-可降解草方格固沙应用案例", "sc": "防沙环保", "p": "TH-SD-2025", "u": "王某", "d": "2025-12-20", "st": "已发布", "sum": "替代传统麦草方格，铺设效率提升约 40%，两个风季后固沙效果稳定。", "meta": {"区域": "甘肃·武威", "规格": "1m×1m方格", "降解周期": "30个月"}}, {"id": 23, "t": "江苏昆山-高韧性3D打印线材应用案例（草稿）", "sc": "3D打印", "p": "TH-3D-2025", "u": "周某", "d": "2025-12-11", "st": "草稿", "sum": "（草稿）工业级打印耗材，冲击强度与层间结合力测试中。", "meta": {"区域": "江苏·昆山", "线材直径": "2.85mm", "打印温度": "200-230℃"}}, {"id": 24, "t": "辽宁大连-可降解海参养殖附着基应用案例", "sc": "渔牧业", "p": "TH-FN-2025", "u": "李某", "d": "2025-11-28", "st": "已发布", "sum": "底播海参养殖附着基材，海水中缓慢降解，避免回收作业与海底残留。", "meta": {"区域": "辽宁·大连", "规格": "400×600mm", "海水降解性": "30个月"}}, {"id": 25, "t": "河北邯郸-可降解地膜-棉花种植案例（旧）", "sc": "农业园艺（农膜）", "p": "7800-系列-MF-2022", "u": "李某", "d": "2025-11-15", "st": "已下架", "sum": "（已下架）产品已迭代，该案例参数不再适用，保留供历史参考。", "meta": {"区域": "河北·邯郸", "作物品种": "棉花", "土种类型": "潮土", "地形": "平原"}}, {"id": 26, "t": "广东佛山-第一代可降解餐具应用案例（旧）", "sc": "日用消费品", "p": "TH-CP-2023", "u": "周某", "d": "2025-10-30", "st": "已下架", "sum": "（已下架）第一代配方耐温性不足，已由 TH-CP-2025 替代。", "meta": {"区域": "广东·佛山", "规格": "套装", "材质": "PLA"}}];
+let page=1, quick='';
+const PER=10;
+let tt;function toast(m){const t=document.getElementById('toast');t.textContent=m;t.classList.add('show');clearTimeout(tt);tt=setTimeout(()=>t.classList.remove('show'),2000)}
+function reset(){document.getElementById('fsc').value='';document.getElementById('q').value='';quick='';page=1;render()}
+function setQuick(s){quick=s;page=1;render()}
+function filtered(){
+  const sc=document.getElementById('fsc').value,
+        q=(document.getElementById('q').value||'').trim();
+  return CASES.filter(c=>{
+    if(sc&&c.sc!==sc)return false;
+    if(quick&&c.st!==quick)return false;
+    if(q&&c.t.indexOf(q)<0&&c.p.indexOf(q)<0)return false;
+    return true;
+  });
+}
+function pillCls(s){return s==='已发布'?'p-on':(s==='草稿'?'p-draft':'p-off')}
+function render(){
+  const cnt={'全部':CASES.length,'已发布':0,'草稿':0,'已下架':0};
+  CASES.forEach(c=>cnt[c.st]++);
+  document.getElementById('tabs').innerHTML=['全部','已发布','草稿','已下架'].map(k=>
+    '<div class="tb'+((quick===k||(k==='全部'&&!quick))?' on':'')+'" onclick="setQuick(\''+(k==='全部'?'':k)+'\')">'+
+    k+'<span class="c">'+cnt[k]+'</span></div>').join('');
+  const rows=filtered(), tot=Math.max(1,Math.ceil(rows.length/PER));
+  if(page>tot)page=tot;
+  const slice=rows.slice((page-1)*PER,page*PER);
+  document.getElementById('list').innerHTML=
+    '<table class="t"><thead><tr><th style="width:46px;text-align:center">序号</th><th>案例名称</th>'+
+    '<th style="width:140px">应用场景</th><th style="width:150px">产品名称</th><th style="width:90px">状态</th>'+
+    '<th style="width:80px">上传人</th><th style="width:110px">上传时间</th><th style="width:190px">操作</th></tr></thead><tbody>'+
+    (slice.length?slice.map((c,i)=>{
+      const off=c.st==='已下架', draft=c.st==='草稿';
+      return '<tr'+(off?' style="color:var(--text3)"':'')+'>'+
+      '<td style="text-align:center;color:var(--text3)">'+((page-1)*PER+i+1)+'</td>'+
+      '<td style="font-weight:500'+(off?';color:var(--text3)':'')+'">'+c.t+'</td>'+
+      '<td><span class="pill p-scene">'+c.sc+'</span></td><td>'+c.p+'</td>'+
+      '<td><span class="pill '+pillCls(c.st)+'">'+c.st+'</span></td>'+
+      '<td>'+c.u+'</td><td style="color:var(--text2)">'+c.d+'</td>'+
+      '<td><span class="act" onclick="goView('+c.id+')">查看</span>'+
+        '<span class="act" onclick="goEdit('+c.id+')">编辑</span>'+
+        (draft?'<span class="act" onclick="mPublish('+c.id+')">发布</span>'
+              :(off?'<span class="act" onclick="mRepublish('+c.id+')">重新发布</span>'
+                   :'<span class="act off" onclick="mOffline('+c.id+')">下架</span>'))+
+        '<span class="act del" onclick="mDelete('+c.id+')">删除</span></td></tr>';
+    }).join('')
+    :'<tr><td colspan="8" style="text-align:center;color:var(--text3);padding:60px 0">暂无符合条件的记录</td></tr>')+
+    '</tbody></table>';
+  let h='<span class="pg-info">共 '+rows.length+' 条 · 第 '+page+'/'+tot+' 页</span>';
+  h+='<span class="pg '+(page<=1?'dis':'')+'" onclick="go('+(page-1)+')">‹</span>';
+  for(let i=1;i<=tot;i++)h+='<span class="pg '+(i===page?'on':'')+'" onclick="go('+i+')">'+i+'</span>';
+  h+='<span class="pg '+(page>=tot?'dis':'')+'" onclick="go('+(page+1)+')">›</span>';
+  document.getElementById('pager').innerHTML=h;
+}
+function go(p){const tot=Math.max(1,Math.ceil(filtered().length/PER));if(p<1||p>tot)return;page=p;render()}
+
+/* ════════ 操作弹窗 ════════ */
+const esc=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;');
+const byId=id=>CASES.find(c=>c.id===id);
+function closeM(){document.getElementById('mask').classList.remove('show')}
+function showM(title,body,foot){
+  document.getElementById('mTtl').innerHTML=title;
+  document.getElementById('mBody').innerHTML=body;
+  document.getElementById('mFoot').innerHTML=foot;
+  document.getElementById('mask').classList.add('show');
+}
+const btnCancel='<button class="btn" onclick="closeM()">取消</button>';
+
+/* 查看 / 编辑：直接跳转，不弹窗 */
+function goView(id){const c=byId(id);toast('跳转到案例详情页：'+c.t)}
+function goEdit(id){const c=byId(id);toast('跳转到「新增/编辑案例」页，带入：'+c.t)}
+
+/* 发布 / 重新发布 / 下架 / 删除 */
+function doAct(id,st,msg){
+  const c=byId(id); if(st==='__del'){const i=CASES.findIndex(x=>x.id===id);CASES.splice(i,1)} else c.st=st;
+  closeM();render();toast(msg);
+}
+function mPublish(id){
+  const c=byId(id);
+  showM('发布案例',
+    '<div class="kv"><div class="k">案例名称</div><div class="v" style="font-weight:600">'+esc(c.t)+'</div></div>'+
+    '<div class="mwarn" style="margin-top:13px">发布后该案例将立即在「场景化案例库」中展示，全部用户可见。<br>'+
+    '本模块由授权人员维护，<b>发布无需审核</b>。</div>',
+    btnCancel+'<button class="btn pri" onclick="doAct('+id+',\'已发布\',\'已发布，案例库中已可见\')">确认发布</button>');
+}
+function mRepublish(id){
+  const c=byId(id);
+  showM('重新发布',
+    '<div class="kv"><div class="k">案例名称</div><div class="v" style="font-weight:600">'+esc(c.t)+'</div>'+
+    '<div class="k">当前状态</div><div class="v"><span class="pill p-off">已下架</span></div></div>'+
+    '<div class="mwarn" style="margin-top:13px">重新发布前请确认内容仍然适用。<br>该案例下架原因：产品已迭代，参数可能不再适用。</div>',
+    btnCancel+'<button class="btn pri" onclick="doAct('+id+',\'已发布\',\'已重新发布\')">确认发布</button>');
+}
+function mOffline(id){
+  const c=byId(id);
+  showM('下架案例',
+    '<div class="kv"><div class="k">案例名称</div><div class="v" style="font-weight:600">'+esc(c.t)+'</div></div>'+
+    '<div class="mwarn" style="margin-top:13px">下架后该案例<b>不在案例库展示</b>，但记录与内容完整保留，可随时重新发布。<br>'+
+    '适用于产品迭代、参数过期等场景。</div>',
+    btnCancel+'<button class="btn" onclick="doAct('+id+',\'已下架\',\'已下架，案例库中不再展示\')">确认下架</button>');
+}
+function mDelete(id){
+  const c=byId(id);
+  showM('删除案例',
+    '<div class="kv"><div class="k">案例名称</div><div class="v" style="font-weight:600">'+esc(c.t)+'</div>'+
+    '<div class="k">上传人</div><div class="v">'+esc(c.u)+'</div></div>'+
+    '<div class="mdang" style="margin-top:13px"><b>删除后不可恢复</b>，案例内容与已上传的图片、附件将一并清除。<br>'+
+    '如只是暂时不展示，建议改用「下架」。</div>',
+    btnCancel+'<button class="btn dang" onclick="doAct('+id+',\'__del\',\'案例已删除\')">确认删除</button>');
+}
+
+render();
+</script></body></html>
