@@ -472,7 +472,7 @@ table.s-tbl tbody tr:hover{background:rgba(30,110,140,.22);box-shadow:inset 3px 
   text-shadow:0 0 8px rgba(58,212,255,.4);white-space:nowrap}
 .kpi-num em{font-style:normal;font-size:11px;color:#7fa3c8;font-weight:400;margin-left:5px;letter-spacing:.3px}
 
-/* PBAT 行业产能 — 顶部 3 个汇总 KPI + 历年柱形图 + 主要厂商 TOP5 */
+/* 行业产能 — 顶部 KPI（行业总产能 / 企业级覆盖）+ 企业级产能横向条形 */
 .cap-summary{display:grid;grid-template-columns:repeat(2,1fr);gap:6px;padding:4px 0 6px;border-bottom:1px dashed rgba(80,180,210,.18)}
 .cap-sm-c{display:flex;flex-direction:column;align-items:center;gap:3px;padding:4px 0;
   background:rgba(15,40,75,.45);border:1px solid rgba(60,160,200,.18);border-radius:3px}
@@ -481,7 +481,7 @@ table.s-tbl tbody tr:hover{background:rgba(30,110,140,.22);box-shadow:inset 3px 
 .cap-sm-v b{font-size:20px;font-weight:800;letter-spacing:.5px}
 .cap-sm-v em{font-style:normal;font-size:10px;color:#7fa3c8;font-weight:400;margin-left:3px}
 
-/* 历年产能柱形图 — 撑满 mini-body 剩余空间 */
+/* 产能图形区 — 撑满 mini-body 剩余空间 */
 .cap-chart{display:block;width:100%;flex:1;min-height:0;margin-top:6px}
 .cap-chart .bar{transition:.18s}
 .cap-chart .bar:hover{filter:brightness(1.25) drop-shadow(0 0 4px #3ad4ff)}
@@ -562,6 +562,17 @@ table.s-tbl tbody tr:hover{background:rgba(30,110,140,.22);box-shadow:inset 3px 
 .ec-u{color:#7fa3c8;font-size:10.5px;letter-spacing:.3px}
 .mini-chart{width:100%;flex:1;display:block;min-height:0}
 .mini-foot{font-size:10.5px;color:#5e85b0;letter-spacing:.5px;padding-top:2px;border-top:1px dashed rgba(80,180,210,.15)}
+
+/* 行业产能 — 企业级产能横向条形 */
+.cap-ent-list{display:flex;flex-direction:column;gap:4px;flex:1;min-height:0;padding-right:2px;justify-content:space-between}
+.cap-ent-list::-webkit-scrollbar{width:3px}
+.cap-ent-list::-webkit-scrollbar-thumb{background:rgba(60,160,200,.3);border-radius:2px}
+.cap-ent-it{display:flex;align-items:center;gap:8px;font-size:11px;flex:1 1 0;min-height:18px;max-height:30px}
+.cap-ent-it .cei-nm{width:112px;color:#a8c4e0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cap-ent-it .cei-bar{flex:1;height:9px;background:rgba(80,180,210,.10);border-radius:2px;overflow:hidden}
+.cap-ent-it .cei-bar>span{display:block;height:100%;background:linear-gradient(90deg,#1797b8,#3ad4ff);border-radius:2px}
+.cap-ent-it .cei-v{width:50px;text-align:right;color:#dbeaff;font-family:DIN,Arial;font-weight:700;font-size:11.5px}
+.card-title .mini-prod-sel{margin-left:auto}
 
 /* 产量卡片 — 产品筛选下拉（紧凑版 chain-sel） */
 .mini-prod-sel{position:relative;display:inline-flex;align-items:center;gap:5px;
@@ -1149,14 +1160,18 @@ table.dl-tbl tbody tr:nth-child(-n+3) .dl-row-num{color:#fcd34d;background:rgba(
           <div class="card-title">全国降解材料制品各月产量</div>
           <div class="mini-body">
             <div class="mini-stat-row">
-              <div class="mini-stat-num" id="outputNum">139.3</div>
-              <div class="mini-stat-unit">万吨/年</div>
+              <div class="mini-stat-num" id="outputNum">1.77</div>
+              <div class="mini-stat-unit" id="outputUnit">万吨（2025年8月）</div>
               <div class="mini-prod-sel" id="outputProdSel" style="margin-left:auto">
                 <span class="mps-l">产品：</span>
                 <span class="mps-v" id="outputProdVal">PBAT</span>
                 <span class="mps-a">▾</span>
                 <div class="mps-dd">
                   <div class="mps-it cur" data-prod="PBAT">PBAT</div>
+                  <div class="mps-it" data-prod="BDO">BDO</div>
+                  <div class="mps-it" data-prod="PTA">PTA</div>
+                  <div class="mps-it" data-prod="电石">电石</div>
+                  <div class="mps-it" data-prod="己二酸">己二酸</div>
                   <div class="mps-it" data-prod="PLA">PLA</div>
                 </div>
               </div>
@@ -1189,18 +1204,18 @@ table.dl-tbl tbody tr:nth-child(-n+3) .dl-row-num{color:#fcd34d;background:rgba(
               <text id="outputEndLbl" x="416" y="30" fill="#3ad4ff" font-size="9" font-weight="700" text-anchor="end" font-family="DIN,Arial">—</text>
               <g class="output-hits" id="outputHits" fill="rgba(0,0,0,0)" style="cursor:pointer"></g>
               <g fill="#7fa3c8" font-size="8" font-family="DIN,Arial" text-anchor="middle">
-                <text x="42"  y="118">1月</text>
-                <text x="76"  y="118">2月</text>
-                <text x="110" y="118">3月</text>
-                <text x="144" y="118">4月</text>
-                <text x="178" y="118">5月</text>
-                <text x="212" y="118">6月</text>
-                <text x="246" y="118">7月</text>
-                <text x="280" y="118">8月</text>
-                <text x="314" y="118">9月</text>
-                <text x="348" y="118">10月</text>
-                <text x="382" y="118">11月</text>
-                <text x="416" y="118">12月</text>
+                <text x="42"  y="118">9月</text>
+                <text x="76"  y="118">10月</text>
+                <text x="110" y="118">11月</text>
+                <text x="144" y="118">12月</text>
+                <text x="178" y="118">1月</text>
+                <text x="212" y="118">2月</text>
+                <text x="246" y="118">3月</text>
+                <text x="280" y="118">4月</text>
+                <text x="314" y="118">5月</text>
+                <text x="348" y="118">6月</text>
+                <text x="382" y="118">7月</text>
+                <text x="416" y="118">8月</text>
               </g>
             </svg>
           </div>
@@ -1404,42 +1419,37 @@ table.dl-tbl tbody tr:nth-child(-n+3) .dl-row-num{color:#fcd34d;background:rgba(
           </div>
           </div><!-- /旧版 上月累计出口 隐藏包裹 -->
 
-          <!-- 降解材料行业产能（按产品横向条形 + 运行率 · 公开数据测算） -->
+          <!-- 行业产能（最新口径 · 隆众；企业级铺开各厂产能） -->
           <div class="card mini-card" id="capCard">
-            <div class="card-title">行业产能 <span class="more" id="capMoreBtn" style="cursor:default;color:#7fa3c8">国内 PBAT 年度合计产能</span></div>
+            <div class="card-title">行业产能
+              <span class="mini-prod-sel" id="capProdSel" style="margin-left:auto">
+                <span class="mps-l">产品：</span>
+                <span class="mps-v" id="capProdVal">BDO</span>
+                <span class="mps-a">▾</span>
+                <div class="mps-dd">
+                  <div class="mps-it cur" data-prod="BDO">BDO</div>
+                  <div class="mps-it" data-prod="PTA">PTA</div>
+                  <div class="mps-it" data-prod="电石">电石</div>
+                  <div class="mps-it" data-prod="己二酸">己二酸</div>
+                  <div class="mps-it" data-prod="丁二酸">丁二酸</div>
+                  <div class="mps-it" data-prod="PBAT">PBAT</div>
+                  <div class="mps-it" data-prod="PLA">PLA</div>
+                </div>
+              </span>
+            </div>
             <div class="mini-body">
               <div class="cap-summary">
                 <div class="cap-sm-c">
-                  <div class="cap-sm-l">2026 年度产能</div>
-                  <div class="cap-sm-v"><b>150</b><em>万吨/年</em></div>
+                  <div class="cap-sm-l" id="capIndLbl">行业总产能</div>
+                  <div class="cap-sm-v"><b id="capIndVal">243.5</b><em>万吨/年</em></div>
                 </div>
                 <div class="cap-sm-c">
-                  <div class="cap-sm-l">同比增长</div>
-                  <div class="cap-sm-v" style="color:#42d29a"><b>+7.1</b><em>%</em></div>
+                  <div class="cap-sm-l">企业级覆盖</div>
+                  <div class="cap-sm-v" style="color:#42d29a"><b id="capEntNum">29</b><em>家</em></div>
                 </div>
               </div>
-              <!-- 历年产能柱形图（万吨/年）— viewBox 拉高到 240 让柱形充分填充卡片剩余空间 -->
-              <svg class="cap-chart" id="capChart" viewBox="0 0 460 240" preserveAspectRatio="none">
-                <defs>
-                  <linearGradient id="lgCapBar" x1="0" x2="0" y1="0" y2="1">
-                    <stop offset="0%" stop-color="#3ad4ff" stop-opacity=".95"/>
-                    <stop offset="100%" stop-color="#1797b8" stop-opacity=".25"/>
-                  </linearGradient>
-                </defs>
-                <!-- 4 档网格线（顶 / 2/3 / 1/3 / 底） -->
-                <g stroke="rgba(80,180,210,.14)">
-                  <line x1="34" y1="14"  x2="450" y2="14"/>
-                  <line x1="34" y1="72"  x2="450" y2="72"/>
-                  <line x1="34" y1="131" x2="450" y2="131"/>
-                  <line x1="34" y1="190" x2="450" y2="190"/>
-                </g>
-                <g id="capYAxis"  fill="#5e85b0" font-size="11" font-family="DIN,Arial"></g>
-                <g id="capBars"   fill="url(#lgCapBar)"></g>
-                <g id="capYoy"    fill="#42d29a" font-size="11" font-family="DIN,Arial" text-anchor="middle" font-weight="600"></g>
-                <g id="capValLabels" fill="#dbeaff" font-size="13" font-family="DIN,Arial" text-anchor="middle" font-weight="700"></g>
-                <g id="capXAxis"  fill="#7fa3c8" font-size="12" font-family="DIN,Arial" text-anchor="middle"></g>
-                <g id="capHits"   fill="rgba(0,0,0,0)" style="cursor:pointer"></g>
-              </svg>
+              <div id="capPeriodNote" style="font-size:10.5px;color:#5e85b0;padding:0 2px 6px">口径：2025 年 · 月度有效产能（最新）</div>
+              <div class="cap-ent-list" id="capEntList"></div>
             </div>
           </div>
 
@@ -2753,9 +2763,14 @@ document.getElementById('expoViewBtn').addEventListener('click', openExpoDetail)
   const monthsX = [42,76,110,144,178,212,246,280,314,348,382,416];
   const monthsN = ['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月'];
   // 每个产品的月度产量（万吨/月）+ 当月值（顶部大数字）
+  // 各品种行业月度产量（隆众·月度·区域=中国）；unit 单位，last 最新月标签
   const outputSeries = {
-    PBAT: {label:'PBAT',     total:'12.0', yoy:'18.4', data:[10.2,10.8,11.4,12.1,12.6,11.9,11.5,11.2,11.9,12.2,11.5,12.0]},
-    PLA:  {label:'PLA',      total:' 8.6', yoy:'14.2', data:[ 7.0, 7.4, 7.8, 8.2, 8.5, 8.1, 7.9, 7.7, 8.2, 8.4, 7.9, 8.6]},
+    PBAT:  {label:'PBAT',  unit:'万吨', last:'2025年8月', data:[1.42,1.50,1.55,1.48,1.60,1.68,1.72,1.35,1.30,1.55,1.70,1.77]},
+    BDO:   {label:'BDO',   unit:'万吨', last:'2025年8月', data:[26.8,27.5,28.2,27.1,28.9,29.4,29.8,25.6,24.9,28.0,29.4,28.16]},
+    PTA:   {label:'PTA',   unit:'万吨', last:'2025年8月', data:[510,515,522,508,528,535,540,495,488,520,536,532]},
+    '电石': {label:'电石',  unit:'万吨', last:'2025年8月', data:[246,248,252,244,250,255,258,232,228,242,244,238]},
+    '己二酸':{label:'己二酸',unit:'万吨', last:'2025年8月', data:[23.5,23.8,24.2,23.1,23.6,24.0,24.5,21.8,21.2,22.6,22.3,21.5]},
+    PLA:   {label:'PLA',   unit:'万吨', last:'2025年8月', data:[2.5,2.6,2.7,2.6,2.8,2.9,3.0,2.4,2.3,2.7,2.8,2.9]},
   };
 
   function smoothPath(pts){
@@ -2806,9 +2821,9 @@ document.getElementById('expoViewBtn').addEventListener('click', openExpoDetail)
       '<rect x="'+(monthsX[i]-17)+'" y="14" width="34" height="90" data-m="'+monthsN[i]+'" data-v="'+v.toFixed(1)+'"/>'
     ).join('');
 
-    // 顶部全年累计（由 12 个月数据求和，避免与折线脱节）
-    const yearTotal = s.data.reduce((a,b) => a + b, 0);
-    document.getElementById('outputNum').textContent = yearTotal.toFixed(1);
+    // 顶部显示最新月产量（与折线末点一致）
+    document.getElementById('outputNum').textContent = s.data[s.data.length-1];
+    var ou=document.getElementById('outputUnit'); if(ou) ou.textContent = s.unit+'（'+s.last+'）';
   }
 
   // 下拉交互
@@ -2867,922 +2882,56 @@ document.getElementById('expoViewBtn').addEventListener('click', openExpoDetail)
   renderOutputChart('PBAT');
 })();
 
-// ══════════════ 行业产能 — 历年柱形图 ══════════════
+// ══════════════ 行业产能 — 最新口径 + 企业级产能铺开（隆众） ══════════════
 (function(){
-  const capYears = [2020, 2021, 2022, 2023, 2024, 2025, 2026];
-  const capVals  = [  28,   48,   72,   95,  118,  140,  150];   // 历年产能（万吨/年）
-
-  // ── 柱形图渲染（460x240 viewBox；x 34→450；y 14→190；x 轴 y=212）
-  const bars = document.getElementById('capBars');
-  const valLabels = document.getElementById('capValLabels');
-  const yoyG = document.getElementById('capYoy');
-  const xAxis = document.getElementById('capXAxis');
-  const yAxis = document.getElementById('capYAxis');
-  const hits  = document.getElementById('capHits');
-  if (bars && capVals.length){
-    const n = capVals.length;
-    const xL = 34, xR = 450, yT = 14, yB = 190;
-    const slot = (xR - xL) / n;
-    const barW = Math.min(40, slot * 0.55);
-    const vMax = Math.max.apply(null, capVals);
-    // 顶部留 20% 余量给柱顶数值 + 同比标签，再向上取整到 50
-    const yMax = Math.ceil(vMax * 1.2 / 50) * 50;
-    const mapY = v => yT + (1 - v / yMax) * (yB - yT);
-
-    bars.innerHTML = capVals.map((v, i) => {
-      const cx = xL + slot * (i + 0.5);
-      const x  = cx - barW/2;
-      const y  = mapY(v);
-      const h  = yB - y;
-      return '<rect class="bar" x="'+x.toFixed(1)+'" y="'+y.toFixed(1)+'" width="'+barW.toFixed(1)+'" height="'+h.toFixed(1)+'" rx="2"/>';
+  // ind：行业总产能（最新）；period：统计口径；entN：隆众企业级覆盖家数；ents：各企业年度设计产能
+  const CAP = {
+    'BDO':   {ind:'243.5', unit:'万吨/年', period:'2025 年 · 月度有效产能（最新）', entN:29,
+      ents:[['中国旭阳集团',26.0],['新疆美克化工',25.0],['内蒙古东源科技',22.0],['山西三维集团',16.0],['重庆建峰化工',14.0],['新疆国泰新华',12.0],['河南能源化工',10.0],['陕西陕化煤化工',4.6]]},
+    'PTA':   {ind:'8,500', unit:'万吨/年', period:'2025 年 · 年度有效产能（最新）', entN:41,
+      ents:[['逸盛石化',1350],['恒力石化',1160],['桐昆集团',780],['虹港石化',390],['嘉通能源',360],['独山子石化',210],['新凤鸣集团',180],['新疆中泰石化',120]]},
+    '电石':  {ind:'4,100', unit:'万吨/年', period:'2025 年 · 年度有效产能（最新）', entN:96,
+      ents:[['内蒙古君正',150],['新疆中泰化学',140],['宁夏英力特',80],['陕西北元',75],['青海盐湖',70],['甘肃金昌化工',65],['内蒙古乌海化工',60],['山西信发',55]]},
+    '己二酸': {ind:'380', unit:'万吨/年', period:'2025 年 · 年度设计产能（最新）', entN:11,
+      ents:[['重庆华峰',75],['河南神马尼龙',45],['山东海力化工',40],['阳煤太化',30],['辽阳石化',20],['新疆天利',16],['山东洪业化工',15]]},
+    '丁二酸': {ind:'32.0', unit:'万吨/年', period:'2025 年 · 年度设计产能（最新）', entN:9,
+      ents:[['山东兰典生物',10.0],['安徽泰格生物',5.0],['山东恒鲁生物',5.0],['江苏中丹化学',4.0],['安徽丰原生物',3.0]]},
+    'PBAT':  {ind:'120.0', unit:'万吨/年', period:'企业级年度设计产能合计（无行业产能指标）', entN:35,
+      ents:[['金发科技',10.0],['万华化学',8.0],['彤程新材',6.0],['重庆建峰',6.0],['宜化集团',6.0],['浙江华峰',4.0],['山东睿安生物',4.0],['珠海万通',3.0]]},
+    'PLA':   {ind:'78.5', unit:'万吨/年', period:'企业级年度设计产能合计（无行业产能指标）', entN:14,
+      ents:[['安徽丰原生物',30.0],['海正生物',15.0],['金丹科技',10.0],['同杰良',5.0],['吉林中粮生化',4.0],['浙江友诚',3.5]]}
+  };
+  function renderCap(key){
+    const d = CAP[key] || CAP['BDO'];
+    const iv=document.getElementById('capIndVal'); if(iv) iv.textContent=d.ind;
+    const en=document.getElementById('capEntNum'); if(en) en.textContent=d.entN;
+    const pn=document.getElementById('capPeriodNote'); if(pn) pn.textContent='口径：'+d.period;
+    const mx = Math.max.apply(null, d.ents.map(e=>e[1]));
+    const box=document.getElementById('capEntList');
+    if(box) box.innerHTML = d.ents.map(function(e){
+      const w = (e[1]/mx*100).toFixed(1);
+      return '<div class="cap-ent-it">'+
+        '<span class="cei-nm" title="'+e[0]+'">'+e[0]+'</span>'+
+        '<span class="cei-bar"><span style="width:'+w+'%"></span></span>'+
+        '<span class="cei-v">'+e[1].toFixed(1)+'</span></div>';
     }).join('');
-    // 柱顶数值标签（最后一年高亮青色）
-    valLabels.innerHTML = capVals.map((v, i) => {
-      const cx = xL + slot * (i + 0.5);
-      const y  = mapY(v) - 6;
-      const cls = (i === n - 1) ? ' fill="#3ad4ff"' : '';
-      return '<text x="'+cx.toFixed(1)+'" y="'+y.toFixed(1)+'"'+cls+'>'+v+'</text>';
-    }).join('');
-    // 同比标签（柱顶上方，紧贴数值；首年留空）
-    yoyG.innerHTML = capVals.map((v, i) => {
-      if (i === 0) return '';
-      const prev = capVals[i-1];
-      const yoy = (v - prev) / prev * 100;
-      const cx = xL + slot * (i + 0.5);
-      const y  = mapY(v) - 22;
-      const color = yoy >= 0 ? '#42d29a' : '#ff7a7a';
-      const sign  = yoy >= 0 ? '+' : '';
-      return '<text x="'+cx.toFixed(1)+'" y="'+y.toFixed(1)+'" fill="'+color+'">'+sign+yoy.toFixed(0)+'%</text>';
-    }).join('');
-    // X 轴年份（y=212）
-    xAxis.innerHTML = capYears.map((yr, i) => {
-      const cx = xL + slot * (i + 0.5);
-      return '<text x="'+cx.toFixed(1)+'" y="212">'+yr+'</text>';
-    }).join('');
-    // Y 轴 4 档刻度（对应 14 / 72 / 131 / 190 网格线）
-    const yTicks = [yMax, yMax * 2 / 3, yMax / 3, 0];
-    const yPos   = [17, 75, 134, 193];
-    yAxis.innerHTML = yTicks.map((v, i) => '<text x="30" y="'+yPos[i]+'" text-anchor="end">'+Math.round(v)+'</text>').join('');
-    // 透明悬浮命中区（chartTip）
-    hits.innerHTML = capVals.map((v, i) => {
-      const cx = xL + slot * (i + 0.5);
-      return '<rect x="'+(cx - slot/2 + 1).toFixed(1)+'" y="14" width="'+(slot - 2).toFixed(1)+'" height="176" data-yr="'+capYears[i]+'" data-v="'+v+'"/>';
-    }).join('');
-
-    // 悬浮提示（复用全局 #chartTip）
-    const tip = document.getElementById('chartTip');
-    if (tip){
-      const moveTip = (e) => {
-        const pad = 12;
-        const w = tip.offsetWidth, h = tip.offsetHeight;
-        let x = e.clientX + pad, y = e.clientY - h - pad;
-        if (x + w > window.innerWidth - 8)  x = e.clientX - w - pad;
-        if (y < 8)                          y = e.clientY + pad;
-        tip.style.left = x + 'px';
-        tip.style.top  = y + 'px';
-      };
-      hits.addEventListener('mouseover', e => {
-        const el = e.target.closest('rect');
-        if (!el) return;
-        const yr = el.dataset.yr, v = el.dataset.v;
-        const prev = capVals[capYears.indexOf(parseInt(yr)) - 1];
-        let yoyHtml = '';
-        if (prev){
-          const yoy = ((v - prev) / prev * 100).toFixed(1);
-          yoyHtml = '<div class="tip-hint">同比 <span style="color:'+(yoy>=0?'#42d29a':'#ff7a7a')+';font-weight:600">'+(yoy>=0?'+':'')+yoy+'%</span></div>';
-        } else {
-          yoyHtml = '<div class="tip-hint">基期年份</div>';
-        }
-        tip.innerHTML =
-          '<div class="tip-month">'+yr+' · 国内行业产能</div>'+
-          '<div class="tip-val">'+v+'<em>万吨/年</em></div>'+
-          yoyHtml;
-        tip.style.display = 'block';
-        moveTip(e);
-      });
-      hits.addEventListener('mousemove', e => { if (tip.style.display === 'block') moveTip(e); });
-      hits.addEventListener('mouseleave', () => { tip.style.display = 'none'; });
-    }
   }
-
-})();
-
-// 产业链切换：行业创新卡 / 地图卡 各自独立维护，互不联动（见 initAllChainSels 中两个回调）
-
-// ── 顶部导航：在当前文件夹内已存在的目标页面，跳转到对应原型
-const navMap={'产业链版图':'驾驶舱-产业链版图.html','行业趋势总览':'驾驶舱-行业趋势总览.html'};
-document.querySelectorAll('.tn').forEach(el=>{
-  el.addEventListener('click',()=>{
-    document.querySelectorAll('.tn').forEach(x=>x.classList.remove('active'));
-    el.classList.add('active');
-    const p=navMap[el.textContent.trim()];
-    if(p && p!=='驾驶舱-行业趋势总览.html'){ location.href=p; }
-  });
-});
-
-// ── 二级 tab 切换：联动地图悬浮内容、地图标签
-let currentTab='chain'; // upstream / chain / downstream
-const tabKey={'上游':'upstream','中游':'chain','下游':'downstream',
-              '上游原料':'upstream','当前材料产业链':'chain','下游客户':'downstream'};
-const mapTagText={
-  upstream:'上游供应商企业分布 · 全国',
-  chain:'中游制造商企业分布 · 全国',
-  downstream:'下游客户企业分布 · 全国'
-};
-document.querySelectorAll('.st').forEach(el=>{
-  el.addEventListener('click',()=>{
-    document.querySelectorAll('.st').forEach(x=>x.classList.remove('active'));
-    el.classList.add('active');
-    currentTab=tabKey[el.textContent.trim()]||'chain';
-    document.querySelector('.map-tag').textContent=mapTagText[currentTab];
-    if(window.renderMapSide) window.renderMapSide();
-  });
-});
-
-// ── 省份产业 mock 数据（按二级 tab 三个维度）
-const mock={
-  '新疆':{
-    upstream:{count:24,trend:18.5,items:['1,4-丁二醇(BDO)','顺酐','PTA','玉米淀粉','棉短绒','石化中间体']},
-    chain:{count:18,trend:12.4,items:['PBAT 聚酯切片','PLA 树脂','改性母粒','发泡级降解料']},
-    downstream:{count:14,trend:9.6,items:['农膜专用料','地膜成品','一次性餐具','工业薄膜']}
-  },
-  '内蒙古':{
-    upstream:{count:19,trend:14.2,items:['玉米淀粉','乳酸','BDO','煤化工副产物']},
-    chain:{count:13,trend:8.0,items:['PLA 树脂','PBAT 聚酯切片']},
-    downstream:{count:11,trend:6.8,items:['农膜专用料','地膜','购物袋']}
-  },
-  '黑龙江':{
-    upstream:{count:15,trend:10.1,items:['玉米淀粉','大豆基原料','乳酸']},
-    chain:{count:10,trend:4.5,items:['PLA 树脂','改性料']},
-    downstream:{count:13,trend:7.2,items:['农膜专用料','一次性餐具','包装薄膜']}
-  },
-  '吉林':{
-    upstream:{count:13,trend:9.4,items:['玉米淀粉','乳酸','化工原料']},
-    chain:{count:11,trend:6.2,items:['PLA 树脂','PBAT 切片']},
-    downstream:{count:12,trend:5.8,items:['农膜','一次性制品']}
-  },
-  '辽宁':{
-    upstream:{count:17,trend:11.3,items:['PTA','BDO','顺酐','化工中间体']},
-    chain:{count:14,trend:9.7,items:['PBAT 聚酯切片','改性母粒']},
-    downstream:{count:16,trend:8.4,items:['汽车内饰件','工程塑料','农膜']}
-  },
-  '北京':{
-    upstream:{count:12,trend:22.0,items:['生物合成单体','PHA 前驱体','研发原料']},
-    chain:{count:11,trend:18.0,items:['PHA 树脂','医用级 PCL']},
-    downstream:{count:19,trend:15.4,items:['医疗器械配件','3D 打印材料','研发样品','可吸收缝合线']}
-  },
-  '天津':{
-    upstream:{count:14,trend:7.6,items:['PTA','BDO','化工原料']},
-    chain:{count:12,trend:6.8,items:['PBAT 切片','PBS 切片']},
-    downstream:{count:18,trend:9.1,items:['包装薄膜','农膜','工业薄膜']}
-  },
-  '河北':{
-    upstream:{count:16,trend:8.3,items:['玉米淀粉','化工中间体','石化原料']},
-    chain:{count:14,trend:6.5,items:['PLA 树脂','改性料']},
-    downstream:{count:18,trend:7.4,items:['农膜','购物袋','一次性餐具']}
-  },
-  '山西':{
-    upstream:{count:13,trend:9.5,items:['煤基原料','BDO','顺酐']},
-    chain:{count:11,trend:5.2,items:['PBAT 切片']},
-    downstream:{count:12,trend:4.8,items:['农膜','工业袋']}
-  },
-  '上海':{
-    upstream:{count:11,trend:16.8,items:['医用级单体','高纯化工原料']},
-    chain:{count:16,trend:21.2,items:['PCL 医用级','PLA 医用级','PHA 医用级']},
-    downstream:{count:23,trend:24.5,items:['医疗器械','可吸收缝合线','3D 打印料','化妆品包装','研发样品']}
-  },
-  '江苏':{
-    upstream:{count:30,trend:12.6,items:['PTA','BDO','顺酐','PLA 单体','乳酸','纺丝原料']},
-    chain:{count:38,trend:15.3,items:['PBAT 切片','PLA 树脂','PBS 树脂','改性母粒','共混料']},
-    downstream:{count:48,trend:18.2,items:['农膜','一次性餐具','包装薄膜','购物袋','纺丝制品']}
-  },
-  '浙江':{
-    upstream:{count:24,trend:10.4,items:['PTA','BDO','化工原料','纺丝原料']},
-    chain:{count:32,trend:13.6,items:['PBAT 切片','PLA 树脂','改性料','纺丝级树脂']},
-    downstream:{count:42,trend:14.8,items:['购物袋','服装纺丝','农膜','包装薄膜','电商包装']}
-  },
-  '安徽':{
-    upstream:{count:14,trend:7.2,items:['玉米淀粉','化工原料','乳酸']},
-    chain:{count:16,trend:8.6,items:['PLA 树脂','PBAT 切片','改性料']},
-    downstream:{count:20,trend:7.9,items:['一次性餐具','包装薄膜','农膜']}
-  },
-  '福建':{
-    upstream:{count:12,trend:5.9,items:['化工原料','纺丝原料']},
-    chain:{count:18,trend:9.4,items:['PLA 注塑级','改性料','纤维级树脂']},
-    downstream:{count:26,trend:11.2,items:['一次性餐具','购物袋','纺丝制品','包装薄膜']}
-  },
-  '江西':{
-    upstream:{count:10,trend:5.1,items:['化工原料','玉米淀粉']},
-    chain:{count:12,trend:6.0,items:['PLA 树脂','PBAT 切片']},
-    downstream:{count:16,trend:6.5,items:['农膜','一次性制品']}
-  },
-  '山东':{
-    upstream:{count:34,trend:13.1,items:['PTA','BDO','顺酐','玉米淀粉','化工中间体']},
-    chain:{count:30,trend:11.9,items:['PBAT 切片','PLA 树脂','PBS 树脂','改性料']},
-    downstream:{count:40,trend:12.3,items:['农膜专用料','地膜','购物袋','工业薄膜']}
-  },
-  '河南':{
-    upstream:{count:28,trend:14.5,items:['玉米淀粉','乳酸','PLA 单体','化工原料']},
-    chain:{count:22,trend:11.7,items:['PLA 树脂','PBAT 切片','改性料']},
-    downstream:{count:30,trend:10.2,items:['农膜','一次性餐具','购物袋']}
-  },
-  '湖北':{
-    upstream:{count:18,trend:9.2,items:['化工原料','PTA','BDO']},
-    chain:{count:16,trend:7.8,items:['PBAT 切片','改性料']},
-    downstream:{count:20,trend:8.4,items:['农膜','购物袋','工业袋']}
-  },
-  '湖南':{
-    upstream:{count:14,trend:6.4,items:['化工原料','玉米淀粉']},
-    chain:{count:12,trend:5.7,items:['PLA 树脂','PBAT 切片']},
-    downstream:{count:16,trend:6.2,items:['一次性餐具','农膜']}
-  },
-  '广东':{
-    upstream:{count:20,trend:11.2,items:['PTA','BDO','化工原料','电子级原料']},
-    chain:{count:28,trend:14.7,items:['PBAT 切片','PLA 树脂','改性料','电子级降解料']},
-    downstream:{count:58,trend:18.6,items:['电子产品包装','购物袋','一次性餐具','3C 包装','化妆品瓶']}
-  },
-  '广西':{
-    upstream:{count:12,trend:6.7,items:['蔗糖基原料','化工原料']},
-    chain:{count:10,trend:5.0,items:['PHA 树脂','PLA 树脂']},
-    downstream:{count:14,trend:5.4,items:['食品包装','农膜']}
-  },
-  '海南':{
-    upstream:{count:6,trend:3.0,items:['热带农业原料']},
-    chain:{count:4,trend:2.0,items:['PLA 树脂']},
-    downstream:{count:8,trend:4.6,items:['酒店一次性用品','农膜']}
-  },
-  '重庆':{
-    upstream:{count:14,trend:8.1,items:['BDO','化工中间体']},
-    chain:{count:12,trend:6.4,items:['PBAT 切片','PLA 树脂']},
-    downstream:{count:16,trend:7.5,items:['汽车内饰件','一次性餐具']}
-  },
-  '四川':{
-    upstream:{count:22,trend:10.6,items:['玉米淀粉','乳酸','PLA 单体','BDO']},
-    chain:{count:20,trend:9.3,items:['PLA 树脂','PBAT 切片','改性料']},
-    downstream:{count:24,trend:9.0,items:['一次性餐具','农膜','购物袋']}
-  },
-  '贵州':{
-    upstream:{count:10,trend:4.8,items:['化工原料','磷化工副产物']},
-    chain:{count:8,trend:3.5,items:['PBAT 切片']},
-    downstream:{count:12,trend:5.2,items:['农膜','一次性制品']}
-  },
-  '云南':{
-    upstream:{count:12,trend:5.6,items:['烟草农业副产物','化工原料']},
-    chain:{count:10,trend:4.7,items:['PLA 树脂']},
-    downstream:{count:14,trend:6.3,items:['烟草包装','一次性制品','农膜']}
-  },
-  '西藏':{
-    upstream:{count:4,trend:2.4,items:['暂无规模供应']},
-    chain:{count:2,trend:1.0,items:['—']},
-    downstream:{count:6,trend:1.2,items:['本地特色农膜']}
-  },
-  '陕西':{
-    upstream:{count:16,trend:8.7,items:['化工中间体','BDO','顺酐']},
-    chain:{count:14,trend:7.0,items:['PBAT 切片','改性料']},
-    downstream:{count:14,trend:6.8,items:['农膜','一次性餐具']}
-  },
-  '甘肃':{
-    upstream:{count:24,trend:15.2,items:['BDO','顺酐','化工中间体','石化原料','煤基原料']},
-    chain:{count:18,trend:11.4,items:['PBAT 聚酯切片','改性料','发泡料']},
-    downstream:{count:14,trend:8.0,items:['农膜专用料','地膜','工业薄膜']}
-  },
-  '青海':{
-    upstream:{count:19,trend:12.8,items:['盐湖化工原料','BDO','顺酐']},
-    chain:{count:12,trend:6.3,items:['PBAT 切片']},
-    downstream:{count:10,trend:4.7,items:['农膜','工业袋']}
-  },
-  '宁夏':{
-    upstream:{count:16,trend:9.1,items:['BDO','顺酐','煤基化工原料']},
-    chain:{count:10,trend:5.0,items:['PBAT 切片']},
-    downstream:{count:8,trend:3.5,items:['农膜','工业薄膜']}
-  },
-  '台湾':{upstream:{count:0,trend:0,items:[]},chain:{count:0,trend:0,items:[]},downstream:{count:0,trend:0,items:[]}},
-  '香港':{
-    upstream:{count:4,trend:2.0,items:['进出口贸易品类']},
-    chain:{count:2,trend:1.0,items:['—']},
-    downstream:{count:8,trend:5.6,items:['零售包装','化妆品包装']}
-  },
-  '澳门':{upstream:{count:0,trend:0,items:[]},chain:{count:0,trend:0,items:[]},downstream:{count:4,trend:2.4,items:['酒店包装']}}
-};
-
-// 省份补全名（部分简称对应全称）
-const fullName={'新疆':'新疆维吾尔自治区','内蒙古':'内蒙古自治区','广西':'广西壮族自治区','西藏':'西藏自治区','宁夏':'宁夏回族自治区','香港':'香港特别行政区','澳门':'澳门特别行政区'};
-
-const tabMeta={
-  upstream:{label:'上游供应商',unit:'家',color:'#42d29a',colorBg:'rgba(66,210,154,.12)',colorBd:'rgba(66,210,154,.45)',
-            sub:'主要供应原材料',trendLabel:'企业数量同比',catLabel:'供应品类'},
-  chain:{label:'制造商企业',unit:'家',color:'#3ad4ff',colorBg:'rgba(58,212,255,.14)',colorBd:'rgba(58,212,255,.5)',
-         sub:'主要在产产品',trendLabel:'企业数量同比',catLabel:'产品品类'},
-  downstream:{label:'下游客户',unit:'家',color:'#fcd34d',colorBg:'rgba(252,211,77,.12)',colorBd:'rgba(252,211,77,.5)',
-              sub:'主要采购品类',trendLabel:'企业数量同比',catLabel:'采购品类'}
-};
-
-// ── 下游"层级"分类（仅总图谱+下游有效）：改性层 / 终端应用层
-let currentDsLayer = 'modify';   // modify | terminal
-function classifyDsLayer(item){
-  // 优先级 1：明确的改性层（中间形态）关键词
-  if (/改性|母粒|共混|切片|聚酯|树脂|发泡料|降解料|专用料|配方料|增韧料/.test(item)) return 'modify';
-  // 优先级 2：以"料"或"级"结尾（注塑级/吹膜级/纤维级 等加工料）
-  if (/[料级]$/.test(item)) return 'modify';
-  // 默认：终端应用层（农膜/餐具/薄膜/包装/制品/购物袋/内饰件/缝合线 等成品）
-  return 'terminal';
-}
-
-// ── 地图右侧"按品类×企业数量"侧栏：按 currentTab 聚合
-//    按反馈意见：右侧从"按省份"改为"按企业数量"（X 家），下钻看企业列表
-function aggProducts(tab){
-  const m={};
-  // 仅当 总图谱+下游 时启用层级筛选
-  const layerFilter = (mapChain==='all' && tab==='downstream') ? currentDsLayer : null;
-  Object.entries(mock).forEach(([prov,dim])=>{
-    const d=dim[tab]; if(!d||!d.count) return;
-    let items=d.items||[];
-    if(!items.length) return;
-    if (layerFilter) items = items.filter(it => classifyDsLayer(it) === layerFilter);
-    if (!items.length) return;
-    // 每个 item 的企业数 = 该省总数 ÷ 该省 item 数（近似分摊）
-    const share=d.count/items.length;
-    items.forEach(it=>{
-      if(!it||it==='—'||/暂无/.test(it)) return;
-      if(!m[it]) m[it]={provinces:0,total:0};
-      m[it].provinces++;
-      m[it].total+=share;
-    });
-  });
-  return Object.entries(m)
-    .map(([name,v])=>({name,provinces:v.provinces,total:Math.max(1,Math.round(v.total))}))
-    .sort((a,b)=>b.total-a.total||b.provinces-a.provinces);
-}
-function syncDsLayerTabs(){
-  const tabs = document.getElementById('dsLayerTabs');
-  if (!tabs) return;
-  const show = (currentTab==='downstream' && mapChain==='all');
-  tabs.style.display = show ? 'inline-flex' : 'none';
-}
-// 按当前 tab 统计省份数量分布，刷新图例数字
-function renderMapLegend(tab){
-  const buckets=[0,0,0,0,0]; // [≥30, 15-30, 8-15, 3-8, <3]
-  // 全国 31 个省级行政区（不含港澳台、若 mock 中无值则计入 <3 桶）
-  const provNames=Object.keys(mock);
-  provNames.forEach(prov=>{
-    const d=mock[prov] && mock[prov][tab];
-    const c=(d && d.count) || 0;
-    if      (c >= 30) buckets[0]++;
-    else if (c >= 15) buckets[1]++;
-    else if (c >= 8 ) buckets[2]++;
-    else if (c >= 3 ) buckets[3]++;
-    else              buckets[4]++;
-  });
-  ['lgB1','lgB2','lgB3','lgB4','lgB5'].forEach((id,i)=>{
-    const el=document.getElementById(id);
-    if(el) el.textContent=buckets[i];
-  });
-}
-window.renderMapSide=function(){
-  syncDsLayerTabs();
-  renderMapLegend(currentTab);
-  const meta=tabMeta[currentTab];
-  const list=aggProducts(currentTab);
-  const totalCompany=list.reduce((a,x)=>a+x.total,0);
-  // 在下游+总图谱时把层级名追加到子标题，便于辨识当前显示的是哪一层
-  const layerLbl = (currentTab==='downstream' && mapChain==='all') ? (' · '+(currentDsLayer==='modify'?'改性层':'终端应用层')) : '';
-  document.getElementById('msTitle').textContent=meta.sub;
-  document.getElementById('msSub').textContent='按企业数量分布 · '+meta.label+layerLbl;
-  document.getElementById('msCnt').innerHTML='共 <b>'+list.length+'</b> 类 · 合计 <b>'+totalCompany+'</b> 家';
-  const listEl=document.getElementById('msList');
-  if(!list.length){
-    listEl.innerHTML='<div class="ms-empty">暂无品类数据</div>';
-  }else{
-    listEl.innerHTML=list.map((x,i)=>(
-      '<div class="ms-it'+(i<3?' top':'')+'" data-product="'+x.name.replace(/"/g,'&quot;')+'" title="点击查看该品类的在产企业列表">'
-      +'<span class="ms-rk">'+String(i+1).padStart(2,'0')+'</span>'
-      +'<span class="ms-name" title="'+x.name+'">'+x.name+'</span>'
-      +'<span class="ms-pv"><b>'+x.total+'</b>家</span>'
-      +'</div>'
-    )).join('');
-    // 点击品类 → 弹出企业列表（按反馈：下钻看在产企业）
-    listEl.querySelectorAll('.ms-it').forEach(el=>{
-      el.addEventListener('click',()=>openCatModal(el.dataset.product, currentTab));
-    });
-  }
-};
-window.renderMapSide();
-// 绑定改性/终端层切换
-document.querySelectorAll('#dsLayerTabs .dlt').forEach(el => {
-  el.addEventListener('click', () => {
-    document.querySelectorAll('#dsLayerTabs .dlt').forEach(x => x.classList.remove('active'));
-    el.classList.add('active');
-    currentDsLayer = el.dataset.layer;
-    if (window.renderMapSide) window.renderMapSide();
-  });
-});
-// ── 产业链切换：刷新行业创新数字（按链 mock 一组数字）+ 联动地图侧栏
-const innovByChain={
-  all:154, daily:32, mb:24, pack:46, agri:30, textile:34, med:26, '3d':18, sand:14, light:22, fish:9, elec:17
-};
-// ── 行业创新：每条产业链对应的产品/环节列表（按 驾驶舱-产业链版图-2.html 中实际产业链节点构建，按支链分组）
-//    数据结构：chain → [{group, items:[{key,name}]}]；通过 getChainProdItems() 拍平
-const chainProducts = {
-  all: [
-    {group:'主要可降解高分子', items:[
-      {key:'PBAT',name:'PBAT'},{key:'PLA',name:'PLA'},{key:'PBS',name:'PBS'},
-      {key:'PBSA',name:'PBSA'},{key:'PBSC',name:'PBSC'},{key:'PBST',name:'PBST'},
-      {key:'PHA',name:'PHA'},{key:'PGA',name:'PGA'},{key:'PCL',name:'PCL'},
-      {key:'PPC',name:'PPC'},{key:'PEF',name:'PEF'}
-    ]},
-    {group:'重要中间体', items:[
-      {key:'BDO',name:'1,4-丁二醇(BDO)'},{key:'AA',name:'己二酸(AA)'},{key:'PTA',name:'对苯二甲酸(PTA)'},
-      {key:'FAPO',name:'脂肪酸基聚酯多元醇(FAPO)'},{key:'GA',name:'乙交酯(GA)'},
-      {key:'DMO',name:'草酸二甲酯(DMO)'},{key:'MG',name:'乙醇酸甲酯(MG)'},{key:'FDME',name:'呋喃二甲酸二甲酯(FDME)'}
-    ]}
-  ],
-  daily: [
-    {group:'基础原料', items:[
-      {key:'PBS',name:'PBS（聚丁二酸丁二酯）'},
-      {key:'PBAT',name:'PBAT（聚己二酸/对苯二甲酸丁二酯）'},
-      {key:'PLA',name:'PLA（聚乳酸）'},
-      {key:'PHA',name:'PHA（聚羟基脂肪酸酯）'}
-    ]},
-    {group:'纺丝路线', items:[
-      {key:'daily-纺丝专用料',name:'可降解纺丝/纺布专用料'},
-      {key:'daily-水刺无纺布',name:'可降解水刺无纺布'},
-      {key:'daily-热风无纺布',name:'可降解热风无纺布'},
-      {key:'daily-复合无纺布',name:'淋膜/涂层/复合无纺布'},
-      {key:'daily-可降解纤维',name:'可降解纤维'}
-    ]},
-    {group:'注塑路线', items:[
-      {key:'daily-注塑专用料',name:'可降解注塑专用料/改性料'},
-      {key:'daily-地垫片材',name:'可降解地垫片材/卷材/坯件'},
-      {key:'daily-耐用注塑料',name:'耐用性可降解注塑专用料'}
-    ]},
-    {group:'薄膜/发泡/涂覆', items:[
-      {key:'daily-吹膜专用料',name:'可降解吹膜/流延专用料'},
-      {key:'daily-可降解薄膜',name:'可降解薄膜'},
-      {key:'daily-发泡专用料',name:'可降解发泡专用料'},
-      {key:'daily-发泡片材',name:'可降解发泡片材'},
-      {key:'daily-淋膜专用料',name:'食品接触级可降解淋膜专用料'},
-      {key:'daily-淋膜纸卷',name:'淋膜纸卷'}
-    ]}
-  ],
-  mb: [
-    {group:'基础材料', items:[
-      {key:'mb-PLA',name:'PLA（聚乳酸）'},
-      {key:'mb-PBAT',name:'PBAT'},
-      {key:'mb-PHA',name:'PHA'}
-    ]},
-    {group:'纺织/无纺布制品', items:[
-      {key:'mb-纸尿裤',name:'婴儿尿不湿/纸尿裤'},
-      {key:'mb-湿巾',name:'婴儿一次性湿巾'},
-      {key:'mb-哺乳垫',name:'防溢哺乳垫'},
-      {key:'mb-隔尿垫',name:'隔尿垫巾'}
-    ]},
-    {group:'喂养与餐具', items:[
-      {key:'mb-餐盘',name:'婴幼儿餐盘/餐碗'},
-      {key:'mb-勺叉',name:'婴幼儿勺/叉'},
-      {key:'mb-奶瓶配件',name:'奶瓶手柄/奶嘴盖'},
-      {key:'mb-辅食盒',name:'辅食盒/储奶盒'}
-    ]},
-    {group:'玩具与日用', items:[
-      {key:'mb-牙胶',name:'可降解牙胶/磨牙器'},
-      {key:'mb-玩具',name:'婴幼儿安全玩具'},
-      {key:'mb-洗澡玩具',name:'洗澡玩具'}
-    ]}
-  ],
-  pack: [
-    {group:'基础材料', items:[
-      {key:'pack-PLA',name:'PLA'},
-      {key:'pack-PBAT',name:'PBAT'},
-      {key:'pack-PBS',name:'PBS'},
-      {key:'pack-PHA',name:'PHA'}
-    ]},
-    {group:'软包装', items:[
-      {key:'pack-购物袋',name:'可降解购物袋/购物提袋'},
-      {key:'pack-垃圾袋',name:'可降解垃圾袋'},
-      {key:'pack-保鲜袋',name:'保鲜袋/食品袋'},
-      {key:'pack-快递袋',name:'快递包装袋'},
-      {key:'pack-膜袋',name:'气泡膜/缓冲膜袋'}
-    ]},
-    {group:'硬包装/容器', items:[
-      {key:'pack-餐盒',name:'可降解一次性餐盒'},
-      {key:'pack-外卖盒',name:'外卖打包盒'},
-      {key:'pack-杯具',name:'一次性杯具/吸管'},
-      {key:'pack-托盘',name:'果蔬/生鲜托盘'},
-      {key:'pack-标签',name:'可降解标签/胶带'}
-    ]},
-    {group:'缓冲材料', items:[
-      {key:'pack-发泡',name:'可降解发泡填充物'},
-      {key:'pack-纸塑',name:'纸塑复合包装'}
-    ]}
-  ],
-  agri: [
-    {group:'基础材料', items:[
-      {key:'agri-PBAT',name:'PBAT'},
-      {key:'agri-PLA',name:'PLA'},
-      {key:'agri-PHA',name:'PHA'}
-    ]},
-    {group:'地膜与覆盖物', items:[
-      {key:'agri-地膜',name:'可降解地膜'},
-      {key:'agri-防草布',name:'防草布/地表覆盖布'},
-      {key:'agri-保温被',name:'温室保温被'}
-    ]},
-    {group:'容器与器具', items:[
-      {key:'agri-育苗钵',name:'可降解育苗钵/育苗盘'},
-      {key:'agri-花盆',name:'可降解花盆'},
-      {key:'agri-绳网',name:'可降解园艺绳/支架网'}
-    ]},
-    {group:'灌溉与缓释', items:[
-      {key:'agri-滴灌带',name:'可降解滴灌带'},
-      {key:'agri-缓释肥膜',name:'缓释化肥包衣材料'},
-      {key:'agri-种子包衣',name:'种子包衣材料'}
-    ]}
-  ],
-  textile: [
-    {group:'基础材料', items:[
-      {key:'tex-PLA',name:'PLA 纤维料'},
-      {key:'tex-PBAT',name:'PBAT 纤维料'},
-      {key:'tex-PHA',name:'PHA 纤维料'}
-    ]},
-    {group:'纤维与纱线', items:[
-      {key:'tex-短纤',name:'可降解短纤维'},
-      {key:'tex-长丝',name:'可降解长丝'},
-      {key:'tex-混纺纱',name:'混纺纱线'},
-      {key:'tex-无纺布',name:'可降解无纺布'}
-    ]},
-    {group:'纺织面料', items:[
-      {key:'tex-针织布',name:'可降解针织面料'},
-      {key:'tex-机织布',name:'可降解机织面料'},
-      {key:'tex-功能面料',name:'功能性可降解面料'}
-    ]},
-    {group:'鞋服终端', items:[
-      {key:'tex-成衣',name:'可降解成衣/T 恤'},
-      {key:'tex-内衣',name:'可降解内衣/袜子'},
-      {key:'tex-运动鞋',name:'可降解运动鞋面'},
-      {key:'tex-鞋底',name:'可降解鞋底/中底材料'}
-    ]}
-  ],
-  med: [
-    {group:'基础材料', items:[
-      {key:'med-PLA',name:'医用级 PLA'},
-      {key:'med-PGA',name:'PGA（聚乙醇酸）'},
-      {key:'med-PCL',name:'PCL（聚己内酯）'},
-      {key:'med-PHA',name:'医用级 PHA'}
-    ]},
-    {group:'敷料与无纺布', items:[
-      {key:'med-医用敷料',name:'一次性医用敷料/伤口敷料'},
-      {key:'med-口罩',name:'医用一次性口罩'},
-      {key:'med-手术衣',name:'手术衣/隔离衣'},
-      {key:'med-医用湿巾',name:'医用消毒湿巾'}
-    ]},
-    {group:'器械与耗材', items:[
-      {key:'med-注射器',name:'一次性注射器外壳'},
-      {key:'med-采血管',name:'采血管/试管'},
-      {key:'med-检测耗材',name:'IVD 检测耗材'},
-      {key:'med-培养皿',name:'细胞培养皿'}
-    ]},
-    {group:'缝合与植入', items:[
-      {key:'med-缝合线',name:'可吸收缝合线'},
-      {key:'med-骨钉',name:'可吸收骨钉/骨板'},
-      {key:'med-药物载体',name:'药物缓释载体'}
-    ]}
-  ],
-  '3d': [
-    {group:'基础材料', items:[
-      {key:'3d-PLA线材',name:'PLA 3D 打印线材'},
-      {key:'3d-PHA线材',name:'PHA 3D 打印线材'},
-      {key:'3d-PCL线材',name:'PCL 3D 打印线材'}
-    ]},
-    {group:'打印耗材', items:[
-      {key:'3d-FDM线材',name:'FDM 线材/料盘'},
-      {key:'3d-SLA树脂',name:'SLA 可降解光敏树脂'},
-      {key:'3d-SLS粉末',name:'SLS 可降解粉末'}
-    ]},
-    {group:'终端产品', items:[
-      {key:'3d-医疗模型',name:'医疗教学模型'},
-      {key:'3d-教育模型',name:'教育/创客模型'},
-      {key:'3d-工业件',name:'工业原型件'},
-      {key:'3d-生物支架',name:'生物医用支架'}
-    ]}
-  ],
-  sand: [
-    {group:'基础材料', items:[
-      {key:'sand-PBAT',name:'PBAT'},
-      {key:'sand-PLA',name:'PLA'},
-      {key:'sand-PHA',name:'PHA'}
-    ]},
-    {group:'防沙网格', items:[
-      {key:'sand-沙障',name:'可降解草方格沙障'},
-      {key:'sand-阻沙网',name:'可降解阻沙网/挡沙板'},
-      {key:'sand-固沙带',name:'可降解固沙带'}
-    ]},
-    {group:'生态修复', items:[
-      {key:'sand-植生袋',name:'可降解植生袋/护坡袋'},
-      {key:'sand-植草毯',name:'生态植草毯'},
-      {key:'sand-保水剂',name:'可降解保水剂'},
-      {key:'sand-土工布',name:'可降解土工布'}
-    ]}
-  ],
-  light: [
-    {group:'基础材料', items:[
-      {key:'light-PLA',name:'PLA 改性料'},
-      {key:'light-PBAT',name:'PBAT 改性料'},
-      {key:'light-发泡料',name:'可降解发泡专用料'},
-      {key:'light-纤维增强',name:'纤维增强可降解复合材料'}
-    ]},
-    {group:'轻量化结构件', items:[
-      {key:'light-轻量板',name:'轻量化复合板材'},
-      {key:'light-发泡件',name:'轻量化发泡缓冲件'},
-      {key:'light-蜂窝',name:'可降解蜂窝芯材'}
-    ]},
-    {group:'终端应用', items:[
-      {key:'light-汽车内饰',name:'汽车内饰件'},
-      {key:'light-高铁内饰',name:'高铁/航空内饰件'},
-      {key:'light-行李箱',name:'轻量化行李箱'},
-      {key:'light-家电壳',name:'家电外壳/支架'}
-    ]}
-  ],
-  fish: [
-    {group:'基础材料', items:[
-      {key:'fish-PBAT',name:'PBAT'},
-      {key:'fish-PHA',name:'PHA'},
-      {key:'fish-PCL',name:'PCL'}
-    ]},
-    {group:'渔业用品', items:[
-      {key:'fish-渔网',name:'可降解渔网/网具'},
-      {key:'fish-渔线',name:'可降解渔线'},
-      {key:'fish-诱饵',name:'可降解人工诱饵'},
-      {key:'fish-浮球',name:'可降解浮球/浮标'}
-    ]},
-    {group:'牧业用品', items:[
-      {key:'fish-饲料包',name:'可降解饲料包装'},
-      {key:'fish-耳标',name:'可降解动物耳标'},
-      {key:'fish-牧场地膜',name:'草场覆盖地膜'}
-    ]}
-  ],
-  elec: [
-    {group:'基础材料', items:[
-      {key:'elec-PLA',name:'PLA 工程改性料'},
-      {key:'elec-PBAT',name:'PBAT 工程改性料'},
-      {key:'elec-PHA',name:'PHA 改性料'}
-    ]},
-    {group:'外壳与结构件', items:[
-      {key:'elec-外壳',name:'可降解电子产品外壳'},
-      {key:'elec-按键',name:'可降解按键/旋钮'},
-      {key:'elec-支架',name:'可降解结构支架'}
-    ]},
-    {group:'电子包装', items:[
-      {key:'elec-缓冲泡棉',name:'电子产品缓冲泡棉'},
-      {key:'elec-防静电袋',name:'可降解防静电袋'},
-      {key:'elec-护套',name:'连接线护套'}
-    ]},
-    {group:'可穿戴/IoT', items:[
-      {key:'elec-可穿戴壳',name:'可穿戴设备外壳'},
-      {key:'elec-IoT外壳',name:'IoT 模块外壳'},
-      {key:'elec-传感器壳',name:'传感器外壳'}
-    ]}
-  ]
-};
-// 把分组列表拍平成 [{key,name}]，"全部" 选项不进入分组而是模态框单独渲染
-function getChainProdItems(chain){
-  return (chainProducts[chain] || chainProducts.all).flatMap(g => g.items);
-}
-let curInnovProd = 'all';
-// 更新按钮上当前产品名（按 innovChain 兜底重置不存在的 key）
-function renderInnovProdSel(){
-  const valEl = document.getElementById('innovProdVal');
-  if (!valEl) return;
-  const flat = getChainProdItems(innovChain);
-  if (curInnovProd !== 'all' && !flat.find(x => x.key === curInnovProd)) curInnovProd = 'all';
-  if (curInnovProd === 'all') { valEl.textContent = '全部'; return; }
-  const cur = flat.find(x => x.key === curInnovProd);
-  valEl.textContent = cur ? cur.name : '全部';
-}
-// 在弹窗内渲染产品分组卡片（支持检索）
-function renderInnovProdModal(kw){
-  const body = document.getElementById('innovProdBody');
-  if (!body) return;
-  const groups = chainProducts[innovChain] || chainProducts.all;
-  const k = (kw||'').trim().toLowerCase();
-  const chainName = (chainList.find(c=>c.key===innovChain)||{name:'全部'}).name;
-  let html = '<div style="font-size:12px;color:#7fa3c8;margin-bottom:10px;letter-spacing:.5px">'+
-    '当前产业链：<b style="color:#3ad4ff;font-weight:600">'+chainName+'</b> · 共 '+getChainProdItems(innovChain).length+' 个产品/中间体'+
-  '</div>';
-  html += '<div class="prod-pick-all'+(curInnovProd==='all'?' cur':'')+'" data-key="all">全部产品</div>';
-  groups.forEach(g => {
-    const items = g.items.filter(it => !k || it.name.toLowerCase().indexOf(k)>=0 || (it.key||'').toLowerCase().indexOf(k)>=0);
-    if (!items.length) return;
-    html += '<div class="prod-pick-grp">';
-    html += '<div class="prod-pick-hd">'+g.group+'<small>'+items.length+' 项</small></div>';
-    html += '<div class="prod-pick-grid">';
-    items.forEach(it => {
-      html += '<div class="prod-pick-it'+(it.key===curInnovProd?' cur':'')+'" data-key="'+it.key+'" title="'+it.name+'">'+it.name+'</div>';
-    });
-    html += '</div></div>';
-  });
-  body.innerHTML = html;
-}
-function openInnovProdModal(){
-  renderInnovProdModal('');
-  const search = document.getElementById('innovProdSearch');
-  if (search) search.value = '';
-  document.getElementById('innovProdModal').classList.add('show');
-}
-function bindInnovProdSel(){
-  const btn = document.getElementById('innovProdBtn');
-  if (!btn) return;
-  renderInnovProdSel();
-  btn.addEventListener('click', () => openInnovProdModal());
-  // 弹窗内交互：选项点击 / 检索 / 关闭
-  const modal = document.getElementById('innovProdModal');
-  const body  = document.getElementById('innovProdBody');
-  const search = document.getElementById('innovProdSearch');
-  if (body){
-    body.addEventListener('click', e => {
-      const it = e.target.closest('.prod-pick-it,.prod-pick-all');
-      if (!it) return;
-      const k = it.dataset.key;
-      const flat = getChainProdItems(innovChain);
-      if (k === 'all') curInnovProd = 'all';
-      else { const f = flat.find(x => x.key === k); if (f) curInnovProd = k; }
-      renderInnovProdSel();
-      updateInnovNum();
-      modal.classList.remove('show');
-    });
-  }
-  if (search) search.addEventListener('input', () => renderInnovProdModal(search.value));
-  document.getElementById('innovProdClose').addEventListener('click', () => modal.classList.remove('show'));
-  modal.addEventListener('click', e => { if (e.target.id === 'innovProdModal') modal.classList.remove('show'); });
-}
-function updateInnovNum(){
-  const baseChain = innovByChain[innovChain] != null ? innovByChain[innovChain] : 0;
-  const flat = getChainProdItems(innovChain);
-  let num = baseChain;
-  if (curInnovProd !== 'all' && flat.length > 0) {
-    const idx = flat.findIndex(x => x.key === curInnovProd);
-    const subCount = flat.length;
-    const variance = ((idx >= 0 ? idx : 0) * 7919 % 100 - 50) / 100;
-    num = Math.max(1, Math.round(baseChain / subCount * (1 + variance * 0.3)));
-  }
-  const el = document.getElementById('innovNum');
-  if (el) el.textContent = num;
-}
-// （旧的 onChainChange 已废弃：两个 chain-sel 各自维护回调，互不联动）
-// chainProducts/curInnovProd 等已定义，现在再初始化 chain-sel（避免 const 暂时性死区错误）
-initAllChainSels();
-
-// ── 品类 → 企业列表 下钻弹窗（复用专利弹窗外壳）
-function openCatModal(product, tab){
-  // 聚合所有省份中含该 product 的企业 + 数量
-  const provs=[];
-  let totalCompanies=0;
-  Object.entries(mock).forEach(([prov,dim])=>{
-    const d=dim[tab]; if(!d||!d.count) return;
-    if((d.items||[]).indexOf(product)>=0){
-      const share=Math.max(1,Math.round(d.count/(d.items.length||1)));
-      provs.push({prov:prov, count:share});
-      totalCompanies+=share;
-    }
-  });
-  // 生成假企业（每省取 share 家）
-  const allRows=[];
-  provs.forEach(p=>{
-    const arr=genCompanies(p.prov, tab, p.count);
-    arr.forEach(c=>allRows.push(Object.assign({},c,{prov:p.prov, fullProv: fullName[p.prov]||p.prov})));
-  });
-  allRows.sort((a,b)=>b.capital-a.capital);
-  const meta=tabMeta[tab];
-  const chainName=(chainList.find(c=>c.key===mapChain)||{name:'全部'}).name;
-
-  document.getElementById('patHead').innerHTML=
-    '<div class="h1">'+product+' 在产企业清单 <small>'+chainName+' · '+meta.label+' · 涉及 '+provs.length+' 省 / 共 '+totalCompanies+' 家</small></div>'+
-    '<span class="tag">品类：'+product+'</span>'+
-    '<span class="tag" style="color:'+meta.color+';border-color:'+meta.colorBd+';background:'+meta.colorBg+'">'+meta.label+'</span>';
-
-  const PAGE_SIZE=10;
-  let curPage=1, searchQ='', provQ='all';
-
-  // 省份下拉选项：基于 provs（实际有该品类企业的省份）+ "全部省份"
-  const provOpts = ['<div class="sel-dd-it cur" data-prov="all">全部省份（'+provs.length+'）</div>']
-    .concat(provs.map(p => {
-      const fn = (typeof fullName!=='undefined' && fullName[p.prov]) || p.prov;
-      return '<div class="sel-dd-it" data-prov="'+p.prov+'" title="'+fn+'">'+p.prov+' <span style="color:#5e85b0;font-size:11px;margin-left:4px">'+p.count+' 家</span></div>';
-    })).join('');
-
-  // ── 一次性构建 shell：搜索/省份下拉/计数（静态） + 表格滚动区 + 分页（静态）
-  document.getElementById('patBody').innerHTML =
-    '<div class="pat-shell">'+
-      '<div class="s-search pat-search-fix">'+
-        '<input id="catSearchInput" placeholder="检索企业名称关键字…" value=""/>'+
-        '<div class="sel sel-dd" id="catProvSel" data-val="all" style="margin-left:8px">'+
-          '<span class="sel-lbl">省份：</span><span class="sel-val" id="catProvVal">全部省份</span><span class="sel-arr">▾</span>'+
-          '<div class="sel-dd-list" id="catProvDd">'+provOpts+'</div>'+
-        '</div>'+
-        '<span class="pat-count">命中 <b id="patCntHit">'+allRows.length+'</b> 条 / 全部 <b class="muted">'+allRows.length+'</b> 条</span>'+
-      '</div>'+
-      '<div class="pat-tbl-wrap">'+
-        '<table class="pat-tbl s-tbl">'+
-          '<thead><tr>'+
-            '<th style="width:50px;text-align:center">序号</th>'+
-            '<th style="width:18%">企业名称</th>'+
-            '<th style="width:13%">社会信用代码</th>'+
-            '<th style="width:7%">所在省</th>'+
-            '<th style="width:27%">主营产品</th>'+
-            '<th style="width:9%;text-align:right">注册资本</th>'+
-            '<th style="width:18%">注册地址</th>'+
-            '<th style="width:8%;text-align:center">操作</th>'+
-          '</tr></thead>'+
-          '<tbody id="patTbody"></tbody>'+
-        '</table>'+
-      '</div>'+
-      '<div class="s-pag pat-pag-fix" id="patPag"></div>'+
-    '</div>';
-
-  const tbody = document.getElementById('patTbody');
-  const pag   = document.getElementById('patPag');
-  const cntEl = document.getElementById('patCntHit');
-  const wrap  = document.querySelector('#patBody .pat-tbl-wrap');
-
-  function renderTable(){
-    let filtered = allRows;
-    if (provQ && provQ !== 'all') filtered = filtered.filter(c => c.prov === provQ);
-    if (searchQ) filtered = filtered.filter(c => (c.prov+c.name).toLowerCase().indexOf(searchQ)>=0);
-    const total = filtered.length;
-    const pages = Math.max(1, Math.ceil(total/PAGE_SIZE));
-    if (curPage > pages) curPage = pages;
-    if (curPage < 1)     curPage = 1;
-    const start=(curPage-1)*PAGE_SIZE;
-    const slice=filtered.slice(start, start+PAGE_SIZE);
-
-    cntEl.textContent = total;
-    tbody.innerHTML = slice.length ? slice.map(function(c,i){
-      const prodEsc=c.product.replace(/"/g,'&quot;');
-      const idx=start+i+1;
-      const gidx=allRows.indexOf(c);
-      return '<tr>'+
-        '<td style="text-align:center"><span class="dl-row-num">'+String(idx).padStart(2,'0')+'</span></td>'+
-        '<td><span class="dl-comp-name">'+c.prov+c.name+'</span></td>'+
-        '<td><span class="dl-cc">'+c.creditCode+'</span></td>'+
-        '<td><span style="color:#a8c4e0">'+c.prov+'</span></td>'+
-        '<td><div class="dl-prod" title="'+prodEsc+'">'+c.product+'</div></td>'+
-        '<td style="text-align:right;white-space:nowrap">'+
-          '<span class="dl-cap">'+c.capital.toLocaleString()+'</span><span class="dl-cap-unit">万元</span>'+
-        '</td>'+
-        '<td><div class="dl-addr"><span>'+c.address+'</span></div></td>'+
-        '<td style="text-align:center"><span class="s-detail-btn pat-comp-detail-btn" data-gidx="'+gidx+'">详情</span></td>'+
-      '</tr>';
-    }).join('') : '<tr><td colspan="8" style="text-align:center;color:#5e85b0;padding:60px 0;font-size:13px">⌕  未找到匹配的企业</td></tr>';
-
-    pag.innerHTML =
-      '<span class="info">共 <b>'+total+'</b> 条 · 第 <b>'+curPage+'</b> / '+pages+' 页</span>'+
-      '<span class="pg" data-go="'+(curPage-1)+'"'+(curPage<=1?' style="opacity:.4;pointer-events:none"':'')+'>上一页</span>'+
-      Array.from({length:Math.min(pages,5)},(_,k)=>{const p=k+1;return '<span class="pg'+(p===curPage?' cur':'')+'" data-go="'+p+'">'+p+'</span>'}).join('')+
-      '<span class="pg" data-go="'+(curPage+1)+'"'+(curPage>=pages?' style="opacity:.4;pointer-events:none"':'')+'>下一页</span>';
-
-    // 表格滚动复位 + 详情按钮重新绑定（每次重渲 tbody 后必做）
-    if (wrap) wrap.scrollTop = 0;
-    tbody.querySelectorAll('.pat-comp-detail-btn').forEach(b => b.addEventListener('click', () => {
-      const c = allRows[parseInt(b.dataset.gidx)];
-      if (c) openCompanyDetail(c.prov, c);
-    }));
-    pag.querySelectorAll('.pg').forEach(p => p.addEventListener('click', () => {
-      const g = parseInt(p.dataset.go);
-      if (!isNaN(g) && g>=1 && g<=pages) { curPage=g; renderTable(); }
-    }));
-  }
-
-  // 搜索：只绑一次，不重建 input → 输入时焦点天然保留
-  const si = document.getElementById('catSearchInput');
-  if (si){
-    si.addEventListener('input', e => {
-      searchQ = e.target.value.trim().toLowerCase();
-      curPage = 1;
-      renderTable();
-    });
-  }
-  // 省份下拉（一次性绑定，不重渲）
-  const provSel = document.getElementById('catProvSel');
-  if (provSel){
-    provSel.addEventListener('click', e => {
-      const it = e.target.closest('.sel-dd-it');
-      if (it){
-        provQ = it.dataset.prov;
-        document.getElementById('catProvVal').textContent = provQ==='all' ? '全部省份' : provQ;
-        provSel.querySelectorAll('.sel-dd-it').forEach(x => x.classList.remove('cur'));
+  renderCap('BDO');
+  // 产品下拉
+  const sel=document.getElementById('capProdSel');
+  if(sel){
+    sel.addEventListener('click', function(ev){
+      const it=ev.target.closest('.mps-it');
+      if(it){
+        sel.querySelectorAll('.mps-it').forEach(x=>x.classList.remove('cur'));
         it.classList.add('cur');
-        provSel.classList.remove('open');
-        curPage = 1;
-        renderTable();
-        e.stopPropagation();
-        return;
-      }
-      document.querySelectorAll('.sel.sel-dd.open').forEach(s => { if (s !== provSel) s.classList.remove('open'); });
-      provSel.classList.toggle('open');
-      e.stopPropagation();
+        document.getElementById('capProdVal').textContent=it.dataset.prod;
+        renderCap(it.dataset.prod);
+        sel.classList.remove('open');
+      } else { sel.classList.toggle('open'); }
     });
   }
-
-  renderTable();
-  document.getElementById('patModal').classList.add('show');
-}
+})();
 
 // ══════════════ 企业详情弹窗（工商信息） ══════════════
 function openCompanyDetail(provName, c){
