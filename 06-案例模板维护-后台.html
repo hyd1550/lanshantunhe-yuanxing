@@ -53,6 +53,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'PingFang SC','Microsoft YaHei
 .hbar .in{display:flex;align-items:center;gap:11px;background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:12px 16px}
 .hbar h2{font-size:16px;font-weight:600}
 .hbar .cnt{font-size:12px;color:var(--text3)}
+.dirty-tag{font-size:11.5px;color:var(--amber);background:var(--amber-bg);border:1px solid #e8cf9e;border-radius:99px;padding:2px 10px;white-space:nowrap}
 .note{font-size:12px;color:var(--text2);background:var(--blue-bg);border-left:3px solid var(--blue);border-radius:4px;padding:9px 13px;line-height:1.7;margin-bottom:13px}
 
 .sec{background:var(--bg);border:1px solid var(--border);border-radius:10px;margin-bottom:13px;overflow:hidden}
@@ -134,7 +135,8 @@ body{font-family:-apple-system,BlinkMacSystemFont,'PingFang SC','Microsoft YaHei
       <div class="fr"><label><span class="req">*</span>场景名称</label><input type="text" id="scName" placeholder="如：农业园艺（农膜）"></div>
       <div class="fr"><label>场景说明</label><input type="text" id="scDesc" placeholder="选填，用于后台识别"></div>
       <div class="fr"><label>状态</label><select id="scStatus"><option>启用</option><option>停用</option></select>
-        <div class="sub2">停用后，该场景不再出现在「新增案例」的应用场景下拉中，已发布案例不受影响。</div></div>
+        <div class="mwarn" id="scEmptyTip" style="margin-top:8px;display:none"></div>
+        <div class="sub2" id="scStatusHint">停用后，该场景不再出现在「新增案例」的应用场景下拉中，已发布案例不受影响。</div></div>
     </div>
     <div class="mod-ft"><button class="btn" onclick="close_('mScene')">取消</button><button class="btn pri" onclick="saveScene()">确定</button></div>
   </div></div>
@@ -222,21 +224,25 @@ const SCENES=[
    {n:'方案图片',items:[T('上传图片','图片',false,true,2)]},
    {n:'生态材料信息',items:[T('规格','文本',true,true,2),T('降解周期','文本',false,true,2)]}
  ]},
- {name:'轻量化应用',desc:'',status:'启用',cases:0,by:'—',at:'—',sections:[]},
+ {name:'轻量化应用',desc:'',status:'停用',cases:0,by:'—',at:'—',sections:[]},
  {name:'渔牧业',desc:'',status:'启用',cases:1,by:'张管理员',at:'2025-06-09 10:31',sections:[
    {n:'方案图片',items:[T('上传图片','图片',false,true,1)]},
    {n:'渔用制品信息',items:[T('规格','文本',true,true,1),T('海水降解性','文本',false,true,1)]}
  ]},
- {name:'电子产品',desc:'',status:'启用',cases:0,by:'—',at:'—',sections:[]},
+ {name:'电子产品',desc:'',status:'停用',cases:0,by:'—',at:'—',sections:[]},
  {name:'卫生用具',desc:'已暂停对外收集',status:'停用',cases:0,by:'—',at:'—',sections:[]}
 ];
 
 let cur=0, editScene=-1, editItemPos=null;
+let draft=null, dirty=false;                       // draft=结构编辑副本；dirty=有未保存改动
+const clone=o=>JSON.parse(JSON.stringify(o));
+function loadDraft(){ draft=clone(SCENES[cur]); dirty=false; }
+function markDirty(){ dirty=true; }
 let tt;function toast(m){const t=document.getElementById('toast');t.textContent=m;t.classList.add('show');clearTimeout(tt);tt=setTimeout(()=>t.classList.remove('show'),2900)}
 const esc=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;');
 const close_=id=>document.getElementById(id).classList.remove('show');
 const open_=id=>document.getElementById(id).classList.add('show');
-const S=()=>SCENES[cur];
+const S=()=>draft||SCENES[cur];
 const nItems=s=>s.sections.reduce((a,x)=>a+x.items.length,0);
 function now(){const d=new Date(),p=n=>String(n).padStart(2,'0');
   return d.getFullYear()+'-'+p(d.getMonth()+1)+'-'+p(d.getDate())+' '+p(d.getHours())+':'+p(d.getMinutes())}
@@ -264,20 +270,54 @@ function renderScenes(){
   }).join('');
   document.getElementById('scList').innerHTML=html||'<div style="text-align:center;color:var(--text3);padding:26px 0;font-size:12.5px">无匹配场景</div>';
 }
-function pickScene(i){cur=i;renderScenes();render();document.querySelector('.right').scrollTop=0}
+function pickScene(i){
+  if(dirty && i!==cur){
+    confirmBox('放弃未保存的更改',
+      '<div style="font-size:13px;line-height:1.8;margin-bottom:11px">当前场景「<b>'+esc(SCENES[cur].name)+'</b>」有未保存的结构改动。</div>'+
+      '<div class="mwarn">切换到其他场景将<b>丢弃这些改动</b>。如需保留，请先返回并点击「保存」。</div>',
+      '放弃并切换', function(){ cur=i; loadDraft(); renderScenes(); render(); document.querySelector('.right').scrollTop=0; }, true);
+    return;
+  }
+  cur=i; loadDraft(); renderScenes(); render(); document.querySelector('.right').scrollTop=0;
+}
 function openScene(i){
   editScene=i;
   document.getElementById('scTtl').textContent=i<0?'新建应用场景':'编辑应用场景';
   document.getElementById('scName').value=i<0?'':SCENES[i].name;
   document.getElementById('scDesc').value=i<0?'':(SCENES[i].desc||'');
-  document.getElementById('scStatus').value=i<0?'启用':SCENES[i].status;
+  const sel=document.getElementById('scStatus');
+  const tip=document.getElementById('scEmptyTip');
+  // 判断依据是「已保存」的结构：状态与结构是两次独立提交
+  const empty = (i<0) ? true : !nItems(SCENES[i]);
+  const pending = (i>=0 && i===cur && dirty);         // 右侧有未保存的结构改动
+  sel.options[0].disabled = empty;
+  sel.value = empty ? '停用' : SCENES[i].status;
+  tip.style.display = empty ? '' : 'none';
+  if(i<0){
+    tip.innerHTML='新建场景尚无内容，只能先以<b>「停用」</b>保存。保存后在右侧添加栏目、并在栏目下添加<b>至少一个指标项</b>，再回到此处启用。';
+  }else if(pending){
+    tip.innerHTML='右侧结构改动<b>尚未保存</b>，此处按上次保存的内容判断，暂不可启用。<br>请先关闭本窗口、点击右上角<b>「保存」</b>，再回到此处启用。';
+  }else{
+    tip.innerHTML='该场景<b>还没有任何指标项</b>，暂不可启用——启用后用户在「新增案例」中选择此场景将没有内容可填。<br>'+
+      '<b>只加栏目不够</b>，需在栏目下至少添加 1 个指标项。';
+  }
   open_('mScene');
 }
 function saveScene(){
   const n=document.getElementById('scName').value.trim();
   if(!n){toast('请填写场景名称');return}
   const d=document.getElementById('scDesc').value.trim(), st=document.getElementById('scStatus').value;
-  if(editScene<0){SCENES.push({name:n,desc:d,status:st,cases:0,by:'张管理员',at:now(),sections:[]});cur=SCENES.length-1;toast('场景已创建，请为其配置栏目与指标项')}
+  // 校验：无内容的场景不可启用
+  if(st==='启用'){
+    const target = editScene<0 ? null : SCENES[editScene];
+    const cnt = target ? nItems(target) : 0;
+    if(!cnt){
+      toast(editScene<0 ? '新建场景尚未配置内容，请先以「停用」保存，配置栏目与指标项后再启用'
+                        : '该场景尚未配置栏目与指标项，不可启用；请先配置内容');
+      return;
+    }
+  }
+  if(editScene<0){SCENES.push({name:n,desc:d,status:st,cases:0,by:'张管理员',at:now(),sections:[]});cur=SCENES.length-1;toast('场景已创建（停用状态），请为其配置栏目与指标项后再启用')}
   else{Object.assign(SCENES[editScene],{name:n,desc:d,status:st});toast('场景已保存')}
   close_('mScene');renderScenes();render();
 }
@@ -333,9 +373,11 @@ function render(){
     '<div class="hbar"><div class="in">'+
       '<h2>'+esc(s.name)+'</h2>'+
       (s.status==='停用'?'<span class="pill p-off">场景已停用</span>':'<span class="pill p-on">启用中</span>')+
+      (dirty?'<span class="dirty-tag">● 有未保存的更改</span>':'')+
       '<span style="flex:1"></span>'+
       '<button class="btn" onclick="openScene('+cur+')">编辑场景</button>'+
-      '<button class="btn pri" onclick="saveAll()">保存</button>'+
+      (dirty?'<button class="btn" onclick="discardAll()">取消更改</button>':'')+
+      '<button class="btn '+(dirty?'pri':'')+'"'+(dirty?'':' disabled title="当前没有改动"')+' onclick="saveAll()">保存</button>'+
     '</div></div>'+
     '<div class="sec"><div class="sec-hd"><span class="bar" style="background:var(--text3)"></span>'+
       '<span style="font-size:13.5px;font-weight:600">基本信息</span><span class="sp2"></span>'+
@@ -363,32 +405,57 @@ function render(){
     (s.sections.length?'':'<div class="empty" style="margin-bottom:13px">该场景尚未配置内容，点击下方按钮新增第一个栏目</div>')+
     '<button class="btn dash blk" style="padding:13px" onclick="addSec()">＋ 增加栏目</button>';
 }
-function saveAll(){const s=S();s.at=now();s.by='张管理员';render();
-  toast('已保存，「新增案例」页选择该场景时即按此结构展示')}
+function saveAll(){
+  const s=S();
+  // 启用中的场景被清空 → 保存时自动转停用（规则：无内容不可启用）
+  if(s.status==='启用' && !nItems(s)){
+    confirmBox('保存并停用场景',
+      '<div style="font-size:13px;line-height:1.8;margin-bottom:11px">场景「<b>'+esc(s.name)+'</b>」已无任何栏目与指标项。</div>'+
+      '<div class="mwarn">保存后该场景将<b>自动转为「停用」</b>——启用状态下没有内容，用户在「新增案例」中选择此场景将无法填写任何信息。<br>'+
+      '补充栏目与指标项后，可随时在「编辑场景」中重新启用。</div>',
+      '保存并停用',
+      function(){ draft.status='停用'; draft.at=now(); draft.by='张管理员';
+        SCENES[cur]=clone(draft); loadDraft(); renderScenes(); render();
+        toast('已保存，该场景已自动转为「停用」；补充内容后可重新启用'); });
+    return;
+  }
+  draft.at=now(); draft.by='张管理员';
+  SCENES[cur]=clone(draft); loadDraft(); renderScenes(); render();
+  toast('已保存，「新增案例」页选择该场景时即按此结构展示');
+}
+function discardAll(){
+  confirmBox('取消更改',
+    '<div style="font-size:13px;line-height:1.8;margin-bottom:11px">放弃本次对「<b>'+esc(SCENES[cur].name)+'</b>」的所有结构改动？</div>'+
+    '<div class="mwarn">页面将恢复到上次保存时的状态，已删除的栏目与指标项会重新出现。</div>',
+    '放弃更改', function(){ loadDraft(); render(); toast('已恢复到上次保存的状态'); }, true);
+}
 
 /* ── 栏目 ── */
-function addSec(){S().sections.push({n:'新栏目',items:[]});render();
+function addSec(){S().sections.push({n:'新栏目',items:[]});markDirty();render();
   setTimeout(function(){const ns=document.querySelectorAll('.sn');if(ns.length)ns[ns.length-1].focus()},60)}
-function renameSec(si,v){const n=(v||'').trim();if(!n){render();return}S().sections[si].n=n}
+function renameSec(si,v){const n=(v||'').trim();if(!n){render();return}
+  if(S().sections[si].n!==n){S().sections[si].n=n;markDirty();render()}}
 function delSec(si){
   const sec=S().sections[si], used=sec.items.filter(function(i){return i[4]>0}).length;
   confirmBox('删除栏目',
     '<div style="font-size:13px;line-height:1.8;margin-bottom:11px">确认删除栏目「<b>'+esc(sec.n)+'</b>」？其下 '+sec.items.length+' 个指标项将一并删除。</div>'+
     (used?'<div class="mwarn">其中 <b>'+used+' 个指标项</b>已被案例填写，删除后这些内容将不再展示。</div>'
          :'<div class="mwarn">这些指标项均未被案例填写，删除后不影响已有数据。</div>'),
-    '确认删除',function(){S().sections.splice(si,1);renderScenes();render();toast('栏目已删除')},true);
+    '确认删除',function(){
+      S().sections.splice(si,1); markDirty(); render(); toast('栏目已删除，点击「保存」后生效');
+    },true);
 }
-function moveSec(si,d){const a=S().sections,j=si+d;if(j<0||j>=a.length)return;const x=a[si];a[si]=a[j];a[j]=x;render()}
+function moveSec(si,d){const a=S().sections,j=si+d;if(j<0||j>=a.length)return;const x=a[si];a[si]=a[j];a[j]=x;markDirty();render()}
 
 /* ── 指标项 ── */
-function moveItem(si,ii,d){const a=S().sections[si].items,j=ii+d;if(j<0||j>=a.length)return;const x=a[ii];a[ii]=a[j];a[j]=x;render()}
+function moveItem(si,ii,d){const a=S().sections[si].items,j=ii+d;if(j<0||j>=a.length)return;const x=a[ii];a[ii]=a[j];a[j]=x;markDirty();render()}
 function delItem(si,ii){
   const it=S().sections[si].items[ii];
   confirmBox('删除指标项',
     '<div style="font-size:13px;line-height:1.8;margin-bottom:11px">确认删除「<b>'+esc(it[0])+'</b>」？</div>'+
     (it[4]>0?'<div class="mwarn">已有 <b>'+it[4]+' 条</b>案例填写了该指标项，删除后这些内容将不再展示。</div>'
             :'<div class="mwarn">该指标项尚未被任何案例填写，删除后不影响已有数据。</div>'),
-    '确认删除',function(){S().sections[si].items.splice(ii,1);renderScenes();render();toast('指标项已删除')},true);
+    '确认删除',function(){S().sections[si].items.splice(ii,1);markDirty();render();toast('指标项已删除，点击「保存」后生效')},true);
 }
 function syncItemForm(){
   const ty=document.getElementById('itType').value;
@@ -426,8 +493,8 @@ function saveItem(){
   else{const it=arr[ii];it[0]=nm;it[1]=ty;it[2]=rq;it[3]=sh}
   const from=(ii<0)?arr.length-1:ii, to=Math.min(ord-1,arr.length-1);
   if(to!==from){const x=arr.splice(from,1)[0];arr.splice(to,0,x)}
-  close_('mItem');renderScenes();render();toast(ii<0?'指标项已添加':'指标项已保存');
+  close_('mItem');markDirty();render();toast((ii<0?'指标项已添加':'指标项已修改')+'，点击「保存」后生效');
 }
 
-renderScenes();render();
+loadDraft();renderScenes();render();
 </script></body></html>
