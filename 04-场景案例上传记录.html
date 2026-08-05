@@ -117,7 +117,7 @@ function render(){
   document.getElementById('list').innerHTML=
     '<table class="t"><thead><tr><th style="width:46px;text-align:center">序号</th><th>案例名称</th>'+
     '<th style="width:140px">应用场景</th><th style="width:150px">产品名称</th><th style="width:90px">状态</th>'+
-    '<th style="width:80px">上传人</th><th style="width:110px">'+(quick==='草稿'?'创建时间':'更新时间')+'</th><th style="width:190px">操作</th></tr></thead><tbody>'+
+    '<th style="width:80px">上传人</th><th style="width:110px">更新时间</th><th style="width:190px">操作</th></tr></thead><tbody>'+
     (slice.length?slice.map((c,i)=>{
       const off=c.st==='已下架', draft=c.st==='草稿';
       return '<tr'+(off?' style="color:var(--text3)"':'')+'>'+
