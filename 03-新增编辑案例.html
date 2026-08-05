@@ -76,10 +76,10 @@ table.t tr:last-child td{border-bottom:none}
         <div class="card-bd"><div class="grid">
           <div class="fr"><label><span class="req">*</span>案例标题</label><input id="ttl" placeholder="如：新疆昌吉-7801系列-地膜-玉米栽培应用案例"></div>
           <div class="fr"><label><span class="req">*</span>应用场景</label>
-            <select id="scene" onchange="renderTpl()"><option value="">请选择应用场景</option><option>农业园艺（农膜）</option><option>包装产业</option><option>母婴用品</option><option>日用消费品</option><option>纺织纤维与鞋服</option><option>一次性医用耗材</option><option>3D打印</option><option>防沙环保</option><option>轻量化应用</option><option>渔牧业</option><option>电子产品</option></select></div>
+            <select id="scene" onchange="renderTpl()"><option value="">请选择应用场景</option><option>农业园艺（农膜）</option><option>包装产业</option><option>母婴用品</option><option>日用消费品</option><option>纺织纤维与鞋服</option><option>一次性医用耗材</option><option>3D打印</option><option>防沙环保</option><option>渔牧业</option></select></div>
           <div class="fr"><label>产品名称</label><input placeholder="如：7801-系列-MF-2023"></div>
           <div class="fr"><label>上传人</label><input value="王某" readonly style="background:#fafbfc;color:var(--text2)"></div>
-          <div class="fr full"><label>摘要</label><textarea placeholder="用 1-2 句话概括该案例的应用效果，将展示在案例库列表中（限 200 字）"></textarea></div>
+          <div class="fr full"><label>摘要</label><textarea id="sum" maxlength="200" oninput="cnt()" placeholder="用 1-2 句话概括该案例的应用效果，将展示在案例库列表中"></textarea><div style="text-align:right;font-size:11.5px;color:var(--text3);margin-top:4px"><span id="sumN">0</span>/200</div></div>
         </div></div>
       </div>
 
@@ -87,8 +87,8 @@ table.t tr:last-child td{border-bottom:none}
       <div id="emptyTip" class="card"><div class="card-bd" style="text-align:center;color:var(--text3);padding:48px 0;font-size:13px">请先选择应用场景，系统将自动带出对应的填写栏目</div></div>
 
       <div class="foot">
-        <button class="btn" onclick="toast('已保存为草稿，可在「场景案例上传记录」中继续编辑')">保存草稿</button>
-        <button class="btn pri" onclick="toast('已发布，案例将展示在场景化案例库中')">发布</button>
+        <button class="btn" onclick="saveDraft()">保存草稿</button>
+        <button class="btn pri" onclick="publish()">发布</button>
         <button class="btn" onclick="toast('已取消')">取消</button>
       </div>
     </div>
@@ -96,7 +96,7 @@ table.t tr:last-child td{border-bottom:none}
   <div class="toast" id="toast"></div>
 </div>
 <script>
-const TPL={"农业园艺（农膜）": [{"n": "方案图片", "items": [["上传图片", "图片", false, true]]}, {"n": "案例概述", "items": [["案例背景说明", "多段文本", false, false]]}, {"n": "农膜产品信息", "items": [["农膜型号（牌号）", "文本", true, true], ["材质", "文本", false, true], ["厚度", "文本", false, true], ["透光率", "文本", false, true], ["保温性", "文本", false, true], ["流滴性", "文本", false, true], ["消雾性", "文本", false, true], ["覆盖方式", "文本", false, true], ["使用周期", "文本", false, true]]}, {"n": "适配土壤信息", "items": [["地形", "文本", false, true], ["土种类型", "文本", false, true], ["土壤酸碱度（PH值）范围", "文本", false, true], ["有机质含量", "文本", false, true], ["土壤质地", "文本", false, true], ["肥力状况", "文本", false, true]]}, {"n": "作物信息", "items": [["作物品种", "文本", true, true], ["生育期", "文本", false, true], ["种植密度", "文本", false, true], ["主要栽培管理措施", "多段文本", false, true]]}, {"n": "气候环境参数", "items": [["年平均气温", "文本", false, true], ["极端高温/低温", "文本", false, true], ["年降水量", "文本", false, true], ["日照时数", "文本", false, true], ["主要风向", "文本", false, true]]}, {"n": "应用效果", "items": [["效果描述", "多段文本", false, true], ["检测报告", "文件", false, true]]}], "包装产业": [{"n": "方案图片", "items": [["上传图片", "图片", false, true]]}, {"n": "包装产品信息", "items": [["产品型号", "文本", true, true], ["材质", "文本", false, true], ["规格尺寸", "文本", false, true], ["厚度", "文本", false, true], ["承重", "文本", false, true], ["降解周期", "文本", false, true]]}, {"n": "应用效果", "items": [["效果描述", "多段文本", false, true], ["检测报告", "文件", false, true]]}], "母婴用品": [{"n": "方案图片", "items": [["上传图片", "图片", false, true]]}, {"n": "产品信息", "items": [["产品型号", "文本", true, true], ["材质", "文本", false, true], ["安全等级", "文本", false, true], ["适用月龄", "文本", false, true]]}], "日用消费品": [{"n": "方案图片", "items": [["上传图片", "图片", false, true]]}, {"n": "产品信息", "items": [["产品型号", "文本", true, true], ["材质", "文本", false, true], ["规格", "文本", false, true]]}]};
+const TPL={"农业园艺（农膜）": [{"n": "方案图片", "items": [["上传图片", "图片", false, true]]}, {"n": "案例概述", "items": [["案例背景说明", "多段文本", false, false]]}, {"n": "农膜产品信息", "items": [["农膜型号（牌号）", "文本", true, true], ["材质", "文本", false, true], ["厚度", "文本", false, true], ["透光率", "文本", false, true], ["保温性", "文本", false, true], ["流滴性", "文本", false, true], ["消雾性", "文本", false, true], ["覆盖方式", "文本", false, true], ["使用周期", "文本", false, true]]}, {"n": "适配土壤信息", "items": [["地形", "文本", false, true], ["土种类型", "文本", false, true], ["土壤酸碱度（PH值）范围", "文本", false, true], ["有机质含量", "文本", false, true], ["土壤质地", "文本", false, true], ["肥力状况", "文本", false, true]]}, {"n": "作物信息", "items": [["作物品种", "文本", true, true], ["生育期", "文本", false, true], ["种植密度", "文本", false, true], ["主要栽培管理措施", "多段文本", false, true]]}, {"n": "气候环境参数", "items": [["年平均气温", "文本", false, true], ["极端高温/低温", "文本", false, true], ["年降水量", "文本", false, true], ["日照时数", "文本", false, true], ["主要风向", "文本", false, true]]}, {"n": "应用效果", "items": [["效果描述", "多段文本", false, true], ["检测报告", "文件", false, true]]}], "包装产业": [{"n": "方案图片", "items": [["上传图片", "图片", false, true]]}, {"n": "包装产品信息", "items": [["产品型号", "文本", true, true], ["材质", "文本", false, true], ["规格尺寸", "文本", false, true], ["厚度", "文本", false, true], ["承重", "文本", false, true], ["降解周期", "文本", false, true]]}, {"n": "应用效果", "items": [["效果描述", "多段文本", false, true], ["检测报告", "文件", false, true]]}], "母婴用品": [{"n": "方案图片", "items": [["上传图片", "图片", false, true]]}, {"n": "产品信息", "items": [["产品型号", "文本", true, true], ["材质", "文本", false, true], ["安全等级", "文本", false, true], ["适用月龄", "文本", false, true]]}], "日用消费品": [{"n": "方案图片", "items": [["上传图片", "图片", false, true]]}, {"n": "产品信息", "items": [["产品型号", "文本", true, true], ["材质", "文本", false, true], ["规格", "文本", false, true]]}], "纺织纤维与鞋服": [{"n": "方案图片", "items": [["上传图片", "图片", false, true]]}, {"n": "纤维产品信息", "items": [["纤维规格", "文本", true, true], ["强度", "文本", false, true], ["回潮率", "文本", false, true]]}], "一次性医用耗材": [{"n": "方案图片", "items": [["上传图片", "图片", false, true]]}, {"n": "医用产品信息", "items": [["产品型号", "文本", true, true], ["灭菌方式", "文本", false, true], ["医用等级", "文本", false, true]]}], "3D打印": [{"n": "方案图片", "items": [["上传图片", "图片", false, true]]}, {"n": "打印耗材信息", "items": [["线材直径", "文本", true, true], ["打印温度", "文本", false, true]]}], "防沙环保": [{"n": "方案图片", "items": [["上传图片", "图片", false, true]]}, {"n": "生态材料信息", "items": [["规格", "文本", true, true], ["降解周期", "文本", false, true]]}], "渔牧业": [{"n": "方案图片", "items": [["上传图片", "图片", false, true]]}, {"n": "渔用制品信息", "items": [["规格", "文本", true, true], ["海水降解性", "文本", false, true]]}]};
 let tt;function toast(m){const t=document.getElementById('toast');t.textContent=m;t.classList.add('show');clearTimeout(tt);tt=setTimeout(()=>t.classList.remove('show'),2000)}
 function field(it){
   const [name,type,req,showTitle]=it;
@@ -111,6 +111,38 @@ function field(it){
     '<textarea'+(showTitle?'':' class="tarea-plain" style="min-height:96px"')+' placeholder="请输入'+name+(showTitle?'':'，前台将作为一段通栏正文展示')+'"></textarea></div>';
   return '<div class="fr">'+lab+'<input placeholder="请输入'+name+'"></div>';
 }
+function cnt(){const t=document.getElementById('sum');const n=document.getElementById('sumN');if(t&&n)n.textContent=t.value.length}
+
+/* 保存草稿：仅校验标题（其余不校验，允许边填边存） */
+function saveDraft(){
+  const t=(document.getElementById('ttl').value||'').trim();
+  if(!t){ mark('ttl'); toast('请先填写案例标题后再保存草稿'); return }
+  toast('已保存为草稿，可在「场景案例上传记录」中继续编辑');
+}
+
+/* 发布：校验基本信息必填 + 模板中标记为必填的指标项 */
+function publish(){
+  const miss=[];
+  const t=(document.getElementById('ttl').value||'').trim();
+  const sc=document.getElementById('scene').value;
+  if(!t){ miss.push('案例标题'); mark('ttl') }
+  if(!sc){ miss.push('应用场景'); mark('scene') }
+  // 模板必填项
+  document.querySelectorAll('#tplArea .fr').forEach(function(fr){
+    const lab=fr.querySelector('label'); if(!lab||!lab.querySelector('.req'))return;
+    const el=fr.querySelector('input,textarea');
+    const name=lab.textContent.replace('*','').trim();
+    if(el && !el.value.trim()){ miss.push(name); el.style.borderColor='var(--red)' }
+  });
+  if(miss.length){
+    toast('以下必填项未填写：'+miss.slice(0,4).join('、')+(miss.length>4?(' 等 '+miss.length+' 项'):''));
+    return;
+  }
+  toast('已发布，案例将展示在场景化案例库中');
+}
+function mark(id){const el=document.getElementById(id);if(el){el.style.borderColor='var(--red)';el.focus();
+  el.addEventListener('input',function(){el.style.borderColor=''},{once:true});}}
+
 function renderTpl(){
   const sc=document.getElementById('scene').value;
   const secs=TPL[sc];
