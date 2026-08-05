@@ -114,7 +114,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'PingFang SC','Microsoft YaHei
     <!-- 右：信息栏 -->
     <div class="side">
       <div class="sc">
-        <div class="sc-hd">案例信息</div>
+        <div class="sc-hd">基本信息</div>
         <div class="sc-bd" id="sInfo"></div>
       </div>
       <div class="sc">
@@ -137,7 +137,7 @@ const CASE={
   title:'新疆昌吉 7801 系列全生物降解地膜 · 玉米大田覆盖栽培应用案例',
   scene:'农业园艺（农膜）', product:'7801-系列-MF-2023', status:'已发布',
   info:[['应用场景','农业园艺（农膜）'],['产品名称','7801-系列-MF-2023'],
-        ['上传人','王某（营销中心）'],['上传时间','2025-09-18 14:22']],
+        ['上传人','王某（营销中心）'],['更新时间','2025-09-18 14:22']],
   sections:[
     {n:'方案图片', items:[
       ['上传图片','图片',true,['铺膜作业现场（2025-04-12）','出苗期覆盖效果（2025-05-06）','降解中期地表状态（2025-06-20）','收获后地表残留对比（2025-09-02）']]
@@ -249,9 +249,7 @@ function jump(i){
 function renderHead(){
   document.getElementById('hTtl').textContent=CASE.title;
   document.getElementById('hMeta').innerHTML=
-    '<span class="pill p-scene">'+esc(CASE.scene)+'</span>'+
-    '<span class="pill '+(CASE.status==='已发布'?'p-on':'p-off')+'">'+esc(CASE.status)+'</span>'+
-    '<span style="font-size:12.5px;color:var(--text3)">产品：'+esc(CASE.product)+'</span>';
+    '<span class="pill '+(CASE.status==='已发布'?'p-on':'p-off')+'">'+esc(CASE.status)+'</span>';
   document.getElementById('sInfo').innerHTML=CASE.info.map(r=>
     '<div class="si"><div class="k">'+esc(r[0])+'</div><div class="v">'+esc(r[1])+'</div></div>').join('');
 }
