@@ -53,7 +53,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,'PingFang SC','Microsoft YaHei
 .hbar .in{display:flex;align-items:center;gap:11px;background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:12px 16px}
 .hbar h2{font-size:16px;font-weight:600}
 .hbar .cnt{font-size:12px;color:var(--text3)}
-.dirty-tag{font-size:11.5px;color:var(--amber);background:var(--amber-bg);border:1px solid #e8cf9e;border-radius:99px;padding:2px 10px;white-space:nowrap}
 .note{font-size:12px;color:var(--text2);background:var(--blue-bg);border-left:3px solid var(--blue);border-radius:4px;padding:9px 13px;line-height:1.7;margin-bottom:13px}
 
 .sec{background:var(--bg);border:1px solid var(--border);border-radius:10px;margin-bottom:13px;overflow:hidden}
@@ -158,7 +157,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,'PingFang SC','Microsoft YaHei
         <div class="sub2">数字越小越靠前，前台按此顺序展示；也可在编辑器中用 ↑↓ 直接调序。</div></div>
       <div class="fr"><label class="ck"><input type="checkbox" id="itReq"> 设为必填项</label></div>
       <div class="fr" id="itShowWrap"><label class="ck"><input type="checkbox" id="itShow" checked> 在前台显示标题</label>
-        <div class="sub2 ind">勾选：详情页显示为「指标项名称 ＋ 内容」；<br>不勾选：仅显示正文、不显示名称（用于案例背景、方案说明等整段正文）。</div>
       </div>
     </div>
     <div class="mod-ft"><button class="btn" onclick="close_('mItem')">取消</button><button class="btn pri" onclick="saveItem()">确定</button></div>
@@ -372,10 +370,8 @@ function render(){
     '<div class="hbar"><div class="in">'+
       '<h2>'+esc(s.name)+'</h2>'+
       (s.status==='停用'?'<span class="pill p-off">场景已停用</span>':'<span class="pill p-on">启用中</span>')+
-      (dirty?'<span class="dirty-tag">● 有未保存的更改</span>':'')+
       '<span style="flex:1"></span>'+
       '<button class="btn" onclick="openScene('+cur+')">编辑场景</button>'+
-      (dirty?'<button class="btn" onclick="discardAll()">取消更改</button>':'')+
       '<button class="btn '+(dirty?'pri':'')+'"'+(dirty?'':' disabled title="当前没有改动"')+' onclick="saveAll()">保存</button>'+
     '</div></div>'+
     '<div class="sec"><div class="sec-hd"><span class="bar" style="background:var(--text3)"></span>'+
@@ -421,12 +417,6 @@ function saveAll(){
   draft.at=now(); draft.by='张管理员';
   SCENES[cur]=clone(draft); loadDraft(); renderScenes(); render();
   toast('已保存，「新增案例」页选择该场景时即按此结构展示');
-}
-function discardAll(){
-  confirmBox('取消更改',
-    '<div style="font-size:13px;line-height:1.8;margin-bottom:11px">放弃本次对「<b>'+esc(SCENES[cur].name)+'</b>」的所有结构改动？</div>'+
-    '<div class="mwarn">页面将恢复到上次保存时的状态，已删除的栏目与指标项会重新出现。</div>',
-    '放弃更改', function(){ loadDraft(); render(); toast('已恢复到上次保存的状态'); }, true);
 }
 
 /* ── 栏目 ── */
