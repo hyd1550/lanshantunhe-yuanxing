@@ -217,7 +217,7 @@ const SCENES=[
    {n:'方案图片',items:[T('上传图片','图片',false,true,2)]},
    {n:'医用产品信息',items:[T('产品型号','文本',true,true,2),T('灭菌方式','文本',false,true,2),T('医用等级','文本',false,true,2)]}
  ]},
- {name:'3D打印',desc:'',status:'启用',cases:1,by:'张管理员',at:'2025-07-02 11:26',sections:[
+ {name:'3D打印',desc:'',status:'启用',cases:0,by:'张管理员',at:'2025-07-02 11:26',sections:[
    {n:'方案图片',items:[T('上传图片','图片',false,true,1)]},
    {n:'打印耗材信息',items:[T('线材直径','文本',true,true,1),T('打印温度','文本',false,true,1)]}
  ]},
@@ -339,7 +339,7 @@ function delScene(i){
   confirmBox('删除应用场景',
     '<div style="font-size:13px;line-height:1.8;margin-bottom:11px">确认删除应用场景「<b>'+esc(s.name)+'</b>」？</div>'+
     '<div class="mwarn">'+(s.sections.length
-      ? '该场景下的 '+s.sections.length+' 个栏目与全部指标项将一并删除。'
+      ? '该场景下的 '+s.sections.length+' 个栏目、'+nItems(s)+' 个指标项将一并删除，删除后模板结构不可恢复。'
       : '该场景尚未配置内容。')+
       '因尚无案例引用，删除后不影响任何已有数据。</div>',
     '确认删除',
