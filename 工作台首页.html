@@ -14,12 +14,12 @@
   --radius:12px;
 }
 html{scroll-behavior:smooth}
-body{font-family:'PingFang SC','Microsoft YaHei','Segoe UI',sans-serif;background:var(--bg);color:var(--text);line-height:1.5;min-height:100vh;-webkit-font-smoothing:antialiased}
+body{font-family:'PingFang SC','Microsoft YaHei','Segoe UI',sans-serif;background:var(--bg);color:var(--text);line-height:1.5;-webkit-font-smoothing:antialiased;overflow:hidden}
 a{color:var(--primary);text-decoration:none}
 button{font-family:inherit;cursor:pointer}
 
 /* ── Layout ── */
-.main{display:flex;flex-direction:column;min-height:100vh}
+.main{display:flex;flex-direction:column;width:1660px;height:990px;overflow:hidden}
 
 /* ── Header ── */
 .header{
@@ -52,7 +52,7 @@ button{font-family:inherit;cursor:pointer}
 .date-display{font-size:12px;color:var(--text3);white-space:nowrap}
 
 /* ── Content ── */
-.content{padding:22px 28px 36px;flex:1}
+.content{padding:22px 28px 28px;flex:1;overflow-y:auto}
 
 /* ── Banner ── */
 .banner{
@@ -166,8 +166,10 @@ button{font-family:inherit;cursor:pointer}
 .tag-kesu{background:#ecfdf5;color:#059669;border:1px solid #a7f3d0}
 .tag-zhuanli{background:#f0fdfa;color:#0891b2;border:1px solid #99f6e4}
 .tag-shangbiao{background:#fffbeb;color:#b45309;border:1px solid #fde68a}
-.tag-jiyu{background:#ecfdf5;color:#059669;border:1px solid #a7f3d0}
-.tag-zhengce{background:#f5f3ff;color:#7c3aed;border:1px solid #ddd6fe}
+.tag-brief{background:#f5f3ff;color:#7c3aed;border:1px solid #ddd6fe}
+.tag-req{background:#eff6ff;color:#2563eb;border:1px solid #bfdbfe}
+.tag-cus{background:#fff1f2;color:#be123c;border:1px solid #fecdd3}
+.tag-report{background:#ecfdf5;color:#059669;border:1px solid #a7f3d0}
 
 /* ── Todo List ── */
 .todo-list{display:flex;flex-direction:column;gap:1px}
@@ -293,7 +295,7 @@ button{font-family:inherit;cursor:pointer}
     <div class="banner anim">
       <div class="banner-left">
         <h2>你好，张工</h2>
-        <p>今日有 <strong>4</strong> 条未读消息，<strong>3</strong> 项待处理事项需要处理<br>平台运行正常，数据同步状态良好</p>
+        <p>今日有 <strong>6</strong> 条未读消息，<strong>3</strong> 项待处理事项需要处理<br>平台运行正常，数据同步状态良好</p>
       </div>
       <div class="banner-right">
         <button class="b-btn">
@@ -363,7 +365,7 @@ button{font-family:inherit;cursor:pointer}
         <div class="card-hd">
           <div class="card-title">
             <svg viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="1.8"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
-            最新消息 <span class="cnt">4</span>
+            最新消息 <span class="cnt">6</span>
           </div>
           <div class="card-more">查看全部 <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></div>
         </div>
@@ -393,18 +395,34 @@ button{font-family:inherit;cursor:pointer}
             <div class="msg-item">
               <div class="msg-dot d-purple"></div>
               <div class="msg-body">
-                <div class="msg-title"><span class="tag tag-zhengce">政策发布</span><span class="msg-title-text">欧盟《包装和包装废弃物法规》更新</span></div>
-                <div class="msg-desc">欧盟发布新版《包装和包装废弃物法规》修正案草案</div>
+                <div class="msg-title"><span class="tag tag-brief">技术简报通知</span><span class="msg-title-text">"高强度可降解购物袋材料"已配置完成</span></div>
+                <div class="msg-desc">您提交的技术简报创建申请已由管理员完成配置，简报内容已可查看</div>
               </div>
-              <div class="msg-meta"><div class="msg-time">08:30</div></div>
+              <div class="msg-meta"><div class="msg-time">09:35</div></div>
+            </div>
+            <div class="msg-item">
+              <div class="msg-dot d-blue"></div>
+              <div class="msg-body">
+                <div class="msg-title"><span class="tag tag-req">需求处理通知</span><span class="msg-title-text">技术需求 #RD-2026-0298 已通过审核并入池</span></div>
+                <div class="msg-desc">"PBAT 柔性薄膜配方改良"已进入研发需求池，当前处理状态：评估中</div>
+              </div>
+              <div class="msg-meta"><div class="msg-time">昨日</div></div>
+            </div>
+            <div class="msg-item">
+              <div class="msg-dot d-red"></div>
+              <div class="msg-body">
+                <div class="msg-title"><span class="tag tag-cus">客诉处理通知</span><span class="msg-title-text">客诉单 #CUS-20260402-112 已处理完成</span></div>
+                <div class="msg-desc">苏州绿联包装批次质量投诉已闭环，根因为挤出工艺参数偏差，已补发</div>
+              </div>
+              <div class="msg-meta"><div class="msg-time">昨日</div></div>
             </div>
             <div class="msg-item">
               <div class="msg-dot d-green"></div>
               <div class="msg-body">
-                <div class="msg-title"><span class="tag tag-jiyu">行业机遇</span><span class="msg-title-text">快递包装领域可降解材料需求上升</span></div>
-                <div class="msg-desc">电商快递"以纸代塑、可降解"持续推进，PBAT/PLA 需求预计上行，存在市场切入机会</div>
+                <div class="msg-title"><span class="tag tag-report">报告生成通知</span><span class="msg-title-text">主题"PGA 材料的研究"生成新报告</span></div>
+                <div class="msg-desc">您创建的研究主题已生成 2026 年 4 月期报告，可查看或下载</div>
               </div>
-              <div class="msg-meta"><div class="msg-time">昨日</div></div>
+              <div class="msg-meta"><div class="msg-time">08:00</div></div>
             </div>
           </div>
         </div>
@@ -450,21 +468,21 @@ button{font-family:inherit;cursor:pointer}
                 </div>
               </div>
               <div class="todo-actions">
-                <button class="todo-btn btn-pass">通过</button>
+                <button class="todo-btn btn-pass">处理</button>
                 <button class="todo-btn btn-view">查看</button>
               </div>
             </div>
             <div class="todo-item">
-              <div class="todo-type type-brief">简报变更申请</div>
+              <div class="todo-type type-brief">技术简报申请</div>
               <div class="todo-body">
-                <div class="todo-title">PBAT 材料技术简报内容变更申请</div>
+                <div class="todo-title">"高强度可降解购物袋材料"创建申请待配置</div>
                 <div class="todo-meta">
                   <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-                  赵强 · 研究院 &nbsp;|&nbsp; 昨日 14:50
+                  张伟 · 茵创公司 &nbsp;|&nbsp; 今日 09:24
                 </div>
               </div>
               <div class="todo-actions">
-                <button class="todo-btn btn-pass">通过</button>
+                <button class="todo-btn btn-pass">去配置</button>
                 <button class="todo-btn btn-view">查看</button>
               </div>
             </div>
