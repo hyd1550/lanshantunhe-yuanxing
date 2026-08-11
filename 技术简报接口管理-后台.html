@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>技术简报接口管理</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#ffffff;--bg2:#f7f6f3;--bg3:#f0efe9;--border:#e2e0da;--border2:#c8c6bc;
+  --text:#1a1a18;--text2:#6b6960;--text3:#9c9a90;
+  --blue:#185FA5;--blue-bg:#E6F1FB;--teal:#0F6E56;--teal-bg:#E1F5EE;
+  --amber:#8A5A0B;--amber-bg:#FAEEDA;--green:#27500A;--green-bg:#EAF3DE;--red:#A32D2D;--red-bg:#FCEBEB;
+}
+html,body{height:100%}
+body{font-family:-apple-system,BlinkMacSystemFont,'PingFang SC','Microsoft YaHei',sans-serif;font-size:13px;color:var(--text);background:var(--bg2)}
+.app{width:1660px;height:990px;background:var(--bg2);display:flex;flex-direction:column;overflow:hidden;position:relative}
+
+.tbar{flex-shrink:0;height:50px;display:flex;align-items:center;gap:10px;padding:0 22px;background:var(--bg);border-bottom:1px solid var(--border)}
+.crumb b{color:var(--text);font-weight:600;font-size:14px}
+.sp{flex:1}
+.todo-pill{font-size:12px;color:var(--amber);background:var(--amber-bg);border-radius:99px;padding:4px 12px;font-weight:500}
+
+.tools{flex-shrink:0;display:flex;align-items:center;gap:10px;padding:14px 22px 12px;flex-wrap:wrap}
+.flabel{font-size:12.5px;color:var(--text2)}
+.search{display:flex;align-items:center;gap:8px;height:36px;padding:0 12px;border:1px solid var(--border2);border-radius:7px;background:var(--bg);width:300px}
+.search input{border:none;outline:none;flex:1;font-size:13px;font-family:inherit;background:transparent;color:var(--text)}
+.fsel{height:36px;padding:0 10px;border:1px solid var(--border2);border-radius:7px;background:var(--bg);font-family:inherit;font-size:12.5px;color:var(--text);outline:none}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:8px 14px;font-size:12.5px;border:1px solid var(--border2);border-radius:7px;background:var(--bg);color:var(--text);cursor:pointer;font-family:inherit;font-weight:500;white-space:nowrap}
+.btn:hover{background:var(--bg2)}
+.btn.pri{background:var(--blue);color:#fff;border-color:var(--blue)}
+.btn.pri:hover{opacity:.9}
+.btn.dang{background:#FCEBEB;color:#A32D2D;border-color:#e8c4c4}
+.btn.dang:hover{background:#f7dede}
+
+.tblwrap{overflow:auto;margin:0 22px 10px;border:1px solid var(--border);border-radius:10px;background:var(--bg)}
+table.t{width:100%;border-collapse:collapse;font-size:12.5px}
+table.t th,table.t td{padding:15px 18px;text-align:left;border-bottom:1px solid var(--border);white-space:nowrap}
+table.t thead th{position:sticky;top:0;background:var(--bg2);color:var(--text2);font-weight:600;font-size:11.5px;z-index:1}
+table.t tbody tr:hover{background:var(--bg2)}
+table.t tr:last-child td{border-bottom:none}
+.c-no{width:56px}.c-title{width:300px}.c-st{width:100px}.c-url{width:330px}
+.c-tm{width:120px}.c-tm2{width:150px}.c-dep{width:120px}.c-op{width:190px}
+.tt{font-weight:500}
+.url-in{max-width:300px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--blue);cursor:pointer}
+.url-in:hover{text-decoration:underline}
+.pill{font-size:11px;padding:3px 10px;border-radius:99px;font-weight:500;display:inline-block}
+.st-cfg{background:var(--blue-bg);color:var(--blue)}
+.st-mod{background:var(--amber-bg);color:var(--amber)}
+.st-del{background:var(--red-bg);color:var(--red)}
+.st-ok{background:var(--bg3);color:var(--text2)}
+.act{color:var(--blue);cursor:pointer;margin-right:14px;font-weight:500}
+.act:hover{text-decoration:underline}
+.act.red{color:var(--red)}
+.act.plain{color:var(--text2);font-weight:400}
+.muted{color:var(--text3)}
+.rowmark{border-left:3px solid transparent}
+tr.todo td:first-child{box-shadow:inset 3px 0 0 var(--amber)}
+
+.pager{display:flex;align-items:center;gap:6px;margin:0 22px 16px;font-size:12.5px}
+.pg-info{color:var(--text3)}
+.pg{min-width:30px;height:30px;padding:0 9px;display:inline-flex;align-items:center;justify-content:center;border:1px solid var(--border2);border-radius:6px;background:var(--bg);cursor:pointer}
+.pg.on{background:var(--blue);color:#fff;border-color:var(--blue)}
+.pg.dis{color:var(--text3);cursor:default;background:var(--bg2)}
+
+.ov{position:absolute;inset:0;background:rgba(20,25,35,.5);display:none;align-items:center;justify-content:center;z-index:60}
+.ov.show{display:flex}
+.modal{background:var(--bg);border-radius:12px;display:flex;flex-direction:column;overflow:hidden;max-height:90%;width:660px}
+.mhd{display:flex;align-items:center;gap:10px;padding:15px 20px;border-bottom:1px solid var(--border)}
+.mhd h3{font-size:15px;font-weight:600;flex:1}
+.mx{cursor:pointer;color:var(--text2);width:28px;height:28px;border:1px solid var(--border2);border-radius:6px;display:flex;align-items:center;justify-content:center}
+.mbody{overflow-y:auto;padding:16px 20px}
+.mft{padding:12px 20px;border-top:1px solid var(--border);display:flex;align-items:center;gap:8px}
+.applybar{display:flex;align-items:center;gap:8px;background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:9px 12px;font-size:12px;color:var(--text2);margin-bottom:14px}
+.applybar b{color:var(--text);font-weight:600}
+.fr{margin-bottom:14px}
+.fr label{display:block;font-size:12px;color:var(--text2);margin-bottom:5px}
+.fr label .req{color:var(--red);margin-right:3px}
+.fr input,.fr select,.fr textarea{width:100%;padding:9px 10px;font-size:13px;border:1px solid var(--border2);border-radius:7px;background:var(--bg);color:var(--text);outline:none;font-family:inherit}
+.fr textarea{resize:vertical;line-height:1.6}
+.fr .ro{background:var(--bg2);color:var(--text2);border-color:var(--border)}
+.hint{font-size:11.5px;color:var(--text3);margin-top:5px;line-height:1.6}
+.cmp{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px}
+.cmp-col label{display:block;font-size:12px;color:var(--text2);margin-bottom:5px}
+.cmp-col.new label{color:var(--amber);font-weight:600}
+.cmp-box{border:1px solid var(--border);border-radius:7px;padding:9px 10px;font-size:12.5px;line-height:1.65;background:var(--bg2);color:var(--text2);min-height:38px;white-space:pre-wrap}
+.cmp-col.new .cmp-box{background:#FFFBF2;border-color:#e6cf9e;color:var(--text)}
+.sect{font-size:12px;color:var(--text3);border-top:1px dashed var(--border);padding-top:12px;margin-bottom:12px}
+.warn{background:var(--red-bg);border:1px solid #f0cfcf;color:var(--red);border-radius:8px;padding:11px 13px;font-size:12.5px;line-height:1.7;margin-bottom:14px}
+.info{background:var(--blue-bg);border:1px solid #cfe1f3;color:#14507f;border-radius:8px;padding:11px 13px;font-size:12.5px;line-height:1.7;margin-bottom:14px}
+.kv{display:grid;grid-template-columns:110px 1fr;gap:8px 12px;font-size:12.5px;margin-bottom:14px}
+.kv .k{color:var(--text3)}
+.toast{position:absolute;bottom:22px;left:50%;transform:translateX(-50%);background:var(--text);color:#fff;padding:9px 18px;border-radius:6px;font-size:12.5px;opacity:0;transition:opacity .2s;pointer-events:none;z-index:99}
+.toast.show{opacity:1}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="tbar">
+    <span class="crumb"><b>技术简报接口维护</b></span>
+    <span class="sp"></span>
+    <span class="todo-pill" id="todoPill"></span>
+  </div>
+
+  <div class="tools">
+    <span class="flabel">所属部门</span>
+    <select class="fsel" id="fDep" onchange="resetPage()"></select>
+    <span class="flabel" style="margin-left:6px">状态</span>
+    <select class="fsel" id="fSt" onchange="resetPage()">
+      <option value="">全部</option>
+      <option value="cfg">待配置</option>
+      <option value="mod">待修改</option>
+      <option value="del">待删除</option>
+      <option value="ok">已生效</option>
+    </select>
+    <div class="search" style="margin-left:6px"><span style="color:var(--text3)">🔍</span><input id="q" placeholder="请输入简报主题等关键字" oninput="resetPage()"></div>
+    <button class="btn pri" onclick="resetPage()">搜索</button>
+    <button class="btn" onclick="doReset()">重置</button>
+  </div>
+
+  <div class="tblwrap">
+    <table class="t">
+      <thead><tr>
+        <th class="c-no">序号</th>
+        <th class="c-title">技术简报主题</th>
+        <th class="c-st">状态</th>
+        <th class="c-url">URL</th>
+        <th class="c-tm">创建时间</th>
+        <th class="c-tm2">最近一次修改时间</th>
+        <th class="c-dep">所属部门</th>
+        <th class="c-op">操作</th>
+      </tr></thead>
+      <tbody id="tbody"></tbody>
+    </table>
+  </div>
+  <div class="pager" id="pager"></div>
+
+  <!-- 维护弹窗 -->
+  <div class="ov" id="mov"><div class="modal">
+    <div class="mhd"><h3 id="mTitle">技术简报接口信息维护</h3><div class="mx" onclick="closeM()">✕</div></div>
+    <div class="mbody" id="mBody"></div>
+    <div class="mft" id="mFoot"></div>
+  </div></div>
+
+  <div class="toast" id="toast"></div>
+</div>
+
+<script>
+var DEPS = ['战略发展部','茵创公司'];
+var ST = {
+  cfg:{label:'待配置', cls:'st-cfg'},
+  mod:{label:'待修改', cls:'st-mod'},
+  del:{label:'待删除', cls:'st-del'},
+  ok :{label:'已生效', cls:'st-ok'}
+};
+var U = 'https://monitor.example.com/detail/62ac98260b2f41c9bd5866a9ffd0116f?av_module';
+
+var DATA = [
+  { id:1, title:'高强度可降解购物袋材料', st:'cfg', url:'', ct:'2026-02-10', mt:'2026-02-10', dep:'茵创公司',
+    content:'监控高强度可降解购物袋材料相关的技术专利、竞对新品与工艺路线动态，重点关注 PBAT/PLA 共混增强方向。',
+    by:'张伟', byTime:'2026-02-10 09:24' },
+
+  { id:2, title:'PBAT 改性料耐候性提升', st:'mod', url:U, ct:'2026-01-12', mt:'2026-02-09', dep:'战略发展部',
+    content:'监控 PBAT 改性料的耐候性、抗紫外老化相关专利与文献。',
+    newTitle:'PBAT 改性料耐候与耐水解性能提升',
+    newContent:'在原有耐候性、抗紫外老化基础上，增加耐水解与长期户外服役性能方向；同时纳入农膜场景的实际应用案例。',
+    by:'李敏', byTime:'2026-02-09 15:41' },
+
+  { id:3, title:'生物基 PBS 合成工艺', st:'del', url:U, ct:'2025-11-03', mt:'2026-02-08', dep:'战略发展部',
+    content:'监控生物基丁二酸路线的 PBS 合成工艺与产业化进展。',
+    by:'王强', byTime:'2026-02-08 11:07' },
+
+  { id:4, title:'可降解农用地膜配方与工艺', st:'ok', url:U, ct:'2025-09-18', mt:'2025-12-20', dep:'茵创公司',
+    content:'监控可降解农用地膜的配方体系、成膜工艺与田间降解性能评价相关技术动态。',
+    by:'李敏', byTime:'2025-12-20 10:12' },
+
+  { id:5, title:'PGA 材料在油田暂堵场景的应用', st:'ok', url:U, ct:'2025-08-05', mt:'2025-08-05', dep:'茵创公司',
+    content:'监控聚乙醇酸（PGA）在油气开采暂堵球、压裂工具等场景的技术方案与竞对布局。',
+    by:'赵磊', byTime:'2025-08-05 16:30' },
+
+  { id:6, title:'BDO 绿色合成路线技术跟踪', st:'ok', url:U, ct:'2025-06-22', mt:'2025-10-11', dep:'战略发展部',
+    content:'监控 BDO 生物法、电石乙炔法等主要路线的技术改进与成本结构变化。',
+    by:'王强', byTime:'2025-10-11 09:03' },
+
+  { id:7, title:'PBAT 吹膜制品加工性能优化', st:'ok', url:U, ct:'2025-05-14', mt:'2025-05-14', dep:'战略发展部',
+    content:'监控 PBAT 吹膜级产品的加工窗口、熔体强度与设备适配性相关技术。',
+    by:'陈静', byTime:'2025-05-14 14:22' }
+];
+
+var PAGE = 10, cur = 1, curId = null, curMode = null;
+var ORDER = { cfg:0, mod:1, del:2, ok:3 };
+
+function esc(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function byId(id){ for (var i=0;i<DATA.length;i++) if (DATA[i].id===id) return DATA[i]; return null; }
+function today(){ return '2026-02-10'; }
+
+function initDep(){
+  var s = document.getElementById('fDep');
+  var h = '<option value="">全部</option>';
+  for (var i=0;i<DEPS.length;i++) h += '<option>'+DEPS[i]+'</option>';
+  s.innerHTML = h;
+}
+
+function filtered(){
+  var q = document.getElementById('q').value.trim();
+  var dep = document.getElementById('fDep').value;
+  var st = document.getElementById('fSt').value;
+  var out = DATA.filter(function(r){
+    if (dep && r.dep !== dep) return false;
+    if (st && r.st !== st) return false;
+    if (q && r.title.indexOf(q) < 0 && (r.newTitle||'').indexOf(q) < 0) return false;
+    return true;
+  });
+  // 待处理在前，按最近修改时间正序（先来先处理）；已生效按修改时间倒序
+  out.sort(function(a,b){
+    if (ORDER[a.st] !== ORDER[b.st]) return ORDER[a.st] - ORDER[b.st];
+    if (a.st === 'ok') return a.mt < b.mt ? 1 : -1;
+    return a.mt < b.mt ? -1 : 1;
+  });
+  return out;
+}
+
+function opsHtml(r){
+  if (r.st === 'cfg') return '<span class="act" onclick="openM('+r.id+',\'cfg\')">配置</span>';
+  if (r.st === 'mod') return '<span class="act" onclick="openM('+r.id+',\'mod\')">处理修改</span>';
+  if (r.st === 'del') return '<span class="act red" onclick="openM('+r.id+',\'del\')">确认删除</span>';
+  return '<span class="act" onclick="openM('+r.id+',\'edit\')">编辑</span>'+
+         '<span class="act red" onclick="openM('+r.id+',\'admindel\')">删除</span>';
+}
+
+function render(){
+  var list = filtered();
+  var total = list.length, pages = Math.max(1, Math.ceil(total/PAGE));
+  if (cur > pages) cur = pages;
+  var slice = list.slice((cur-1)*PAGE, cur*PAGE);
+
+  var todo = DATA.filter(function(r){ return r.st !== 'ok'; }).length;
+  document.getElementById('todoPill').textContent = todo ? ('待处理 ' + todo + ' 项') : '暂无待处理';
+
+  var h = '';
+  for (var i=0;i<slice.length;i++){
+    var r = slice[i];
+    var no = (cur-1)*PAGE + i + 1;
+    var urlCell = r.url
+      ? '<div class="url-in" title="'+esc(r.url)+'" onclick="copyUrl(this)">'+esc(r.url)+'</div>'
+      : '<span class="muted">未配置</span>';
+    var titleShow = (r.st === 'mod') ? r.title : r.title;
+    h += '<tr class="'+(r.st!=='ok'?'todo':'')+'">'+
+      '<td>'+no+'</td>'+
+      '<td class="tt">'+esc(titleShow)+'</td>'+
+      '<td><span class="pill '+ST[r.st].cls+'">'+ST[r.st].label+'</span></td>'+
+      '<td>'+urlCell+'</td>'+
+      '<td>'+r.ct+'</td>'+
+      '<td>'+r.mt+'</td>'+
+      '<td>'+esc(r.dep)+'</td>'+
+      '<td>'+opsHtml(r)+'</td>'+
+    '</tr>';
+  }
+  if (!slice.length) h = '<tr><td colspan="8" style="text-align:center;color:var(--text3);padding:70px 0">暂无符合条件的数据</td></tr>';
+  document.getElementById('tbody').innerHTML = h;
+
+  var p = '<span class="pg-info">共 <b>'+total+'</b> 条 · 第 '+cur+' / '+pages+' 页</span><span class="sp"></span>';
+  p += '<span class="pg '+(cur<=1?'dis':'')+'" onclick="go('+(cur-1)+')">上一页</span>';
+  for (var k=1;k<=pages;k++) p += '<span class="pg '+(k===cur?'on':'')+'" onclick="go('+k+')">'+k+'</span>';
+  p += '<span class="pg '+(cur>=pages?'dis':'')+'" onclick="go('+(cur+1)+')">下一页</span>';
+  document.getElementById('pager').innerHTML = p;
+}
+
+function go(n){ var pages = Math.max(1, Math.ceil(filtered().length/PAGE)); if (n>=1 && n<=pages){ cur=n; render(); } }
+function resetPage(){ cur = 1; render(); }
+function doReset(){
+  document.getElementById('q').value = '';
+  document.getElementById('fDep').value = '';
+  document.getElementById('fSt').value = '';
+  resetPage();
+  toast('已重置筛选条件');
+}
+function copyUrl(el){ toast('已复制监控链接'); }
+
+function applyBar(r){
+  return '<div class="applybar">本次申请：<b>'+esc(r.by)+'</b> · '+r.byTime+'　|　所属部门：<b>'+esc(r.dep)+'</b></div>';
+}
+
+function openM(id, mode){
+  curId = id; curMode = mode;
+  var r = byId(id);
+  var body = '', foot = '', title = '';
+
+  if (mode === 'cfg'){
+    title = '配置技术简报接口';
+    body = applyBar(r) +
+      '<div class="info">该简报由业务人员提交创建申请。请先在数据源平台建立对应监控，再回填监控链接，保存后申请人即可正常查看简报内容。</div>' +
+      '<div class="fr"><label>简报主题</label><input class="ro" value="'+esc(r.title)+'" readonly></div>' +
+      '<div class="fr"><label>描述要监控的简报内容</label><textarea class="ro" rows="4" readonly>'+esc(r.content)+'</textarea></div>' +
+      '<div class="fr"><label><span class="req">*</span>URL（监控链接）</label><input id="fUrl" placeholder="https://"><div class="hint">未填写监控链接时，业务人员暂时无法查看该简报内容。</div></div>' +
+      '<div class="fr"><label>所属部门</label><input class="ro" value="'+esc(r.dep)+'" readonly></div>';
+    foot = '<span class="sp"></span><button class="btn" onclick="closeM()">取消</button><button class="btn pri" onclick="doConfig()">确认配置</button>';
+  }
+
+  else if (mode === 'mod'){
+    title = '处理简报修改申请';
+    body = applyBar(r) +
+      '<div class="info">左侧为当前生效内容，右侧为用户申请修改的内容。请按右侧要求调整监控后，确认修改完成。</div>' +
+      '<div class="cmp">' +
+        '<div class="cmp-col"><label>当前简报主题</label><div class="cmp-box">'+esc(r.title)+'</div></div>' +
+        '<div class="cmp-col new"><label>申请修改为</label><div class="cmp-box">'+esc(r.newTitle)+'</div></div>' +
+      '</div>' +
+      '<div class="cmp">' +
+        '<div class="cmp-col"><label>当前监控内容</label><div class="cmp-box">'+esc(r.content)+'</div></div>' +
+        '<div class="cmp-col new"><label>申请修改为</label><div class="cmp-box">'+esc(r.newContent)+'</div></div>' +
+      '</div>' +
+      '<div class="sect">管理员处理</div>' +
+      '<div class="fr"><label><span class="req">*</span>URL（监控链接）</label><input id="fUrl" value="'+esc(r.url)+'"><div class="hint">若重建了监控，请更新为新链接；沿用原监控则无需修改。</div></div>';
+    foot = '<span class="sp"></span><button class="btn" onclick="closeM()">取消</button><button class="btn pri" onclick="doModify()">确认修改完成</button>';
+  }
+
+  else if (mode === 'del'){
+    title = '确认删除技术简报';
+    body = applyBar(r) +
+      '<div class="warn">业务人员已提交删除申请。请先删除对应监控，再执行本操作。<br>删除后该记录不可恢复，该简报将从申请人的简报列表中移除，并释放其 1 个监控名额。</div>' +
+      '<div class="kv">' +
+        '<div class="k">简报主题</div><div>'+esc(r.title)+'</div>' +
+        '<div class="k">监控内容</div><div>'+esc(r.content)+'</div>' +
+        '<div class="k">URL</div><div style="word-break:break-all">'+esc(r.url||'未配置')+'</div>' +
+        '<div class="k">创建时间</div><div>'+r.ct+'</div>' +
+        '<div class="k">所属部门</div><div>'+esc(r.dep)+'</div>' +
+      '</div>';
+    foot = '<span class="sp"></span><button class="btn" onclick="closeM()">取消</button><button class="btn dang" onclick="doDelete()">确认删除</button>';
+  }
+
+  else if (mode === 'edit'){
+    title = '技术简报接口信息维护';
+    body =
+      '<div class="fr"><label><span class="req">*</span>简报主题</label><input id="fTitle" value="'+esc(r.title)+'"></div>' +
+      '<div class="fr"><label><span class="req">*</span>描述要监控的简报内容</label><textarea id="fContent" rows="4">'+esc(r.content)+'</textarea></div>' +
+      '<div class="fr"><label><span class="req">*</span>URL</label><input id="fUrl" value="'+esc(r.url)+'"></div>' +
+      '<div class="fr"><label>所属部门</label><select id="fDep2">'+DEPS.map(function(d){ return '<option'+(d===r.dep?' selected':'')+'>'+d+'</option>'; }).join('')+'</select></div>';
+    foot = '<span class="sp"></span><button class="btn" onclick="closeM()">取消</button><button class="btn pri" onclick="doSaveEdit()">确定</button>';
+  }
+
+  else if (mode === 'admindel'){
+    title = '删除技术简报接口';
+    body =
+      '<div class="warn">该简报当前为「已生效」状态，由管理员直接删除。<br>删除后该简报将从创建人的简报列表中移除、释放其 1 个监控名额，并向创建人发送一条系统消息。请确认已与业务方沟通。</div>' +
+      '<div class="kv">' +
+        '<div class="k">简报主题</div><div>'+esc(r.title)+'</div>' +
+        '<div class="k">URL</div><div style="word-break:break-all">'+esc(r.url||'未配置')+'</div>' +
+        '<div class="k">所属部门</div><div>'+esc(r.dep)+'</div>' +
+      '</div>';
+    foot = '<span class="sp"></span><button class="btn" onclick="closeM()">取消</button><button class="btn dang" onclick="doDelete()">确认删除</button>';
+  }
+
+  document.getElementById('mTitle').textContent = title;
+  document.getElementById('mBody').innerHTML = body;
+  document.getElementById('mFoot').innerHTML = foot;
+  document.getElementById('mov').classList.add('show');
+}
+function closeM(){ document.getElementById('mov').classList.remove('show'); curId = null; curMode = null; }
+
+function doConfig(){
+  var r = byId(curId);
+  var u = document.getElementById('fUrl').value.trim();
+  if (!u){ toast('请填写监控链接 URL'); return; }
+  r.url = u; r.st = 'ok'; r.mt = today();
+  closeM(); render();
+  toast('已完成配置，申请人现在可以查看简报了');
+}
+function doModify(){
+  var r = byId(curId);
+  var u = document.getElementById('fUrl').value.trim();
+  if (!u){ toast('请填写监控链接 URL'); return; }
+  r.url = u;
+  r.title = r.newTitle || r.title;
+  r.content = r.newContent || r.content;
+  delete r.newTitle; delete r.newContent;
+  r.st = 'ok'; r.mt = today();
+  closeM(); render();
+  toast('修改已生效，已通知申请人');
+}
+function doDelete(){
+  for (var i=0;i<DATA.length;i++) if (DATA[i].id === curId){ DATA.splice(i,1); break; }
+  closeM(); render();
+  toast('已删除，监控名额已释放');
+}
+function doSaveEdit(){
+  var r = byId(curId);
+  var t = document.getElementById('fTitle').value.trim();
+  var c = document.getElementById('fContent').value.trim();
+  var u = document.getElementById('fUrl').value.trim();
+  if (!t || !c || !u){ toast('简报主题、监控内容、URL 均为必填'); return; }
+  r.title = t; r.content = c; r.url = u;
+  r.dep = document.getElementById('fDep2').value;
+  r.mt = today();
+  closeM(); render();
+  toast('保存成功');
+}
+
+var tmr = null;
+function toast(msg){
+  var el = document.getElementById('toast');
+  el.textContent = msg; el.classList.add('show');
+  clearTimeout(tmr); tmr = setTimeout(function(){ el.classList.remove('show'); }, 2000);
+}
+
+document.getElementById('mov').addEventListener('click', function(e){ if (e.target.id === 'mov') closeM(); });
+
+initDep();
+render();
+</script>
+</body>
+</html>

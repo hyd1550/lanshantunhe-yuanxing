@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>技术简报</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#ffffff;--bg2:#f7f6f3;--bg3:#f0efe9;--border:#e2e0da;--border2:#c8c6bc;
+  --text:#1a1a18;--text2:#6b6960;--text3:#9c9a90;
+  --blue:#185FA5;--blue-bg:#E6F1FB;
+  --amber:#8A5A0B;--amber-bg:#FAEEDA;--green:#27500A;--green-bg:#EAF3DE;--red:#A32D2D;--red-bg:#FCEBEB;
+}
+html,body{height:100%}
+body{font-family:-apple-system,BlinkMacSystemFont,'PingFang SC','Microsoft YaHei',sans-serif;font-size:13px;color:var(--text);background:var(--bg2)}
+.app{width:1660px;height:990px;background:var(--bg2);display:flex;flex-direction:column;overflow:hidden;position:relative}
+
+.tbar{flex-shrink:0;height:50px;display:flex;align-items:center;gap:10px;padding:0 24px;background:var(--bg);border-bottom:1px solid var(--border)}
+.tbar b{font-size:14px;font-weight:600}
+.sp{flex:1}
+
+.tools{flex-shrink:0;display:flex;align-items:center;gap:12px;padding:16px 24px 12px}
+.quota{font-size:12.5px;color:var(--text2);background:var(--bg3);border-radius:99px;padding:5px 14px}
+.quota b{color:var(--blue);font-weight:600}
+.quota.full b{color:var(--red)}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:8px 15px;font-size:12.5px;border:1px solid var(--border2);border-radius:7px;background:var(--bg);color:var(--text);cursor:pointer;font-family:inherit;font-weight:500;white-space:nowrap}
+.btn:hover{background:var(--bg2)}
+.btn.pri{background:var(--blue);color:#fff;border-color:var(--blue)}
+.btn.pri:hover{opacity:.9}
+.btn.dang{background:#FCEBEB;color:#A32D2D;border-color:#e8c4c4}
+.btn.dang:hover{background:#f7dede}
+.btn.dis{background:var(--bg3);color:var(--text3);border-color:var(--border);cursor:not-allowed}
+.btn.sm{padding:6px 12px;font-size:12px}
+
+.list{flex:1;overflow-y:auto;padding:0 24px 20px;display:flex;flex-direction:column;gap:14px}
+.card{background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:20px 22px;display:flex;align-items:center;gap:18px;cursor:pointer;transition:box-shadow .15s}
+.card:hover{box-shadow:0 2px 10px rgba(0,0,0,.06)}
+.card.pend{cursor:default}
+.card.pend:hover{box-shadow:none}
+.cmain{flex:1;min-width:0}
+.crow1{display:flex;align-items:center;gap:12px;margin-bottom:10px}
+.clabel{font-size:13.5px;color:var(--text2)}
+.ctitle{font-size:15px;font-weight:600}
+.crow2{font-size:12.5px;color:var(--text2);line-height:1.7;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.crow2 span.k{color:var(--text3)}
+.cops{display:flex;gap:8px;flex-shrink:0}
+.pill{font-size:11px;padding:3px 11px;border-radius:4px;font-weight:500;color:#fff}
+.p-cfg{background:#41893f}
+.p-mod{background:#E09112}
+.p-del{background:#CF3030}
+.pend-tip{font-size:11.5px;color:var(--text3);margin-top:8px}
+
+.ov{position:absolute;inset:0;background:rgba(20,25,35,.5);display:none;align-items:center;justify-content:center;z-index:60}
+.ov.show{display:flex}
+.modal{background:var(--bg);border-radius:12px;display:flex;flex-direction:column;overflow:hidden;max-height:88%;width:620px}
+.modal.sm{width:460px}
+.mhd{display:flex;align-items:center;gap:10px;padding:15px 20px;border-bottom:1px solid var(--border)}
+.mhd h3{font-size:15px;font-weight:600;flex:1}
+.mx{cursor:pointer;color:var(--text2);width:28px;height:28px;border:1px solid var(--border2);border-radius:6px;display:flex;align-items:center;justify-content:center}
+.mbody{overflow-y:auto;padding:18px 20px}
+.mft{padding:12px 20px;border-top:1px solid var(--border);display:flex;align-items:center;gap:8px}
+.fr{margin-bottom:15px}
+.fr label{display:block;font-size:12.5px;color:var(--text2);margin-bottom:6px}
+.fr label .req{color:var(--red);margin-right:3px}
+.fr input,.fr textarea{width:100%;padding:9px 11px;font-size:13px;border:1px solid var(--border2);border-radius:7px;background:var(--bg);color:var(--text);outline:none;font-family:inherit}
+.fr textarea{resize:vertical;line-height:1.6}
+.hint{font-size:11.5px;color:var(--text3);margin-top:6px;line-height:1.6}
+.info{background:var(--blue-bg);border:1px solid #cfe1f3;color:#14507f;border-radius:8px;padding:11px 13px;font-size:12.5px;line-height:1.7;margin-bottom:15px}
+.warn{background:var(--red-bg);border:1px solid #f0cfcf;color:var(--red);border-radius:8px;padding:11px 13px;font-size:12.5px;line-height:1.7;margin-bottom:15px}
+.ctext{font-size:13px;line-height:1.8}
+.ctext b{font-weight:600}
+.toast{position:absolute;bottom:24px;left:50%;transform:translateX(-50%);background:var(--text);color:#fff;padding:9px 18px;border-radius:6px;font-size:12.5px;opacity:0;transition:opacity .2s;pointer-events:none;z-index:99}
+.toast.show{opacity:1}
+.empty{flex:1;display:flex;align-items:center;justify-content:center;color:var(--text3);font-size:13px}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="tbar"><b>技术简报</b></div>
+
+  <div class="tools">
+    <span class="sp"></span>
+    <span class="quota" id="quota"></span>
+    <button class="btn pri" id="createBtn" onclick="openCreate()">创建技术简报</button>
+  </div>
+
+  <div class="list" id="list"></div>
+
+  <!-- 创建 / 修改 -->
+  <div class="ov" id="fov"><div class="modal">
+    <div class="mhd"><h3 id="fTitle">创建技术简报</h3><div class="mx" onclick="closeF()">✕</div></div>
+    <div class="mbody" id="fBody"></div>
+    <div class="mft"><span class="sp"></span><button class="btn" onclick="closeF()">取消</button><button class="btn pri" id="fOk"></button></div>
+  </div></div>
+
+  <!-- 通用确认 -->
+  <div class="ov" id="cov"><div class="modal sm">
+    <div class="mhd"><h3 id="cTitle">提示</h3><div class="mx" onclick="closeC()">✕</div></div>
+    <div class="mbody" id="cBody"></div>
+    <div class="mft"><span class="sp"></span><button class="btn" onclick="closeC()">取消</button><button class="btn" id="cOk"></button></div>
+  </div></div>
+
+  <div class="toast" id="toast"></div>
+</div>
+
+<script>
+var MAX = 5;
+var SUB = '金发科技股份有限公司，华峰化学股份有限公司，新疆蓝山屯河科技股份有限公司，彤程新材料集团股份有限公司，万华化学集团股份有限公司 ……';
+
+var DATA = [
+  { id:1, title:'PBAT 改性料耐候性提升', st:'cfg',
+    content:'监控 PBAT 改性料的耐候性、抗紫外老化相关专利与技术文献。', sub:SUB },
+  { id:2, title:'生物基 PBS 合成工艺', st:'del',
+    content:'监控生物基丁二酸路线的 PBS 合成工艺与产业化进展。', sub:SUB },
+  { id:3, title:'高强度可降解购物袋材料', st:'mod',
+    content:'监控高强度可降解购物袋材料相关的技术专利与工艺路线动态。', sub:SUB,
+    newTitle:'高强度可降解购物袋材料（含 PLA 共混方向）',
+    newContent:'在原方向基础上增加 PBAT/PLA 共混增强、薄膜力学性能相关内容。' },
+  { id:4, title:'可降解农用地膜配方与工艺', st:'ok',
+    content:'监控可降解农用地膜的配方体系、成膜工艺与田间降解性能评价相关技术动态。', sub:SUB }
+];
+
+var ST = {
+  cfg:{label:'主题创建中', cls:'p-cfg', tip:'管理员正在配置监控，配置完成后即可查看简报内容。'},
+  mod:{label:'主题修改中', cls:'p-mod', tip:'修改申请已提交，管理员处理完成后生效。'},
+  del:{label:'主题删除中', cls:'p-del', tip:'删除申请已提交，管理员处理完成后本简报将被移除。'}
+};
+
+var curId = null, fMode = null, cAction = null;
+function esc(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function byId(id){ for (var i=0;i<DATA.length;i++) if (DATA[i].id===id) return DATA[i]; return null; }
+
+function render(){
+  var used = DATA.length, left = MAX - used;
+  var q = document.getElementById('quota');
+  q.innerHTML = '剩余可创建监控数：<b>' + left + '</b>';
+  q.className = 'quota' + (left <= 0 ? ' full' : '');
+  var cb = document.getElementById('createBtn');
+  cb.className = 'btn ' + (left <= 0 ? 'dis' : 'pri');
+
+  var h = '';
+  for (var i=0;i<DATA.length;i++){
+    var r = DATA[i], pend = r.st !== 'ok';
+    var tag = pend ? '<span class="pill '+ST[r.st].cls+'">'+ST[r.st].label+'</span>' : '';
+    var ops = pend
+      ? '<button class="btn sm" onclick="event.stopPropagation();askRevoke('+r.id+')">撤回申请</button>'
+      : '<button class="btn sm" onclick="event.stopPropagation();openModify('+r.id+')">修改简报</button>'+
+        '<button class="btn sm" onclick="event.stopPropagation();askDelete('+r.id+')">删除</button>';
+    h += '<div class="card '+(pend?'pend':'')+'" onclick="viewBrief('+r.id+')" title="'+(pend?'':'点击查看简报内容')+'">'+
+      '<div class="cmain">'+
+        '<div class="crow1"><span class="clabel">技术主题：</span><span class="ctitle">'+esc(r.title)+'</span>'+tag+'</div>'+
+        '<div class="crow2"><span class="k">包含的子领域：</span>'+esc(r.sub)+'</div>'+
+        (pend ? '<div class="pend-tip">'+ST[r.st].tip+'</div>' : '')+
+      '</div>'+
+      '<div class="cops">'+ops+'</div>'+
+    '</div>';
+  }
+  document.getElementById('list').innerHTML = h || '<div class="empty">暂无技术简报，点击右上角「创建技术简报」新建</div>';
+}
+
+function viewBrief(id){
+  var r = byId(id);
+  if (r.st === 'cfg'){ toast('简报配置中，请稍后查看'); return; }
+  if (r.st === 'del'){ toast('该简报正在删除申请中'); return; }
+  toast('打开简报内容页（嵌入监控链接）');
+}
+
+/* ── 创建 ── */
+function openCreate(){
+  if (DATA.length >= MAX){ toast('可创建监控数已用完，请先删除已有简报'); return; }
+  fMode = 'create'; curId = null;
+  document.getElementById('fTitle').textContent = '创建技术简报';
+  document.getElementById('fBody').innerHTML =
+    '<div class="info">提交后进入「主题创建中」，由管理员完成监控配置后生效。创建申请提交即占用 1 个监控名额，撤回后名额释放。</div>'+
+    '<div class="fr"><label><span class="req">*</span>简报主题</label><input id="iTitle" placeholder="请输入简报主题"></div>'+
+    '<div class="fr"><label><span class="req">*</span>描述要监控的简报内容</label><textarea id="iContent" rows="5" placeholder="请描述您需要进行监控的内容"></textarea></div>';
+  var ok = document.getElementById('fOk');
+  ok.textContent = '提交'; ok.onclick = submitForm;
+  document.getElementById('fov').classList.add('show');
+}
+
+/* ── 修改 ── */
+function openModify(id){
+  fMode = 'modify'; curId = id;
+  var r = byId(id);
+  document.getElementById('fTitle').textContent = '修改技术简报';
+  document.getElementById('fBody').innerHTML =
+    '<div class="info">提交后进入「主题修改中」，管理员处理完成前简报仍按原内容正常推送。</div>'+
+    '<div class="fr"><label><span class="req">*</span>简报主题</label><input id="iTitle" value="'+esc(r.title)+'"></div>'+
+    '<div class="fr"><label><span class="req">*</span>描述要监控的简报内容</label><textarea id="iContent" rows="5">'+esc(r.content)+'</textarea></div>';
+  var ok = document.getElementById('fOk');
+  ok.textContent = '提交修改'; ok.onclick = submitForm;
+  document.getElementById('fov').classList.add('show');
+}
+function closeF(){ document.getElementById('fov').classList.remove('show'); }
+
+function submitForm(){
+  var t = document.getElementById('iTitle').value.trim();
+  var c = document.getElementById('iContent').value.trim();
+  if (!t){ toast('请填写简报主题'); return; }
+  if (!c){ toast('请描述要监控的简报内容'); return; }
+  if (fMode === 'create'){
+    var nid = 1; for (var i=0;i<DATA.length;i++) nid = Math.max(nid, DATA[i].id+1);
+    DATA.push({ id:nid, title:t, content:c, st:'cfg', sub:SUB });
+    closeF(); render(); toast('已提交创建申请，等待管理员配置');
+  } else {
+    var r = byId(curId);
+    r.newTitle = t; r.newContent = c; r.st = 'mod';
+    closeF(); render(); toast('已提交修改申请，等待管理员处理');
+  }
+}
+
+/* ── 确认类 ── */
+function openC(title, body, okText, okCls, fn){
+  document.getElementById('cTitle').textContent = title;
+  document.getElementById('cBody').innerHTML = body;
+  var ok = document.getElementById('cOk');
+  ok.textContent = okText; ok.className = 'btn ' + okCls; ok.onclick = fn;
+  document.getElementById('cov').classList.add('show');
+}
+function closeC(){ document.getElementById('cov').classList.remove('show'); }
+
+function askDelete(id){
+  curId = id; var r = byId(id);
+  openC('删除技术简报',
+    '<div class="warn">删除申请提交后进入「主题删除中」，由管理员确认后正式移除，届时释放 1 个监控名额。</div>'+
+    '<div class="ctext">确认要删除简报 <b>'+esc(r.title)+'</b> 吗？</div>',
+    '确认删除', 'dang', doDelete);
+}
+function doDelete(){ var r = byId(curId); r.st = 'del'; closeC(); render(); toast('已提交删除申请，等待管理员处理'); }
+
+function askRevoke(id){
+  curId = id; var r = byId(id);
+  var body;
+  if (r.st === 'cfg'){
+    body = '<div class="warn">撤回后本条创建申请将被取消，卡片一并移除，并释放 1 个监控名额。需要时可重新创建。</div>';
+  } else if (r.st === 'mod'){
+    body = '<div class="warn">撤回后本次修改申请作废，简报恢复为修改前的内容，可正常查看。</div>';
+  } else {
+    body = '<div class="warn">撤回后本次删除申请作废，简报将保留并恢复正常使用。</div>';
+  }
+  openC('撤回申请',
+    body + '<div class="ctext">确认撤回 <b>'+esc(r.title)+'</b> 的「'+ST[r.st].label+'」申请吗？</div>',
+    '确认撤回', 'pri', doRevoke);
+}
+function doRevoke(){
+  var r = byId(curId);
+  if (r.st === 'cfg'){
+    for (var i=0;i<DATA.length;i++) if (DATA[i].id === curId){ DATA.splice(i,1); break; }
+    closeC(); render(); toast('创建申请已撤回，名额已释放');
+  } else {
+    r.st = 'ok'; delete r.newTitle; delete r.newContent;
+    closeC(); render(); toast('申请已撤回，简报恢复正常');
+  }
+}
+
+var tmr = null;
+function toast(msg){
+  var el = document.getElementById('toast');
+  el.textContent = msg; el.classList.add('show');
+  clearTimeout(tmr); tmr = setTimeout(function(){ el.classList.remove('show'); }, 2200);
+}
+document.getElementById('fov').addEventListener('click', function(e){ if (e.target.id === 'fov') closeF(); });
+document.getElementById('cov').addEventListener('click', function(e){ if (e.target.id === 'cov') closeC(); });
+
+render();
+</script>
+</body>
+</html>
