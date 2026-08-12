@@ -1,0 +1,902 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>操作日志</title>
+</head>
+<body>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#ffffff;
+  --bg2:#f7f6f3;
+  --bg3:#f0efe9;
+  --border:#d8d6ce;
+  --border2:#c8c6bc;
+  --text:#1a1a18;
+  --text2:#6b6960;
+  --text3:#9c9a90;
+  --blue:#185FA5;
+  --blue-bg:#E6F1FB;
+  --teal:#085041;
+  --teal-bg:#E1F5EE;
+  --green:#27500A;
+  --green-bg:#EAF3DE;
+  --red:#A32D2D;
+  --red-bg:#FCEBEB;
+  --orange:#B86400;
+  --orange-bg:#FFF3E0;
+  --success:#2d7a3a;
+  --danger:#A32D2D;
+  --sidebar-w:192px;
+}
+html,body{height:100%}
+body{font-family:-apple-system,BlinkMacSystemFont,'PingFang SC','Microsoft YaHei',sans-serif;font-size:13px;color:var(--text);background:var(--bg2);margin:0;overflow:hidden}
+.app{display:grid;grid-template-rows:46px 1fr;width:1660px;height:990px;overflow:hidden;background:var(--bg)}
+.topbar{display:flex;align-items:center;border-bottom:1.5px solid var(--border2);padding:0 8px;gap:0;background:var(--bg)}
+.tb{padding:0 16px;height:46px;border:none;background:none;font-size:13px;color:var(--text2);cursor:pointer;border-bottom:2.5px solid transparent;font-family:inherit;white-space:nowrap;transition:color .15s}
+.tb.on{color:var(--text);font-weight:500;border-bottom-color:var(--text)}
+.tb:hover:not(.on){color:var(--text)}
+.body{display:grid;grid-template-columns:var(--sidebar-w) 1fr;overflow:hidden;height:100%}
+.sb{border-right:1.5px solid var(--border2);overflow-y:auto;display:flex;flex-direction:column;background:var(--bg2)}
+.sb-lbl{font-size:10px;color:var(--text3);padding:10px 12px 3px;letter-spacing:.5px;text-transform:uppercase;font-weight:600;flex-shrink:0}
+.sn{display:flex;align-items:center;gap:4px;padding:6px 12px;cursor:pointer;font-size:12px;color:var(--text2);position:relative;transition:background .1s;user-select:none;flex-shrink:0}
+.sn:hover{background:var(--bg3);color:var(--text)}
+.sn.on{background:var(--bg3);color:var(--text);font-weight:500}
+.sn.on::before{content:'';position:absolute;left:0;top:0;bottom:0;width:2.5px;background:var(--text);border-radius:0 2px 2px 0}
+.main{overflow-y:auto;background:var(--bg)}
+.panel{display:none}
+.panel.on{display:block}
+.ph{padding:16px 20px 12px;border-bottom:1.5px solid var(--border2);display:flex;align-items:flex-start;justify-content:space-between;gap:12px;background:var(--bg)}
+.ph-t{font-size:14px;font-weight:600;color:var(--text)}
+.ph-s{font-size:11.5px;color:var(--text2);margin-top:3px}
+.btn{display:inline-flex;align-items:center;gap:4px;padding:5px 12px;border:1px solid var(--border2);border-radius:6px;background:var(--bg);font-size:12px;color:var(--text);cursor:pointer;font-family:inherit;transition:background .1s;white-space:nowrap;flex-shrink:0;font-weight:500}
+.btn:hover{background:var(--bg2)}
+.btn-p{background:var(--text);color:var(--bg);border-color:var(--text)}
+.btn-p:hover{opacity:.85}
+.btn-d{color:var(--danger);border-color:#f0c0c0}
+.btn-d:hover{background:var(--red-bg)}
+.btn-g{border-color:transparent}
+.btn-g:hover{background:var(--bg2)}
+.tag{display:inline-flex;align-items:center;padding:2px 7px;border-radius:20px;font-size:10.5px;font-weight:600;white-space:nowrap}
+.tag-green{background:var(--green-bg);color:var(--green)}
+.tag-blue{background:var(--blue-bg);color:var(--blue)}
+.tag-orange{background:var(--orange-bg);color:var(--orange)}
+.tag-red{background:var(--red-bg);color:var(--red)}
+.tag-gray{background:var(--bg3);color:var(--text3)}
+.tag-purple{background:#EEEDFE;color:#3C3489}
+.logtbl{width:100%;border-collapse:collapse;font-size:12px}
+.logtbl th{text-align:left;padding:10px 12px;color:var(--text2);font-weight:500;font-size:11px;border-bottom:1.5px solid var(--border2);background:var(--bg2)}
+.logtbl td{padding:10px 12px;border-bottom:1px solid var(--border);vertical-align:middle;white-space:nowrap}
+.logtbl th{white-space:nowrap}
+.logtbl tr:last-child td{border-bottom:none}
+.logtbl tr:hover td{background:var(--bg2)}
+.logtbl tr.expanded-row td{background:var(--bg2)}
+.filters{padding:14px 20px;border-bottom:1px solid var(--border);background:var(--bg2)}
+.filter-row{display:flex;gap:10px;align-items:center;margin-bottom:10px}
+.filter-row:last-child{margin-bottom:0}
+.filter-lbl{font-size:12px;color:var(--text2);white-space:nowrap}
+.filter-input{padding:6px 10px;border:1px solid var(--border2);border-radius:6px;font-size:12px;font-family:inherit;background:var(--bg);color:var(--text);min-width:120px}
+.filter-input:focus{outline:none;border-color:var(--blue)}
+.filter-select{padding:6px 10px;border:1px solid var(--border2);border-radius:6px;font-size:12px;font-family:inherit;background:var(--bg);color:var(--text);min-width:140px}
+.filter-select:focus{outline:none;border-color:var(--blue)}
+.empty{padding:60px;text-align:center;color:var(--text3);font-size:12px}
+.sdot{width:6px;height:6px;border-radius:50%;display:inline-block;margin-right:4px;flex-shrink:0}
+.detail-btn{background:none;border:none;color:var(--blue);cursor:pointer;font-size:12px;padding:3px 8px;border-radius:4px;font-family:inherit;font-weight:500}
+.detail-btn:hover{background:var(--blue-bg)}
+.page-info{font-size:12px;color:var(--text3);margin-left:auto}
+
+/* Modal 样式 */
+.overlay{display:none;position:fixed;top:0;left:0;right:0;bottom:0;z-index:1000;align-items:flex-start;justify-content:center;padding-top:36px;background:rgba(30,28,24,.52)}
+.overlay.on{display:flex}
+.modal{background:#ffffff;border-radius:10px;border:1.5px solid var(--border2);width:580px;max-width:96%;max-height:85vh;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 8px 32px rgba(0,0,0,.18)}
+.modal-h{padding:16px 18px 13px;border-bottom:1.5px solid var(--border2);display:flex;align-items:center;justify-content:space-between;flex-shrink:0;background:#f7f6f3}
+.modal-ht{font-size:14px;font-weight:600;color:#1a1a18}
+.modal-x{width:24px;height:24px;border:none;background:none;cursor:pointer;font-size:16px;color:#6b6960;display:flex;align-items:center;justify-content:center;border-radius:5px;line-height:1}
+.modal-x:hover{background:#e8e7e0}
+.modal-b{padding:16px 18px;flex:1;overflow-y:auto;background:#ffffff}
+.modal-f{padding:12px 18px;border-top:1.5px solid var(--border2);display:flex;gap:8px;justify-content:flex-end;flex-shrink:0;background:#f7f6f3}
+.fr{margin-bottom:13px}
+.fr:last-child{margin-bottom:0}
+.fl{font-size:11.5px;color:#6b6960;margin-bottom:5px;display:block;font-weight:600}
+.fi{width:100%;padding:7px 10px;border:1px solid var(--border2);border-radius:6px;font-size:12.5px;font-family:inherit;background:#ffffff;color:#1a1a18;transition:border-color .15s}
+.fi:focus{outline:none;border-color:#888}
+.fi-ro{background:var(--bg2);cursor:default;color:var(--text2)}
+.detail-grid{display:grid;grid-template-columns:100px 1fr;gap:6px 12px}
+.detail-row{display:contents}
+.detail-lbl{font-size:12px;color:var(--text2);font-weight:500}
+.detail-val{font-size:12px;color:var(--text)}
+.detail-row .detail-lbl::after{content:':'}
+.changes{margin-top:12px;padding:12px;background:var(--bg2);border-radius:6px;border:1px solid var(--border)}
+.changes-t{font-size:11.5px;font-weight:600;color:var(--text);margin-bottom:8px}
+.change-item{font-size:11.5px;padding:4px 0;color:var(--text2);line-height:1.6}
+.change-item .field{color:var(--text3);margin-right:4px}
+.change-item .op{color:var(--text3);margin:0 4px;font-weight:600}
+.change-item .val{color:var(--text)}
+.change-item .val.old{text-decoration:line-through;color:var(--danger)}
+.change-item .val.new{color:var(--success)}
+
+/* 人员选择弹窗 */
+.pp-body{display:grid;grid-template-columns:180px 1fr;height:380px;overflow:hidden}
+.pp-left{border-right:1.5px solid var(--border);overflow-y:auto;background:var(--bg2)}
+.pp-right{overflow-y:auto;padding:0}
+.pp-search{padding:10px 12px;border-bottom:1px solid var(--border);position:sticky;top:0;background:var(--bg);z-index:1}
+.pp-search input{width:100%;padding:6px 10px 6px 28px;border:1px solid var(--border2);border-radius:6px;font-size:12px;font-family:inherit;background:var(--bg) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' fill='%239c9a90' viewBox='0 0 24 24'%3E%3Cpath d='M15.5 14h-.79l-.28-.27A6.47 6.47 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z'/%3E%3C/svg%3E") 8px center no-repeat}
+.pp-search input:focus{outline:none;border-color:var(--blue)}
+.pp-dept{padding:8px 12px;font-size:12px;color:var(--text2);cursor:pointer;display:flex;align-items:center;gap:6px;transition:background .1s;user-select:none;position:relative}
+.pp-dept:hover{background:var(--bg3);color:var(--text)}
+.pp-dept.on{background:var(--bg3);color:var(--text);font-weight:500}
+.pp-dept.on::before{content:'';position:absolute;left:0;top:0;bottom:0;width:2.5px;background:var(--text);border-radius:0 2px 2px 0}
+.pp-dept-icon{font-size:13px;flex-shrink:0}
+.pp-dept-name{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pp-dept-cnt{font-size:10px;color:var(--text3);background:var(--bg3);padding:1px 6px;border-radius:10px;flex-shrink:0}
+.pp-dept-check{width:15px;height:15px;border:1.5px solid var(--border2);border-radius:3px;flex-shrink:0;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .12s;font-size:10px;color:#fff}
+.pp-dept-check.checked{background:var(--text);border-color:var(--text)}
+.pp-person{padding:7px 14px;font-size:12px;color:var(--text);display:flex;align-items:center;gap:8px;cursor:pointer;transition:background .1s;user-select:none}
+.pp-person:hover{background:var(--bg2)}
+.pp-person-check{width:15px;height:15px;border:1.5px solid var(--border2);border-radius:3px;flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all .12s;font-size:10px;color:#fff}
+.pp-person-check.checked{background:var(--text);border-color:var(--text)}
+.pp-person-avatar{width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:600;color:#fff;flex-shrink:0}
+.pp-person-info{flex:1;min-width:0}
+.pp-person-name{font-size:12px;font-weight:500}
+.pp-person-role{font-size:10.5px;color:var(--text3);margin-top:1px}
+.pp-selected{padding:10px 14px;border-top:1px solid var(--border);background:var(--bg2);display:flex;align-items:center;gap:6px;flex-wrap:wrap;min-height:42px;position:sticky;bottom:0}
+.pp-selected-lbl{font-size:11px;color:var(--text3);flex-shrink:0}
+.pp-chip{display:inline-flex;align-items:center;gap:3px;padding:2px 8px;background:var(--bg);border:1px solid var(--border);border-radius:12px;font-size:11px;color:var(--text)}
+.pp-chip-x{cursor:pointer;color:var(--text3);font-size:12px;line-height:1;margin-left:2px}
+.pp-chip-x:hover{color:var(--danger)}
+.pp-right-head{padding:10px 14px;border-bottom:1px solid var(--border);background:var(--bg2);display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:1}
+.pp-right-title{font-size:12px;font-weight:500;color:var(--text)}
+.pp-check-all{font-size:11px;color:var(--blue);cursor:pointer;border:none;background:none;font-family:inherit;padding:2px 6px;border-radius:4px}
+.pp-check-all:hover{background:var(--blue-bg)}
+</style>
+
+<div class="app">
+<div class="topbar">
+  <button class="tb on">操作日志</button>
+</div>
+<div class="body">
+  <div class="sb">
+    <div class="sb-lbl">日志类型</div>
+    <div class="sn on" onclick="filterLogs('all', this)">全部日志</div>
+    <div class="sn" onclick="filterLogs('login', this)">登录日志</div>
+    <div class="sn" onclick="filterLogs('account', this)">账户操作</div>
+    <div class="sn" onclick="filterLogs('dept', this)">部门操作</div>
+    <div class="sn" onclick="filterLogs('role', this)">角色操作</div>
+    <div class="sn" onclick="filterLogs('permission', this)">权限配置</div>
+    <div class="sn" onclick="filterLogs('system', this)">系统操作</div>
+  </div>
+  <div class="main">
+    <div class="ph">
+      <div><div class="ph-t">操作日志</div><div class="ph-s">查看系统内所有操作记录，支持按条件筛选和导出</div></div>
+      <div style="display:flex;gap:6px">
+        <button class="btn" onclick="showExport()">导出日志</button>
+        <button class="btn btn-d" onclick="showClear()">清理日志</button>
+      </div>
+    </div>
+    <div class="filters">
+      <div class="filter-row">
+        <span class="filter-lbl">时间范围：</span>
+        <input type="date" class="filter-input" value="2026-04-01">
+        <span style="color:var(--text3)">至</span>
+        <input type="date" class="filter-input" value="2026-04-03">
+        <button class="btn btn-g" style="margin-left:0" onclick="setRange('today')">今日</button>
+        <button class="btn btn-g" onclick="setRange('week')">本周</button>
+        <button class="btn btn-g" onclick="setRange('month')">本月</button>
+      </div>
+      <div class="filter-row">
+        <span class="filter-lbl">操作人：</span>
+        <div style="position:relative">
+          <button class="filter-select" id="personBtn" onclick="showPersonPicker()" style="cursor:pointer;text-align:left;display:flex;align-items:center;justify-content:space-between;gap:6px">
+            <span id="personBtnText">全部操作人</span><span style="font-size:10px;color:var(--text3)">▼</span>
+          </button>
+        </div>
+        <span class="filter-lbl" style="margin-left:20px">操作结果：</span>
+        <select class="filter-select"><option>全部</option><option>成功</option><option>失败</option></select>
+        <button class="btn btn-p" style="margin-left:auto" onclick="doSearch()">查询</button>
+      </div>
+    </div>
+    <table class="logtbl">
+      <thead>
+        <tr>
+          <th>操作时间</th>
+          <th>操作人</th>
+          <th>操作类型</th>
+          <th>操作内容</th>
+          <th>IP地址</th>
+          <th>结果</th>
+          <th>操作</th>
+        </tr>
+      </thead>
+      <tbody id="logBody">
+        <tr>
+          <td>2026-04-03 15:32:18</td>
+          <td>李晓燕</td>
+          <td><span class="tag tag-blue">账户管理</span></td>
+          <td>编辑账户「张明」信息</td>
+          <td style="color:var(--text2);font-size:11px">192.168.1.105</td>
+          <td><span style="display:inline-flex;align-items:center;font-size:11px"><span class="sdot" style="background:var(--success)"></span>成功</span></td>
+          <td><button class="detail-btn" onclick="showDetail(0)">详情</button></td>
+        </tr>
+        <tr>
+          <td>2026-04-03 15:28:45</td>
+          <td>周总</td>
+          <td><span class="tag tag-green">部门管理</span></td>
+          <td>创建新部门「市场拓展部」</td>
+          <td style="color:var(--text2);font-size:11px">192.168.1.100</td>
+          <td><span style="display:inline-flex;align-items:center;font-size:11px"><span class="sdot" style="background:var(--success)"></span>成功</span></td>
+          <td><button class="detail-btn" onclick="showDetail(1)">详情</button></td>
+        </tr>
+        <tr>
+          <td>2026-04-03 15:15:22</td>
+          <td>张明</td>
+          <td><span class="tag tag-orange">权限配置</span></td>
+          <td>修改角色「研发工程师」权限</td>
+          <td style="color:var(--text2);font-size:11px">192.168.1.110</td>
+          <td><span style="display:inline-flex;align-items:center;font-size:11px"><span class="sdot" style="background:var(--success)"></span>成功</span></td>
+          <td><button class="detail-btn" onclick="showDetail(2)">详情</button></td>
+        </tr>
+        <tr>
+          <td>2026-04-03 14:58:33</td>
+          <td>李晓燕</td>
+          <td><span class="tag tag-blue">账户管理</span></td>
+          <td>创建新账户「王建国」</td>
+          <td style="color:var(--text2);font-size:11px">192.168.1.105</td>
+          <td><span style="display:inline-flex;align-items:center;font-size:11px"><span class="sdot" style="background:var(--success)"></span>成功</span></td>
+          <td><button class="detail-btn" onclick="showDetail(3)">详情</button></td>
+        </tr>
+        <tr>
+          <td>2026-04-03 14:45:12</td>
+          <td>系统</td>
+          <td><span class="tag tag-gray">系统操作</span></td>
+          <td>自动清理过期临时文件</td>
+          <td style="color:var(--text2);font-size:11px">127.0.0.1</td>
+          <td><span style="display:inline-flex;align-items:center;font-size:11px"><span class="sdot" style="background:var(--success)"></span>成功</span></td>
+          <td><button class="detail-btn" onclick="showDetail(4)">详情</button></td>
+        </tr>
+        <tr>
+          <td>2026-04-03 14:30:55</td>
+          <td>张明</td>
+          <td><span class="tag tag-red">登录失败</span></td>
+          <td>登录失败：密码错误（第3次）</td>
+          <td style="color:var(--text2);font-size:11px">192.168.1.112</td>
+          <td><span style="display:inline-flex;align-items:center;font-size:11px"><span class="sdot" style="background:var(--danger)"></span>失败</span></td>
+          <td><button class="detail-btn" onclick="showDetail(5)">详情</button></td>
+        </tr>
+        <tr>
+          <td>2026-04-03 14:15:08</td>
+          <td>刘洋</td>
+          <td><span class="tag tag-blue">账户管理</span></td>
+          <td>删除账户「陈晨」</td>
+          <td style="color:var(--text2);font-size:11px">192.168.1.108</td>
+          <td><span style="display:inline-flex;align-items:center;font-size:11px"><span class="sdot" style="background:var(--success)"></span>成功</span></td>
+          <td><button class="detail-btn" onclick="showDetail(6)">详情</button></td>
+        </tr>
+        <tr>
+          <td>2026-04-03 13:55:41</td>
+          <td>赵丽</td>
+          <td><span class="tag tag-purple">角色管理</span></td>
+          <td>创建新角色「法务专员」</td>
+          <td style="color:var(--text2);font-size:11px">192.168.1.109</td>
+          <td><span style="display:inline-flex;align-items:center;font-size:11px"><span class="sdot" style="background:var(--success)"></span>成功</span></td>
+          <td><button class="detail-btn" onclick="showDetail(7)">详情</button></td>
+        </tr>
+        <tr>
+          <td>2026-04-03 13:40:22</td>
+          <td>李晓燕</td>
+          <td><span class="tag tag-green">登录成功</span></td>
+          <td>用户登录系统</td>
+          <td style="color:var(--text2);font-size:11px">192.168.1.105</td>
+          <td><span style="display:inline-flex;align-items:center;font-size:11px"><span class="sdot" style="background:var(--success)"></span>成功</span></td>
+          <td><button class="detail-btn" onclick="showDetail(8)">详情</button></td>
+        </tr>
+        <tr>
+          <td>2026-04-03 13:25:18</td>
+          <td>周总</td>
+          <td><span class="tag tag-orange">权限配置</span></td>
+          <td>修改部门「研究院」权限配置</td>
+          <td style="color:var(--text2);font-size:11px">192.168.1.100</td>
+          <td><span style="display:inline-flex;align-items:center;font-size:11px"><span class="sdot" style="background:var(--success)"></span>成功</span></td>
+          <td><button class="detail-btn" onclick="showDetail(9)">详情</button></td>
+        </tr>
+      </tbody>
+    </table>
+    <div id="emptyState" class="empty" style="display:none">暂无该类型的日志记录</div>
+    <div style="padding:14px 20px;display:flex;align-items:center;border-top:1px solid var(--border2);background:var(--bg2)">
+      <span class="page-info" id="pageInfo"></span>
+      <button class="btn btn-g" onclick="changePage(-1)">上一页</button>
+      <button class="btn btn-g" onclick="changePage(1)">下一页</button>
+    </div>
+  </div>
+</div>
+
+<!-- 详情弹窗 -->
+<div class="overlay" id="detailOverlay" onclick="if(event.target===this)closeOverlay('detailOverlay')">
+<div class="modal" onclick="event.stopPropagation()">
+  <div class="modal-h"><span class="modal-ht">操作详情</span><button class="modal-x" onclick="closeOverlay('detailOverlay')">✕</button></div>
+  <div class="modal-b" id="detailBody"></div>
+  <div class="modal-f"><button class="btn" onclick="closeOverlay('detailOverlay')">关闭</button></div>
+</div></div>
+
+<!-- 导出弹窗 -->
+<div class="overlay" id="exportOverlay" onclick="if(event.target===this)closeOverlay('exportOverlay')">
+<div class="modal" style="width:440px" onclick="event.stopPropagation()">
+  <div class="modal-h"><span class="modal-ht">导出日志</span><button class="modal-x" onclick="closeOverlay('exportOverlay')">✕</button></div>
+  <div class="modal-b">
+    <div class="fr"><label class="fl">导出范围</label>
+      <select class="fi" id="exportRange"><option>当前筛选结果</option><option>全部日志</option><option>自定义时间段</option></select>
+    </div>
+    <div class="fr"><label class="fl">日志类型</label>
+      <select class="fi" id="exportType"><option>全部类型</option><option>登录日志</option><option>账户操作</option><option>部门操作</option><option>角色操作</option><option>权限配置</option><option>系统操作</option></select>
+    </div>
+    <div class="fr"><label class="fl">导出格式</label>
+      <div style="display:flex;gap:10px;margin-top:2px">
+        <label style="display:flex;align-items:center;gap:4px;font-size:12px;color:var(--text2);cursor:pointer"><input type="radio" name="fmt" checked> Excel (.xlsx)</label>
+        <label style="display:flex;align-items:center;gap:4px;font-size:12px;color:var(--text2);cursor:pointer"><input type="radio" name="fmt"> CSV (.csv)</label>
+        <label style="display:flex;align-items:center;gap:4px;font-size:12px;color:var(--text2);cursor:pointer"><input type="radio" name="fmt"> PDF</label>
+      </div>
+    </div>
+    <div style="margin-top:14px;padding:12px;background:var(--bg2);border-radius:6px;border:1px solid var(--border)">
+      <div style="font-size:11.5px;color:var(--text2)">预计导出 <strong style="color:var(--text)">128</strong> 条记录</div>
+    </div>
+  </div>
+  <div class="modal-f">
+    <button class="btn" onclick="closeOverlay('exportOverlay')">取消</button>
+    <button class="btn btn-p" onclick="doExport()">确认导出</button>
+  </div>
+</div></div>
+
+<!-- 清理弹窗 -->
+<div class="overlay" id="clearOverlay" onclick="if(event.target===this)closeOverlay('clearOverlay')">
+<div class="modal" style="width:420px" onclick="event.stopPropagation()">
+  <div class="modal-h"><span class="modal-ht">清理日志</span><button class="modal-x" onclick="closeOverlay('clearOverlay')">✕</button></div>
+  <div class="modal-b">
+    <div style="display:flex;align-items:flex-start;gap:10px;margin-bottom:16px">
+      <span style="font-size:22px;flex-shrink:0;margin-top:2px">⚠️</span>
+      <div>
+        <div style="font-size:13px;font-weight:600;color:var(--text);margin-bottom:4px">确认清理日志？</div>
+        <div style="font-size:12px;color:var(--text2);line-height:1.6">清理后的日志将无法恢复，请谨慎操作。建议在清理前先导出日志备份。</div>
+      </div>
+    </div>
+    <div class="fr"><label class="fl">清理范围</label>
+      <select class="fi" id="clearRange"><option>30天前的日志</option><option>60天前的日志</option><option>90天前的日志</option><option>半年前的日志</option><option>一年前的日志</option></select>
+    </div>
+    <div class="fr"><label class="fl">清理类型</label>
+      <select class="fi" id="clearType"><option>全部类型</option><option>仅登录日志</option><option>仅系统操作日志</option></select>
+    </div>
+    <div style="margin-top:14px;padding:12px;background:var(--red-bg);border-radius:6px;border:1px solid #f0c0c0">
+      <div style="font-size:11.5px;color:var(--danger)">预计清理 <strong>1,024</strong> 条记录，释放存储空间约 <strong>2.3 MB</strong></div>
+    </div>
+  </div>
+  <div class="modal-f">
+    <button class="btn" onclick="closeOverlay('clearOverlay')">取消</button>
+    <button class="btn btn-d" onclick="doClear()">确认清理</button>
+  </div>
+</div></div>
+
+<!-- 人员选择弹窗 -->
+<div class="overlay" id="personOverlay" onclick="if(event.target===this)closeOverlay('personOverlay')">
+<div class="modal" style="width:560px" onclick="event.stopPropagation()">
+  <div class="modal-h"><span class="modal-ht">选择操作人</span><button class="modal-x" onclick="closeOverlay('personOverlay')">✕</button></div>
+  <div class="pp-body">
+    <div class="pp-left" id="ppDeptList"></div>
+    <div class="pp-right">
+      <div class="pp-search"><input type="text" placeholder="搜索姓名或工号..." id="ppSearchInput" oninput="ppSearch(this.value)"></div>
+      <div class="pp-right-head">
+        <span class="pp-right-title" id="ppRightTitle">全部人员</span>
+        <button class="pp-check-all" id="ppCheckAllBtn" onclick="ppToggleAllVisible()">全选</button>
+      </div>
+      <div id="ppPersonList"></div>
+    </div>
+  </div>
+  <div class="pp-selected" id="ppSelectedBar">
+    <span class="pp-selected-lbl">已选：</span>
+    <span id="ppSelectedChips" style="display:flex;gap:4px;flex-wrap:wrap"></span>
+  </div>
+  <div class="modal-f">
+    <button class="btn" onclick="ppClearAll()">清空</button>
+    <div style="flex:1"></div>
+    <button class="btn" onclick="closeOverlay('personOverlay')">取消</button>
+    <button class="btn btn-p" onclick="ppConfirm()">确定</button>
+  </div>
+</div></div>
+
+<!-- 成功提示 -->
+<div class="overlay" id="successOverlay" onclick="if(event.target===this)closeOverlay('successOverlay')">
+<div class="modal" style="width:360px" onclick="event.stopPropagation()">
+  <div class="modal-h"><span class="modal-ht">操作成功</span><button class="modal-x" onclick="closeOverlay('successOverlay')">✕</button></div>
+  <div class="modal-b" style="text-align:center;padding:28px 18px">
+    <div style="font-size:36px;margin-bottom:10px" id="successIcon">✅</div>
+    <div style="font-size:13px;font-weight:500;color:var(--text)" id="successMsg">操作完成</div>
+    <div style="font-size:12px;color:var(--text2);margin-top:6px" id="successSub"></div>
+  </div>
+  <div class="modal-f"><button class="btn btn-p" onclick="closeOverlay('successOverlay')">确定</button></div>
+</div></div>
+</div>
+
+<script>
+const logs=[
+  {time:'2026-04-03 15:32:18',user:'李晓燕',type:'account',typeTag:'账户管理',typeCls:'tag-blue',content:'编辑账户「张明」信息',ip:'192.168.1.105',result:'success',resultText:'成功',
+    changes:[{field:'手机号',op:'修改',old:'138****6721',new:'139****8834'},{field:'所属部门',op:'修改',old:'研究院',new:'研究院·材料研发组'},{field:'账户状态',op:'修改',old:'停用',new:'启用'}],
+    details:{userId:'ou_003',userAgent:'Chrome 120.0.6099 / Windows 11',location:'新疆·乌鲁木齐',device:'PC',module:'系统管理 > 账户管理',requestId:'req_20260403153218_a7f2'}
+  },
+  {time:'2026-04-03 15:28:45',user:'周总',type:'dept',typeTag:'部门管理',typeCls:'tag-green',content:'创建新部门「市场拓展部」',ip:'192.168.1.100',result:'success',resultText:'成功',
+    changes:[{field:'部门名称',op:'创建',old:'',new:'市场拓展部'},{field:'上级部门',op:'设置',old:'',new:'营销中心'},{field:'部门负责人',op:'设置',old:'',new:'待指定'},{field:'部门编码',op:'生成',old:'',new:'DEPT-MK-003'}],
+    details:{userId:'ou_001',userAgent:'Chrome 120.0.6099 / Windows 11',location:'新疆·乌鲁木齐',device:'PC',module:'系统管理 > 部门管理',requestId:'req_20260403152845_b3e1'}
+  },
+  {time:'2026-04-03 15:15:22',user:'张明',type:'permission',typeTag:'权限配置',typeCls:'tag-orange',content:'修改角色「研发工程师」权限',ip:'192.168.1.110',result:'success',resultText:'成功',
+    changes:[{field:'功能权限',op:'添加',old:'',new:'技术情报洞察（查看、导出）'},{field:'功能权限',op:'添加',old:'',new:'专利成果分析（查看）'},{field:'数据范围',op:'修改',old:'仅本人数据',new:'本部门所有数据'}],
+    details:{userId:'ou_003',userAgent:'Edge 120.0.2210 / Windows 11',location:'新疆·乌鲁木齐',device:'PC',module:'系统管理 > 权限配置管理',requestId:'req_20260403151522_c9d4'}
+  },
+  {time:'2026-04-03 14:58:33',user:'李晓燕',type:'account',typeTag:'账户管理',typeCls:'tag-blue',content:'创建新账户「王建国」',ip:'192.168.1.105',result:'success',resultText:'成功',
+    changes:[{field:'姓名',op:'创建',old:'',new:'王建国'},{field:'登录账号',op:'创建',old:'',new:'wang.jianguo'},{field:'所属部门',op:'设置',old:'',new:'茵创公司'},{field:'角色',op:'设置',old:'',new:'普通用户（待分配）'},{field:'初始密码',op:'生成',old:'',new:'系统自动生成，已通过邮件发送'}],
+    details:{userId:'ou_002',userAgent:'Chrome 120.0.6099 / Windows 11',location:'新疆·乌鲁木齐',device:'PC',module:'系统管理 > 账户管理',requestId:'req_20260403145833_d5a8'}
+  },
+  {time:'2026-04-03 14:45:12',user:'系统',type:'system',typeTag:'系统操作',typeCls:'tag-gray',content:'自动清理过期临时文件',ip:'127.0.0.1',result:'success',resultText:'成功',
+    changes:[{field:'清理范围',op:'执行',old:'',new:'过期超过7天的临时缓存文件'},{field:'清理数量',op:'统计',old:'',new:'15 个文件'},{field:'释放空间',op:'统计',old:'',new:'23.5 MB'},{field:'耗时',op:'统计',old:'',new:'0.8 秒'}],
+    details:{userId:'system',userAgent:'System Scheduler v2.1',location:'本地服务器',device:'Server',module:'系统维护 > 定时任务',requestId:'req_20260403144512_sys1'}
+  },
+  {time:'2026-04-03 14:30:55',user:'张明',type:'login',typeTag:'登录失败',typeCls:'tag-red',content:'登录失败：密码错误（第3次）',ip:'192.168.1.112',result:'fail',resultText:'失败',
+    changes:[{field:'失败原因',op:'记录',old:'',new:'密码错误'},{field:'尝试次数',op:'累计',old:'第2次（14:28:30）',new:'第3次（14:30:55）'},{field:'安全措施',op:'触发',old:'',new:'账户已临时锁定30分钟'},{field:'风险提示',op:'记录',old:'',new:'登录IP与常用IP不一致（常用：192.168.1.110）'}],
+    details:{userId:'ou_003',userAgent:'Chrome 119.0.6045 / Windows 11',location:'未知位置',device:'PC',module:'用户认证',requestId:'req_20260403143055_e2b7'}
+  },
+  {time:'2026-04-03 14:15:08',user:'刘洋',type:'account',typeTag:'账户管理',typeCls:'tag-blue',content:'删除账户「陈晨」',ip:'192.168.1.108',result:'success',resultText:'成功',
+    changes:[{field:'账户信息',op:'删除',old:'姓名：陈晨，账号：chen.chen',new:'已删除'},{field:'关联数据',op:'处理',old:'',new:'操作日志保留，业务数据已转移至部门负责人'},{field:'删除原因',op:'记录',old:'',new:'人员离职'}],
+    details:{userId:'ou_004',userAgent:'Firefox 125.0 / Windows 11',location:'新疆·乌鲁木齐',device:'PC',module:'系统管理 > 账户管理',requestId:'req_20260403141508_f1c3'}
+  },
+  {time:'2026-04-03 13:55:41',user:'赵丽',type:'role',typeTag:'角色管理',typeCls:'tag-purple',content:'创建新角色「法务专员」',ip:'192.168.1.109',result:'success',resultText:'成功',
+    changes:[{field:'角色名称',op:'创建',old:'',new:'法务专员'},{field:'角色编码',op:'生成',old:'',new:'ROLE_LEGAL_STAFF'},{field:'所属部门',op:'设置',old:'',new:'法务部'},{field:'功能权限',op:'配置',old:'',new:'侵权风险防控（查看、处理）、专利成果分析（查看）、知识库管理（查看）'},{field:'数据范围',op:'设置',old:'',new:'本部门数据'}],
+    details:{userId:'ou_005',userAgent:'Chrome 120.0.6099 / Windows 11',location:'新疆·乌鲁木齐',device:'PC',module:'系统管理 > 权限配置管理',requestId:'req_20260403135541_g8d2'}
+  },
+  {time:'2026-04-03 13:40:22',user:'李晓燕',type:'login',typeTag:'登录成功',typeCls:'tag-green',content:'用户登录系统',ip:'192.168.1.105',result:'success',resultText:'成功',
+    changes:[{field:'登录方式',op:'记录',old:'',new:'账号密码登录'},{field:'会话时长',op:'设置',old:'',new:'8小时（至21:40自动过期）'},{field:'上次登录',op:'记录',old:'',new:'2026-04-02 09:12:35 / 192.168.1.105'}],
+    details:{userId:'ou_002',userAgent:'Chrome 120.0.6099 / Windows 11',location:'新疆·乌鲁木齐',device:'PC',module:'用户认证',requestId:'req_20260403134022_h4e9'}
+  },
+  {time:'2026-04-03 13:25:18',user:'周总',type:'permission',typeTag:'权限配置',typeCls:'tag-orange',content:'修改部门「研究院」权限配置',ip:'192.168.1.100',result:'success',resultText:'成功',
+    changes:[{field:'功能权限',op:'移除',old:'专利申请支持（查看、编辑、提交）',new:'已移除'},{field:'功能权限',op:'保留',old:'',new:'技术需求管理、研发方案推演、研发知识库等12项权限不变'},{field:'数据范围',op:'保持',old:'本部门所有数据',new:'本部门所有数据（未变更）'},{field:'变更原因',op:'备注',old:'',new:'专利申请支持功能暂移交法务部管理'}],
+    details:{userId:'ou_001',userAgent:'Chrome 120.0.6099 / Windows 11',location:'新疆·乌鲁木齐',device:'PC',module:'系统管理 > 权限配置管理',requestId:'req_20260403132518_i6f1'}
+  },
+  {time:'2026-04-03 12:58:40',user:'李晓燕',type:'account',typeTag:'账户管理',typeCls:'tag-blue',content:'停用账户「王海」',ip:'192.168.1.105',result:'success',resultText:'成功',
+    changes:[{field:'操作对象',op:'变更',old:'—',new:'停用账户「王海」'}],
+    details:{userId:'ou_011',userAgent:'Chrome 120.0.6099 / Windows 11',location:'新疆·乌鲁木齐',device:'PC',module:'系统管理 > 操作日志',requestId:'req_20260403125840'}
+  },
+  {time:'2026-04-03 12:31:07',user:'张明',type:'login',typeTag:'登录日志',typeCls:'tag-teal',content:'用户登录系统',ip:'192.168.1.112',result:'success',resultText:'成功',
+    changes:[{field:'操作对象',op:'变更',old:'—',new:'用户登录系统'}],
+    details:{userId:'ou_012',userAgent:'Chrome 120.0.6099 / Windows 11',location:'新疆·乌鲁木齐',device:'PC',module:'系统管理 > 操作日志',requestId:'req_20260403123107'}
+  },
+  {time:'2026-04-03 11:47:55',user:'赵磊',type:'role',typeTag:'角色操作',typeCls:'tag-purple',content:'为角色「研发工程师」新增3项功能权限',ip:'192.168.1.121',result:'success',resultText:'成功',
+    changes:[{field:'操作对象',op:'变更',old:'—',new:'为角色「研发工程师」新增3项功能权限'}],
+    details:{userId:'ou_013',userAgent:'Chrome 120.0.6099 / Windows 11',location:'新疆·乌鲁木齐',device:'PC',module:'系统管理 > 操作日志',requestId:'req_20260403114755'}
+  },
+  {time:'2026-04-03 11:20:33',user:'系统',type:'system',typeTag:'系统操作',typeCls:'tag-green',content:'定时任务：生成主题研究报告',ip:'—',result:'success',resultText:'成功',
+    changes:[{field:'操作对象',op:'变更',old:'—',new:'定时任务：生成主题研究报告'}],
+    details:{userId:'ou_014',userAgent:'Chrome 120.0.6099 / Windows 11',location:'新疆·乌鲁木齐',device:'PC',module:'系统管理 > 操作日志',requestId:'req_20260403112033'}
+  },
+  {time:'2026-04-03 10:55:12',user:'王丽',type:'account',typeTag:'账户管理',typeCls:'tag-blue',content:'重置账户「陈静」登录密码',ip:'192.168.1.108',result:'success',resultText:'成功',
+    changes:[{field:'操作对象',op:'变更',old:'—',new:'重置账户「陈静」登录密码'}],
+    details:{userId:'ou_015',userAgent:'Chrome 120.0.6099 / Windows 11',location:'新疆·乌鲁木齐',device:'PC',module:'系统管理 > 操作日志',requestId:'req_20260403105512'}
+  },
+  {time:'2026-04-03 10:33:29',user:'刘敏',type:'login',typeTag:'登录日志',typeCls:'tag-teal',content:'用户登录失败：密码错误',ip:'192.168.1.130',result:'fail',resultText:'失败',
+    changes:[{field:'操作对象',op:'变更',old:'—',new:'用户登录失败：密码错误'}],
+    details:{userId:'ou_016',userAgent:'Chrome 120.0.6099 / Windows 11',location:'新疆·乌鲁木齐',device:'PC',module:'系统管理 > 操作日志',requestId:'req_20260403103329'}
+  },
+  {time:'2026-04-03 10:12:04',user:'周总',type:'dept',typeTag:'部门操作',typeCls:'tag-orange',content:'调整部门「营销中心」上级为集团根节点',ip:'192.168.1.100',result:'success',resultText:'成功',
+    changes:[{field:'操作对象',op:'变更',old:'—',new:'调整部门「营销中心」上级为集团根节点'}],
+    details:{userId:'ou_017',userAgent:'Chrome 120.0.6099 / Windows 11',location:'新疆·乌鲁木齐',device:'PC',module:'系统管理 > 操作日志',requestId:'req_20260403101204'}
+  },
+  {time:'2026-04-03 09:48:51',user:'李晓燕',type:'permission',typeTag:'权限配置',typeCls:'tag-orange',content:'为部门「茵创公司」开放驾驶舱页签权限',ip:'192.168.1.105',result:'success',resultText:'成功',
+    changes:[{field:'操作对象',op:'变更',old:'—',new:'为部门「茵创公司」开放驾驶舱页签权限'}],
+    details:{userId:'ou_018',userAgent:'Chrome 120.0.6099 / Windows 11',location:'新疆·乌鲁木齐',device:'PC',module:'系统管理 > 操作日志',requestId:'req_20260403094851'}
+  },
+  {time:'2026-04-03 09:26:18',user:'陈涛',type:'login',typeTag:'登录日志',typeCls:'tag-teal',content:'用户登录系统',ip:'192.168.1.118',result:'success',resultText:'成功',
+    changes:[{field:'操作对象',op:'变更',old:'—',new:'用户登录系统'}],
+    details:{userId:'ou_019',userAgent:'Chrome 120.0.6099 / Windows 11',location:'新疆·乌鲁木齐',device:'PC',module:'系统管理 > 操作日志',requestId:'req_20260403092618'}
+  },
+  {time:'2026-04-03 09:05:42',user:'系统',type:'system',typeTag:'系统操作',typeCls:'tag-green',content:'定时任务：技术简报数据采集',ip:'—',result:'success',resultText:'成功',
+    changes:[{field:'操作对象',op:'变更',old:'—',new:'定时任务：技术简报数据采集'}],
+    details:{userId:'ou_020',userAgent:'Chrome 120.0.6099 / Windows 11',location:'新疆·乌鲁木齐',device:'PC',module:'系统管理 > 操作日志',requestId:'req_20260403090542'}
+  },
+  {time:'2026-04-02 17:52:36',user:'张明',type:'account',typeTag:'账户管理',typeCls:'tag-blue',content:'新建账户「孙悦」并分配角色',ip:'192.168.1.112',result:'success',resultText:'成功',
+    changes:[{field:'操作对象',op:'变更',old:'—',new:'新建账户「孙悦」并分配角色'}],
+    details:{userId:'ou_021',userAgent:'Chrome 120.0.6099 / Windows 11',location:'新疆·乌鲁木齐',device:'PC',module:'系统管理 > 操作日志',requestId:'req_20260402175236'}
+  },
+  {time:'2026-04-02 17:20:15',user:'赵磊',type:'role',typeTag:'角色操作',typeCls:'tag-purple',content:'删除角色「临时访客」',ip:'192.168.1.121',result:'success',resultText:'成功',
+    changes:[{field:'操作对象',op:'变更',old:'—',new:'删除角色「临时访客」'}],
+    details:{userId:'ou_022',userAgent:'Chrome 120.0.6099 / Windows 11',location:'新疆·乌鲁木齐',device:'PC',module:'系统管理 > 操作日志',requestId:'req_20260402172015'}
+  },
+  {time:'2026-04-02 16:44:03',user:'王丽',type:'dept',typeTag:'部门操作',typeCls:'tag-orange',content:'创建新部门「品控部」',ip:'192.168.1.108',result:'success',resultText:'成功',
+    changes:[{field:'操作对象',op:'变更',old:'—',new:'创建新部门「品控部」'}],
+    details:{userId:'ou_023',userAgent:'Chrome 120.0.6099 / Windows 11',location:'新疆·乌鲁木齐',device:'PC',module:'系统管理 > 操作日志',requestId:'req_20260402164403'}
+  },
+  {time:'2026-04-02 16:10:27',user:'刘敏',type:'permission',typeTag:'权限配置',typeCls:'tag-orange',content:'修改角色「市场专员」数据可见范围',ip:'192.168.1.130',result:'success',resultText:'成功',
+    changes:[{field:'操作对象',op:'变更',old:'—',new:'修改角色「市场专员」数据可见范围'}],
+    details:{userId:'ou_024',userAgent:'Chrome 120.0.6099 / Windows 11',location:'新疆·乌鲁木齐',device:'PC',module:'系统管理 > 操作日志',requestId:'req_20260402161027'}
+  },
+  {time:'2026-04-02 15:38:49',user:'李晓燕',type:'login',typeTag:'登录日志',typeCls:'tag-teal',content:'用户登录系统',ip:'192.168.1.105',result:'success',resultText:'成功',
+    changes:[{field:'操作对象',op:'变更',old:'—',new:'用户登录系统'}],
+    details:{userId:'ou_025',userAgent:'Chrome 120.0.6099 / Windows 11',location:'新疆·乌鲁木齐',device:'PC',module:'系统管理 > 操作日志',requestId:'req_20260402153849'}
+  },
+  {time:'2026-04-02 15:02:11',user:'系统',type:'system',typeTag:'系统操作',typeCls:'tag-green',content:'第三方接口调用失败：智慧芽专利检索',ip:'—',result:'fail',resultText:'失败',
+    changes:[{field:'操作对象',op:'变更',old:'—',new:'第三方接口调用失败：智慧芽专利检索'}],
+    details:{userId:'ou_026',userAgent:'Chrome 120.0.6099 / Windows 11',location:'新疆·乌鲁木齐',device:'PC',module:'系统管理 > 操作日志',requestId:'req_20260402150211'}
+  },
+  {time:'2026-04-02 14:29:58',user:'周总',type:'account',typeTag:'账户管理',typeCls:'tag-blue',content:'启用账户「王海」',ip:'192.168.1.100',result:'success',resultText:'成功',
+    changes:[{field:'操作对象',op:'变更',old:'—',new:'启用账户「王海」'}],
+    details:{userId:'ou_027',userAgent:'Chrome 120.0.6099 / Windows 11',location:'新疆·乌鲁木齐',device:'PC',module:'系统管理 > 操作日志',requestId:'req_20260402142958'}
+  },
+  {time:'2026-04-02 13:55:22',user:'陈涛',type:'role',typeTag:'角色操作',typeCls:'tag-purple',content:'新建角色「战略分析师」',ip:'192.168.1.118',result:'success',resultText:'成功',
+    changes:[{field:'操作对象',op:'变更',old:'—',new:'新建角色「战略分析师」'}],
+    details:{userId:'ou_028',userAgent:'Chrome 120.0.6099 / Windows 11',location:'新疆·乌鲁木齐',device:'PC',module:'系统管理 > 操作日志',requestId:'req_20260402135522'}
+  },
+  {time:'2026-04-02 11:33:07',user:'张明',type:'permission',typeTag:'权限配置',typeCls:'tag-orange',content:'为角色「研究院主管」新增需求审核权限',ip:'192.168.1.112',result:'success',resultText:'成功',
+    changes:[{field:'操作对象',op:'变更',old:'—',new:'为角色「研究院主管」新增需求审核权限'}],
+    details:{userId:'ou_029',userAgent:'Chrome 120.0.6099 / Windows 11',location:'新疆·乌鲁木齐',device:'PC',module:'系统管理 > 操作日志',requestId:'req_20260402113307'}
+  },
+  {time:'2026-04-02 10:47:40',user:'王丽',type:'login',typeTag:'登录日志',typeCls:'tag-teal',content:'用户登录系统',ip:'192.168.1.108',result:'success',resultText:'成功',
+    changes:[{field:'操作对象',op:'变更',old:'—',new:'用户登录系统'}],
+    details:{userId:'ou_030',userAgent:'Chrome 120.0.6099 / Windows 11',location:'新疆·乌鲁木齐',device:'PC',module:'系统管理 > 操作日志',requestId:'req_20260402104740'}
+  },
+  {time:'2026-04-02 09:58:16',user:'系统',type:'system',typeTag:'系统操作',typeCls:'tag-green',content:'定时任务：竞对企业工商信息同步',ip:'—',result:'success',resultText:'成功',
+    changes:[{field:'操作对象',op:'变更',old:'—',new:'定时任务：竞对企业工商信息同步'}],
+    details:{userId:'ou_031',userAgent:'Chrome 120.0.6099 / Windows 11',location:'新疆·乌鲁木齐',device:'PC',module:'系统管理 > 操作日志',requestId:'req_20260402095816'}
+  },
+  {time:'2026-04-01 18:06:33',user:'赵磊',type:'dept',typeTag:'部门操作',typeCls:'tag-orange',content:'编辑部门「研究院」描述信息',ip:'192.168.1.121',result:'success',resultText:'成功',
+    changes:[{field:'操作对象',op:'变更',old:'—',new:'编辑部门「研究院」描述信息'}],
+    details:{userId:'ou_032',userAgent:'Chrome 120.0.6099 / Windows 11',location:'新疆·乌鲁木齐',device:'PC',module:'系统管理 > 操作日志',requestId:'req_20260401180633'}
+  },
+  {time:'2026-04-01 17:22:05',user:'刘敏',type:'account',typeTag:'账户管理',typeCls:'tag-blue',content:'编辑账户「李敏」所属部门',ip:'192.168.1.130',result:'success',resultText:'成功',
+    changes:[{field:'操作对象',op:'变更',old:'—',new:'编辑账户「李敏」所属部门'}],
+    details:{userId:'ou_033',userAgent:'Chrome 120.0.6099 / Windows 11',location:'新疆·乌鲁木齐',device:'PC',module:'系统管理 > 操作日志',requestId:'req_20260401172205'}
+  },
+  {time:'2026-04-01 16:39:51',user:'李晓燕',type:'login',typeTag:'登录日志',typeCls:'tag-teal',content:'用户退出登录',ip:'192.168.1.105',result:'success',resultText:'成功',
+    changes:[{field:'操作对象',op:'变更',old:'—',new:'用户退出登录'}],
+    details:{userId:'ou_034',userAgent:'Chrome 120.0.6099 / Windows 11',location:'新疆·乌鲁木齐',device:'PC',module:'系统管理 > 操作日志',requestId:'req_20260401163951'}
+  },
+  {time:'2026-04-01 15:14:28',user:'周总',type:'permission',typeTag:'权限配置',typeCls:'tag-orange',content:'停用功能模块「内部价格监测」',ip:'192.168.1.100',result:'success',resultText:'成功',
+    changes:[{field:'操作对象',op:'变更',old:'—',new:'停用功能模块「内部价格监测」'}],
+    details:{userId:'ou_035',userAgent:'Chrome 120.0.6099 / Windows 11',location:'新疆·乌鲁木齐',device:'PC',module:'系统管理 > 操作日志',requestId:'req_20260401151428'}
+  },
+  {time:'2026-04-01 14:03:19',user:'系统',type:'system',typeTag:'系统操作',typeCls:'tag-green',content:'定时任务：出口数据同步',ip:'—',result:'success',resultText:'成功',
+    changes:[{field:'操作对象',op:'变更',old:'—',new:'定时任务：出口数据同步'}],
+    details:{userId:'ou_036',userAgent:'Chrome 120.0.6099 / Windows 11',location:'新疆·乌鲁木齐',device:'PC',module:'系统管理 > 操作日志',requestId:'req_20260401140319'}
+  },
+  {time:'2026-04-01 11:47:02',user:'陈涛',type:'account',typeTag:'账户管理',typeCls:'tag-blue',content:'批量导入账户 12 条',ip:'192.168.1.118',result:'success',resultText:'成功',
+    changes:[{field:'操作对象',op:'变更',old:'—',new:'批量导入账户 12 条'}],
+    details:{userId:'ou_037',userAgent:'Chrome 120.0.6099 / Windows 11',location:'新疆·乌鲁木齐',device:'PC',module:'系统管理 > 操作日志',requestId:'req_20260401114702'}
+  },
+  {time:'2026-04-01 10:25:44',user:'张明',type:'role',typeTag:'角色操作',typeCls:'tag-purple',content:'调整角色「品控专员」职级为中级',ip:'192.168.1.112',result:'success',resultText:'成功',
+    changes:[{field:'操作对象',op:'变更',old:'—',new:'调整角色「品控专员」职级为中级'}],
+    details:{userId:'ou_038',userAgent:'Chrome 120.0.6099 / Windows 11',location:'新疆·乌鲁木齐',device:'PC',module:'系统管理 > 操作日志',requestId:'req_20260401102544'}
+  },
+  {time:'2026-04-01 09:36:57',user:'王丽',type:'login',typeTag:'登录日志',typeCls:'tag-teal',content:'用户登录系统',ip:'192.168.1.108',result:'success',resultText:'成功',
+    changes:[{field:'操作对象',op:'变更',old:'—',new:'用户登录系统'}],
+    details:{userId:'ou_039',userAgent:'Chrome 120.0.6099 / Windows 11',location:'新疆·乌鲁木齐',device:'PC',module:'系统管理 > 操作日志',requestId:'req_20260401093657'}
+  },
+  {time:'2026-03-31 17:58:13',user:'刘敏',type:'dept',typeTag:'部门操作',typeCls:'tag-orange',content:'删除部门「筹备组」',ip:'192.168.1.130',result:'success',resultText:'成功',
+    changes:[{field:'操作对象',op:'变更',old:'—',new:'删除部门「筹备组」'}],
+    details:{userId:'ou_040',userAgent:'Chrome 120.0.6099 / Windows 11',location:'新疆·乌鲁木齐',device:'PC',module:'系统管理 > 操作日志',requestId:'req_20260331175813'}
+  },
+  {time:'2026-03-31 16:20:35',user:'系统',type:'system',typeTag:'系统操作',typeCls:'tag-green',content:'定时任务：商标侵权监测',ip:'—',result:'success',resultText:'成功',
+    changes:[{field:'操作对象',op:'变更',old:'—',new:'定时任务：商标侵权监测'}],
+    details:{userId:'ou_041',userAgent:'Chrome 120.0.6099 / Windows 11',location:'新疆·乌鲁木齐',device:'PC',module:'系统管理 > 操作日志',requestId:'req_20260331162035'}
+  },
+  {time:'2026-03-31 15:07:48',user:'赵磊',type:'permission',typeTag:'权限配置',typeCls:'tag-orange',content:'为账户「孙悦」单独授予数据维护权限',ip:'192.168.1.121',result:'success',resultText:'成功',
+    changes:[{field:'操作对象',op:'变更',old:'—',new:'为账户「孙悦」单独授予数据维护权限'}],
+    details:{userId:'ou_042',userAgent:'Chrome 120.0.6099 / Windows 11',location:'新疆·乌鲁木齐',device:'PC',module:'系统管理 > 操作日志',requestId:'req_20260331150748'}
+  }
+];
+
+let currentFilter='all';
+let currentPage=1;
+const PER_PAGE=14;
+let totalPages=1;
+
+function filterLogs(type,el){
+  currentFilter=type; currentPage=1;
+  document.querySelectorAll('.sb .sn').forEach(s=>s.classList.remove('on'));
+  el.classList.add('on');
+  renderLogs();
+}
+
+renderLogs();
+
+function renderLogs(){
+  const tbody=document.getElementById('logBody');
+  const empty=document.getElementById('emptyState');
+  tbody.innerHTML='';
+  const all=currentFilter==='all'?logs:logs.filter(l=>l.type===currentFilter);
+  totalPages=Math.max(1,Math.ceil(all.length/PER_PAGE));
+  if(currentPage>totalPages)currentPage=totalPages;
+  const filtered=all.slice((currentPage-1)*PER_PAGE,currentPage*PER_PAGE);
+  const pi=document.getElementById('pageInfo');
+  if(pi)pi.textContent=`共 ${all.length} 条记录，第 ${currentPage}/${totalPages} 页`;
+  if(all.length===0){
+    empty.style.display='block';
+    tbody.parentElement.style.display='none';
+  } else {
+    empty.style.display='none';
+    tbody.parentElement.style.display='table';
+    filtered.forEach(l=>{
+      const row=document.createElement('tr');
+      row.innerHTML=`
+        <td>${l.time}</td>
+        <td>${l.user}</td>
+        <td><span class="tag ${l.typeCls}">${l.typeTag}</span></td>
+        <td>${l.content}</td>
+        <td style="color:var(--text2);font-size:11px">${l.ip}</td>
+        <td><span style="display:inline-flex;align-items:center;font-size:11px"><span class="sdot" style="background:${l.result==='success'?'var(--success)':'var(--danger)'}"></span>${l.resultText}</span></td>
+        <td><button class="detail-btn" onclick="showDetail(${logs.indexOf(l)})">详情</button></td>
+      `;
+      tbody.appendChild(row);
+    });
+  }
+}
+
+/* ========== 详情弹窗 ========== */
+function showDetail(idx){
+  const l=logs[idx];
+  const d=l.details;
+  const body=document.getElementById('detailBody');
+  body.innerHTML=`
+    <div class="detail-grid">
+      <div class="detail-row"><div class="detail-lbl">操作时间</div><div class="detail-val">${l.time}</div></div>
+      <div class="detail-row"><div class="detail-lbl">操作人</div><div class="detail-val">${l.user}（${d.userId}）</div></div>
+      <div class="detail-row"><div class="detail-lbl">IP 地址</div><div class="detail-val">${l.ip}</div></div>
+      <div class="detail-row"><div class="detail-lbl">归属地</div><div class="detail-val">${d.location}</div></div>
+      <div class="detail-row"><div class="detail-lbl">操作类型</div><div class="detail-val"><span class="tag ${l.typeCls}">${l.typeTag}</span></div></div>
+      <div class="detail-row"><div class="detail-lbl">操作结果</div><div class="detail-val"><span style="display:inline-flex;align-items:center"><span class="sdot" style="background:${l.result==='success'?'var(--success)':'var(--danger)'}"></span>${l.resultText}</span></div></div>
+      <div class="detail-row"><div class="detail-lbl">所属模块</div><div class="detail-val">${d.module}</div></div>
+      <div class="detail-row"><div class="detail-lbl">终端设备</div><div class="detail-val">${d.device}</div></div>
+      <div class="detail-row"><div class="detail-lbl">浏览器</div><div class="detail-val">${d.userAgent}</div></div>
+      <div class="detail-row"><div class="detail-lbl">请求ID</div><div class="detail-val" style="font-family:monospace;font-size:11px;color:var(--text3)">${d.requestId}</div></div>
+    </div>
+    <div class="changes" style="margin-top:14px">
+      <div class="changes-t">变更明细</div>
+      ${l.changes.map(c=>`
+        <div class="change-item" style="display:flex;align-items:baseline;gap:4px;padding:5px 0;border-bottom:1px dashed var(--border);flex-wrap:wrap">
+          <span class="field" style="min-width:70px">[${c.field}]</span>
+          <span class="tag ${c.op==='删除'||c.op==='移除'?'tag-red':c.op==='创建'||c.op==='添加'?'tag-green':c.op==='修改'?'tag-orange':'tag-gray'}" style="font-size:10px;margin-right:2px">${c.op}</span>
+          ${c.old?`<span class="val old" style="text-decoration:line-through;color:var(--danger);font-size:11.5px">${c.old}</span><span class="op" style="color:var(--text3);margin:0 3px">→</span>`:''}
+          <span class="val" style="color:${c.op==='删除'||c.op==='移除'?'var(--danger)':'var(--success)'};font-size:11.5px">${c.new}</span>
+        </div>
+      `).join('')}
+    </div>
+    <div style="margin-top:12px;padding:10px 12px;background:var(--bg2);border-radius:6px;font-size:11px;color:var(--text3);display:flex;align-items:center;gap:6px">
+      <span>📋</span> 操作描述：${l.content}
+    </div>
+  `;
+  document.getElementById('detailOverlay').classList.add('on');
+}
+
+/* ========== 通用弹窗关闭 ========== */
+function closeOverlay(id){
+  document.getElementById(id).classList.remove('on');
+}
+
+/* ========== 导出 ========== */
+function showExport(){
+  document.getElementById('exportOverlay').classList.add('on');
+}
+function doExport(){
+  closeOverlay('exportOverlay');
+  document.getElementById('successIcon').textContent='📥';
+  document.getElementById('successMsg').textContent='日志导出成功';
+  document.getElementById('successSub').textContent='文件已下载：操作日志_20260403.xlsx';
+  document.getElementById('successOverlay').classList.add('on');
+}
+
+/* ========== 清理 ========== */
+function showClear(){
+  document.getElementById('clearOverlay').classList.add('on');
+}
+function doClear(){
+  closeOverlay('clearOverlay');
+  document.getElementById('successIcon').textContent='🗑️';
+  document.getElementById('successMsg').textContent='日志清理完成';
+  document.getElementById('successSub').textContent='已清理 1,024 条记录，释放 2.3 MB 存储空间';
+  document.getElementById('successOverlay').classList.add('on');
+}
+
+/* ========== 时间快捷按钮 ========== */
+function setRange(range){
+  const d1=document.querySelectorAll('.filter-input[type="date"]')[0];
+  const d2=document.querySelectorAll('.filter-input[type="date"]')[1];
+  const today='2026-04-03';
+  if(range==='today'){d1.value=today;d2.value=today}
+  else if(range==='week'){d1.value='2026-03-30';d2.value=today}
+  else if(range==='month'){d1.value='2026-04-01';d2.value=today}
+}
+
+/* ========== 查询 ========== */
+function doSearch(){
+  currentPage=1;
+  renderLogs();
+  // 查询动画反馈
+  const btn=document.querySelector('.btn-p');
+  btn.textContent='查询中...';
+  setTimeout(()=>{btn.textContent='查询'},300);
+}
+
+/* ========== 分页 ========== */
+function changePage(dir){
+  const newPage=currentPage+dir;
+  if(newPage<1||newPage>totalPages)return;
+  currentPage=newPage;
+  renderLogs();
+  document.querySelector('.main').scrollTop=0;
+}
+
+
+/* ========== 人员选择器 ========== */
+const deptData=[
+  {id:'all',name:'全部人员',icon:'👥',persons:[]},
+  {id:'leader',name:'公司领导',icon:'🏢',persons:[
+    {name:'周总',role:'总经理',code:'001',color:'#185FA5'},
+  ]},
+  {id:'strategy',name:'战略发展部',icon:'📊',persons:[
+    {name:'杨艺',role:'战略分析师',code:'010',color:'#085041'},
+    {name:'孙磊',role:'战略规划专员',code:'011',color:'#27500A'},
+  ]},
+  {id:'research',name:'研究院',icon:'🔬',persons:[
+    {name:'张明',role:'研发工程师',code:'020',color:'#B86400'},
+    {name:'尤润菁',role:'材料研究员',code:'021',color:'#3C3489'},
+    {name:'王建国',role:'研发工程师',code:'022',color:'#085041'},
+  ]},
+  {id:'marketing',name:'营销中心',icon:'📈',persons:[
+    {name:'王霖东',role:'市场经理',code:'030',color:'#A32D2D'},
+    {name:'陈雪',role:'客户经理',code:'031',color:'#185FA5'},
+    {name:'刘洋',role:'销售代表',code:'032',color:'#27500A'},
+  ]},
+  {id:'admin',name:'综合管理部',icon:'⚙️',persons:[
+    {name:'李晓燕',role:'系统管理员',code:'040',color:'#B86400'},
+    {name:'赵丽',role:'行政专员',code:'041',color:'#3C3489'},
+  ]},
+  {id:'legal',name:'法务部',icon:'⚖️',persons:[
+    {name:'马昊',role:'法务主管',code:'050',color:'#A32D2D'},
+    {name:'林婷',role:'知识产权专员',code:'051',color:'#085041'},
+  ]},
+  {id:'yinchuang',name:'茵创公司',icon:'🏭',persons:[
+    {name:'韩磊',role:'生产主管',code:'060',color:'#185FA5'},
+    {name:'吴芳',role:'质检员',code:'061',color:'#B86400'},
+  ]},
+];
+// 汇总全部人员
+deptData[0].persons=deptData.slice(1).flatMap(d=>d.persons);
+
+let ppSelected=new Set();
+let ppCurrentDept='all';
+let ppSearchKey='';
+
+function showPersonPicker(){
+  ppSelected=new Set();
+  ppCurrentDept='all';
+  ppSearchKey='';
+  document.getElementById('ppSearchInput').value='';
+  ppRenderDepts();
+  ppRenderPersons();
+  ppRenderChips();
+  document.getElementById('personOverlay').classList.add('on');
+}
+
+function ppRenderDepts(){
+  const el=document.getElementById('ppDeptList');
+  el.innerHTML=deptData.map(d=>{
+    const cnt=d.id==='all'?deptData.slice(1).reduce((s,x)=>s+x.persons.length,0):d.persons.length;
+    const deptPersonNames=d.id==='all'?deptData.slice(1).flatMap(x=>x.persons.map(p=>p.name)):d.persons.map(p=>p.name);
+    const allChecked=deptPersonNames.length>0&&deptPersonNames.every(n=>ppSelected.has(n));
+    const someChecked=!allChecked&&deptPersonNames.some(n=>ppSelected.has(n));
+    return `<div class="pp-dept ${ppCurrentDept===d.id?'on':''}" onclick="ppSelectDept('${d.id}',event)">
+      <span class="pp-dept-check ${allChecked?'checked':''}" onclick="ppToggleDept('${d.id}',event)" style="${someChecked&&!allChecked?'background:var(--text3);border-color:var(--text3)':''}">${allChecked?'✓':someChecked?'−':''}</span>
+      <span class="pp-dept-icon">${d.icon}</span>
+      <span class="pp-dept-name">${d.name}</span>
+      ${d.id!=='all'?`<span class="pp-dept-cnt">${cnt}</span>`:''}
+    </div>`;
+  }).join('');
+}
+
+function ppSelectDept(id,e){
+  if(e.target.classList.contains('pp-dept-check'))return;
+  ppCurrentDept=id;
+  ppSearchKey='';
+  document.getElementById('ppSearchInput').value='';
+  ppRenderDepts();
+  ppRenderPersons();
+}
+
+function ppToggleDept(id,e){
+  e.stopPropagation();
+  const dept=deptData.find(d=>d.id===id);
+  const names=id==='all'?deptData.slice(1).flatMap(d=>d.persons.map(p=>p.name)):dept.persons.map(p=>p.name);
+  const allChecked=names.every(n=>ppSelected.has(n));
+  if(allChecked){names.forEach(n=>ppSelected.delete(n))}
+  else{names.forEach(n=>ppSelected.add(n))}
+  ppRenderDepts();
+  ppRenderPersons();
+  ppRenderChips();
+}
+
+function ppGetVisiblePersons(){
+  const dept=deptData.find(d=>d.id===ppCurrentDept);
+  let list=dept.persons;
+  if(ppSearchKey){
+    const k=ppSearchKey.toLowerCase();
+    list=deptData[0].persons.filter(p=>p.name.includes(k)||p.code.includes(k)||p.role.includes(k));
+  }
+  return list;
+}
+
+function ppRenderPersons(){
+  const list=ppGetVisiblePersons();
+  const dept=deptData.find(d=>d.id===ppCurrentDept);
+  document.getElementById('ppRightTitle').textContent=ppSearchKey?`搜索结果（${list.length}）`:dept.name;
+  const allChecked=list.length>0&&list.every(p=>ppSelected.has(p.name));
+  document.getElementById('ppCheckAllBtn').textContent=allChecked?'取消全选':'全选';
+  const el=document.getElementById('ppPersonList');
+  if(list.length===0){
+    el.innerHTML='<div class="empty" style="padding:40px">暂无匹配的人员</div>';
+    return;
+  }
+  el.innerHTML=list.map(p=>`
+    <div class="pp-person" onclick="ppTogglePerson('${p.name}')">
+      <span class="pp-person-check ${ppSelected.has(p.name)?'checked':''}">${ppSelected.has(p.name)?'✓':''}</span>
+      <span class="pp-person-avatar" style="background:${p.color}">${p.name.slice(-1)}</span>
+      <div class="pp-person-info">
+        <div class="pp-person-name">${p.name}</div>
+        <div class="pp-person-role">${p.role}　${p.code}</div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function ppTogglePerson(name){
+  if(ppSelected.has(name))ppSelected.delete(name);else ppSelected.add(name);
+  ppRenderDepts();
+  ppRenderPersons();
+  ppRenderChips();
+}
+
+function ppToggleAllVisible(){
+  const list=ppGetVisiblePersons();
+  const allChecked=list.every(p=>ppSelected.has(p.name));
+  list.forEach(p=>{if(allChecked)ppSelected.delete(p.name);else ppSelected.add(p.name)});
+  ppRenderDepts();
+  ppRenderPersons();
+  ppRenderChips();
+}
+
+function ppSearch(val){
+  ppSearchKey=val.trim();
+  ppRenderPersons();
+}
+
+function ppRenderChips(){
+  const el=document.getElementById('ppSelectedChips');
+  if(ppSelected.size===0){el.innerHTML='<span style="font-size:11px;color:var(--text3)">未选择，默认显示全部操作人</span>';return}
+  el.innerHTML=[...ppSelected].map(n=>`<span class="pp-chip">${n}<span class="pp-chip-x" onclick="ppRemoveChip('${n}')">✕</span></span>`).join('');
+}
+
+function ppRemoveChip(name){
+  ppSelected.delete(name);
+  ppRenderDepts();
+  ppRenderPersons();
+  ppRenderChips();
+}
+
+function ppClearAll(){
+  ppSelected.clear();
+  ppRenderDepts();
+  ppRenderPersons();
+  ppRenderChips();
+}
+
+function ppConfirm(){
+  const btn=document.getElementById('personBtnText');
+  if(ppSelected.size===0){btn.textContent='全部操作人'}
+  else if(ppSelected.size<=2){btn.textContent=[...ppSelected].join('、')}
+  else{btn.textContent=[...ppSelected].slice(0,2).join('、')+` 等${ppSelected.size}人`}
+  closeOverlay('personOverlay');
+}
+</script>
+</body>
+</html>
