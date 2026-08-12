@@ -119,11 +119,11 @@ body{font-family:'PingFang SC','Microsoft YaHei',sans-serif;font-size:13px;color
 .list-wrap{flex:1;overflow-y:auto}
 .list-wrap::-webkit-scrollbar{width:4px}
 .list-wrap::-webkit-scrollbar-thumb{background:var(--bd2);border-radius:2px}
-.list-inner{padding:4px 10px}
+.list-inner{padding:0 10px}
 
 .mcard{
   display:flex;gap:8px;
-  padding:9px 10px 9px 8px;
+  padding:12px 12px 12px 10px;
   border-bottom:1px solid var(--bd);
   cursor:pointer;background:#fff;transition:background .1s;
 }
@@ -136,13 +136,13 @@ body{font-family:'PingFang SC','Microsoft YaHei',sans-serif;font-size:13px;color
 .ico-ent{background:var(--blue-bg)}.ico-comp{background:var(--orange-bg)}.ico-pub{background:var(--coral-bg)}.ico-pol{background:var(--green-bg)}
 .ico-req{background:var(--purple-bg)}.ico-cus{background:var(--red-bg)}
 .mcard-body{flex:1;min-width:0}
-.mcard-top{display:flex;align-items:flex-start;gap:5px;margin-bottom:2px}
+.mcard-top{display:flex;align-items:flex-start;gap:5px;margin-bottom:4px}
 .mcard-title{font-size:12px;font-weight:600;color:var(--t1);flex:1;line-height:1.4;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .mcard.sel .mcard-title{color:var(--blue-t)}
 .mcard-time{font-size:10.5px;color:var(--t3);white-space:nowrap;flex-shrink:0;margin-top:1px}
 .udot{width:6px;height:6px;border-radius:50%;background:var(--blue);flex-shrink:0;margin-top:3px}
 .mcard-catrow{margin-bottom:3px}
-.mcard-sum{font-size:11.5px;color:var(--t2);line-height:1.5;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;margin-bottom:4px}
+.mcard-sum{font-size:11.5px;color:var(--t2);line-height:1.55;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;margin-bottom:6px}
 .mtags{display:flex;gap:4px;flex-wrap:wrap}
 .list-foot{
   height:33px;display:flex;align-items:center;
@@ -196,6 +196,8 @@ body{font-family:'PingFang SC','Microsoft YaHei',sans-serif;font-size:13px;color
 .dp-text{font-size:12.5px;color:var(--t2);line-height:1.65}
 .dp-grid{display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-top:3px}
 .dp-cell{background:var(--bg2);border-radius:var(--r6);padding:7px 9px;border:1px solid var(--bd)}
+.dp-cell.full{grid-column:1 / -1}
+.dp-cell.full .dp-cv{font-weight:400;font-size:12.5px;line-height:1.7;color:var(--t1);white-space:pre-wrap}
 .dp-cl{font-size:10px;color:var(--t3);margin-bottom:2px}
 .dp-cv{font-size:12.5px;font-weight:700;color:var(--t1)}
 .dp-advice{font-size:12px;color:var(--t2);line-height:1.65;background:var(--orange-bg);border-radius:var(--r6);padding:9px 11px;border-left:3px solid var(--orange)}
@@ -269,6 +271,7 @@ body{font-family:'PingFang SC','Microsoft YaHei',sans-serif;font-size:13px;color
 .goto-btn:hover{background:var(--blue-t)}
 .goto-hint{font-size:11px;color:var(--t3);text-align:center;margin-top:5px}
 .msg-pager{display:flex;align-items:center;gap:5px;justify-content:center;flex:1}
+.mpg-info{font-size:11.5px;color:var(--t3);margin-left:6px}
 .mpg{min-width:24px;height:24px;padding:0 7px;display:inline-flex;align-items:center;justify-content:center;border:1px solid var(--bd2);border-radius:5px;font-size:11.5px;color:var(--t2);cursor:pointer;background:#fff}
 .mpg:hover{background:var(--bg3)}
 .mpg.on{background:var(--blue);color:#fff;border-color:var(--blue)}
@@ -283,7 +286,7 @@ body{font-family:'PingFang SC','Microsoft YaHei',sans-serif;font-size:13px;color
   <div class="sbm active" id="sbm-msg" onclick="goSec('msg')">
     <span class="sbm-ico">🔔</span>
     <span class="sbm-name">消息提醒</span>
-    <span class="sbm-badge badge-r" id="badge-msg">8</span>
+    <span class="sbm-badge badge-r" id="badge-msg">0</span>
   </div>
   <div class="sbm" id="sbm-sub" onclick="goSec('sub')">
     <span class="sbm-ico">⚙</span>
@@ -292,7 +295,7 @@ body{font-family:'PingFang SC','Microsoft YaHei',sans-serif;font-size:13px;color
   <div class="sbm" id="sbm-task" onclick="goSec('task')">
     <span class="sbm-ico">📋</span>
     <span class="sbm-name">待处理任务提醒</span>
-    <span class="sbm-badge badge-o" id="badge-task">4</span>
+    <span class="sbm-badge badge-o" id="badge-task">0</span>
   </div>
   <div class="sb-spacer"></div>
   <div class="sb-ver">站内信消息中心</div>
@@ -307,10 +310,9 @@ body{font-family:'PingFang SC','Microsoft YaHei',sans-serif;font-size:13px;color
     <!-- 消息分类 (shown when msg active) -->
     <div id="innav-msg">
       <div class="innav-head">消息分类</div>
-      <div class="ini ini-all active" id="ini-all" onclick="fMsg('all',this)">全部消息<span class="ini-cnt r" id="cnt-all">8</span></div>
+      <div class="ini ini-all active" id="ini-all" onclick="fMsg('all',this)">全部消息<span class="ini-cnt r" id="cnt-all">0</span></div>
       <div class="innav-div"></div>
-      <div class="ini" id="ini-tm-warn" onclick="fMsg('tm-warn',this)">商标侵权预警<span class="ini-cnt" id="cnt-tm-warn">1</span></div>
-      <div class="ini" id="ini-pub-warn" onclick="fMsg('pub-warn',this)">舆情预警<span class="ini-cnt" id="cnt-pub-warn">5</span></div>
+      <div class="ini" id="ini-tm-warn" onclick="fMsg('tm-warn',this)">商标侵权预警<span class="ini-cnt" id="cnt-tm-warn">0</span></div>
       <div class="ini" id="ini-brief-notice" onclick="fMsg('brief-notice',this)">技术简报通知<span class="ini-cnt" id="cnt-brief-notice">0</span></div>
       <div class="ini" id="ini-req-notice" onclick="fMsg('req-notice',this)">需求处理通知<span class="ini-cnt" id="cnt-req-notice">0</span></div>
       <div class="ini" id="ini-cus-notice" onclick="fMsg('cus-notice',this)">客诉处理通知<span class="ini-cnt" id="cnt-cus-notice">0</span></div>
@@ -320,11 +322,11 @@ body{font-family:'PingFang SC','Microsoft YaHei',sans-serif;font-size:13px;color
     <!-- 任务类型 (shown when task active) -->
     <div id="innav-task" class="hide">
       <div class="innav-head">任务类型</div>
-      <div class="ini ini-all active" id="ini-task-all" onclick="fTask('all',this)">全部任务<span class="ini-cnt o" id="tcnt-all">3</span></div>
+      <div class="ini ini-all active" id="ini-task-all" onclick="fTask('all',this)">全部任务<span class="ini-cnt o" id="tcnt-all">0</span></div>
       <div class="innav-div"></div>
-      <div class="ini" id="ini-task-approval" onclick="fTask('approval',this)">需求审批<span class="ini-cnt" id="tcnt-approval">1</span></div>
-      <div class="ini" id="ini-task-complaint" onclick="fTask('complaint',this)">客诉反馈处理<span class="ini-cnt" id="tcnt-complaint">1</span></div>
-      <div class="ini" id="ini-task-brief" onclick="fTask('brief',this)">技术简报申请<span class="ini-cnt" id="tcnt-brief">3</span></div>
+      <div class="ini" id="ini-task-approval" onclick="fTask('approval',this)">需求审批<span class="ini-cnt" id="tcnt-approval">0</span></div>
+      <div class="ini" id="ini-task-complaint" onclick="fTask('complaint',this)">客诉反馈处理<span class="ini-cnt" id="tcnt-complaint">0</span></div>
+      <div class="ini" id="ini-task-brief" onclick="fTask('brief',this)">技术简报申请<span class="ini-cnt" id="tcnt-brief">0</span></div>
     </div>
 
   </div><!-- /innav -->
@@ -378,250 +380,496 @@ body{font-family:'PingFang SC','Microsoft YaHei',sans-serif;font-size:13px;color
    DATA
 ═══════════════════════════ */
 const MSGS=[
-  {id:'m1',cat:'pub-warn',catN:'舆情预警',group:'舆情预警',ico:'🏢',icoCls:'ico-pub',ctag:'ctag-pub',
-   title:'【舆情预警】绿川科技被列入经营异常名录',
-   sum:'监控企业绿川科技（深圳）于2026-04-09被列入经营异常名录，原因：未按规定期限公示2025年度报告，建议持续关注。',
-   time:'10分钟前',timeX:'2026-04-10 09:45',unread:true,urg:'mid',
-   tags:[{l:'经营异常',c:'o'},{l:'绿川科技',c:'b'}],
-   det:{desc:'绿川科技（深圳）有限公司于2026-04-09被深圳市市场监督管理局列入经营异常名录，原因为未按法定期限在企业信用信息公示系统中公示2025年度报告。',
-     data:[{l:'企业名称',v:'绿川科技（深圳）'},{l:'异常原因',v:'未公示年报'},{l:'列入机构',v:'深圳市场监管局'},{l:'列入日期',v:'2026-04-09'}],
-     advice:'建议战略发展部跟踪该企业后续整改情况，评估是否影响竞争格局及合作意向。'}},
-  {id:'m2',cat:'tm-warn',catN:'商标侵权预警',group:'商标侵权预警',ico:'™',icoCls:'ico-ent',ctag:'ctag-ent',
-   title:'【商标预警】发现高相似度商标申请，建议评估异议',
-   sum:'苏州美绿科技申请商标"蓝山绿材"（第17类），与本司注册商标"蓝山屯河"视觉近似度达78%，公示期30天，建议法务部及时评估。',
-   time:'昨天 16:30',timeX:'2026-04-09 16:30',unread:true,urg:'high',
-   tags:[{l:'商标近似：78%',c:'r'},{l:'第17类',c:'o'}],
-   det:{desc:'国家知识产权局商标局公示，苏州美绿科技有限公司申请注册商标"蓝山绿材"（申请号：2026087654321），国际分类第17类，与本司商标字形相似度较高。',
-     data:[{l:'申请商标',v:'蓝山绿材'},{l:'申请人',v:'苏州美绿科技'},{l:'申请号',v:'2026087654321'},{l:'视觉近似度',v:'78%'}],
-     advice:'公示期30天，建议法务部尽快评估是否提交商标异议申请，以保护本司品牌权益。'}},
-  {id:'m3',cat:'pub-warn',catN:'舆情预警',group:'舆情预警',ico:'📋',icoCls:'ico-pub',ctag:'ctag-pub',
-   title:'【舆情预警】博纳新材料更换法定代表人',
-   sum:'博纳新材料于2026-04-08完成工商变更，法定代表人由"陈志远"变更为"王海明"，同步新增高分子新材料研发业务范围。',
-   time:'昨天 14:00',timeX:'2026-04-09 14:00',unread:false,urg:'low',
-   tags:[{l:'法人变更',c:'b'},{l:'经营范围扩展',c:'o'}],
-   det:{desc:'博纳新材料科技有限公司于2026-04-08完成工商变更登记：① 法定代表人由陈志远变更为王海明；② 经营范围新增"高分子新材料及可降解材料研发、生产"。',
-     data:[{l:'变更类型',v:'法人 + 经营范围'},{l:'变更日期',v:'2026-04-08'},{l:'新法定代表人',v:'王海明'},{l:'原法定代表人',v:'陈志远'}],
-     advice:'建议关注管理层变动对其战略方向的影响，重点跟踪其在可降解材料领域后续动作。'}},
-  {id:'m4',cat:'pub-warn',catN:'舆情预警',group:'舆情预警',ico:'📄',icoCls:'ico-pub',ctag:'ctag-pub',
-   title:'【舆情预警】竞对企业发布PBAT共混改性配方新专利',
-   sum:'绿川科技申请发明专利"一种高强度PBAT/TPS共混改性可降解薄膜配方及制备方法"，核心参数与本司在研项目存在技术交叉。',
-   time:'3天前',timeX:'2026-04-07 11:20',unread:true,urg:'mid',
-   tags:[{l:'发明专利',c:'o'},{l:'技术重叠风险',c:'r'}],
-   det:{desc:'专利公开公告（公开号CN2026-PBAT-GC-021），申请人：绿川科技，名称：一种高强度PBAT/TPS共混改性可降解薄膜配方及制备方法。与本司研发知识库KB-RD-202601-008存在方法交叉。',
-     data:[{l:'专利申请号',v:'CN2026PBATGC021'},{l:'申请人',v:'绿川科技'},{l:'申请日期',v:'2026-04-07'},{l:'技术领域',v:'PBAT共混改性'}],
-     advice:'建议研发院尽快评估技术交叉程度，必要时加快本司同类专利申请进度以建立防护壁垒。'}},
-  {id:'m5',cat:'pub-warn',catN:'舆情预警',group:'舆情预警',ico:'⚠',icoCls:'ico-pub',ctag:'ctag-pub',
-   title:'【舆情预警】主流媒体集中报道"伪降解"产品乱象',
-   sum:'财经日报、新华网等12家主流媒体于近三日集中发布"可降解材料认证造假"相关报道，行业整体负面情绪持续上升，风险等级：中。',
-   time:'1小时前',timeX:'2026-04-10 09:00',unread:true,urg:'mid',
-   tags:[{l:'行业风险',c:'c'},{l:'媒体曝光×12',c:'r'}],
-   det:{desc:'2026年4月8-10日，财新、新华网、第一财经等12家主流媒体相继刊发"可降解塑料行业虚假宣传"相关报道，核心质疑：部分产品标注"可降解"但实际降解率不达标。',
-     data:[{l:'涉及媒体数',v:'12家'},{l:'报道时间段',v:'04-08 至 04-10'},{l:'行业情感分',v:'负面 68%'},{l:'风险等级',v:'行业中级'}],
-     advice:'建议市场部门准备本司产品合规证书及第三方检测报告，以便媒体询问时快速响应，同时评估是否主动向行业协会提供规范材料。'}},
-  {id:'m6',cat:'pub-warn',catN:'舆情预警',group:'舆情预警',ico:'⚠',icoCls:'ico-pub',ctag:'ctag-pub',
-   title:'【舆情预警】微博涉企质量质疑帖持续扩散',
-   sum:'微博用户"@环保体验官"发文质疑本司降解袋3个月未降解，帖子获赞1800+、转发690次，风险评分88，已触发本企业舆情预警阈值。',
-   time:'2小时前',timeX:'2026-04-10 08:10',unread:true,urg:'high',
-   tags:[{l:'风险评分：88',c:'r'},{l:'扩散中',c:'r'},{l:'本企业',c:'c'}],
-   det:{desc:'微博用户@环保体验官（粉丝：12.3万）发布长图文，称亲测"蓝山屯河"品牌PLA降解袋在户外放置3个月未见明显降解，配有对比图片及视频。获赞1803次、转发692次。',
-     data:[{l:'平台',v:'微博'},{l:'风险评分',v:'88分'},{l:'曝光量',v:'3.6万次'},{l:'情感倾向',v:'负面 81%'}],
-     advice:'建议营销中心2小时内完成核实，公关专员起草官方回应（突出GB/T 19277标准合规），联系平台进行内容评估，通知相关负责人重点关注。'}},
-  {id:'m7',cat:'pub-warn',catN:'舆情预警',group:'舆情预警',ico:'⚠',icoCls:'ico-pub',ctag:'ctag-pub',
-   title:'【舆情预警】竞对企业因环保问题被行政处罚',
-   sum:'绿川科技因废气排放超标被深圳生态环境局罚款35万元并责令限期整改，或影响其部分产线开工。',
-   time:'30分钟前',timeX:'2026-04-10 09:20',unread:true,urg:'mid',
-   tags:[{l:'环保处罚',c:'r'},{l:'绿川科技',c:'b'}],
-   det:{desc:'深圳市生态环境局对绿川科技（深圳）有限公司作出行政处罚，因废气排放超标处罚款35万元，并责令限期整改。',
-     data:[{l:'企业名称',v:'绿川科技'},{l:'处罚金额',v:'35万元'},{l:'处罚事由',v:'废气排放超标'}],
-     advice:'建议持续跟踪其整改与产线开工情况，评估对区域供给的影响。'}},
-  {id:'m8',cat:'tm-warn',catN:'商标侵权预警',group:'商标侵权预警',ico:'™',icoCls:'ico-ent',ctag:'ctag-ent',
-   title:'【商标预警】发现近似企业字号"蓝山屯禾"',
-   sum:'监测到新注册企业"新疆蓝山屯禾新材料有限公司"，字号与本司高度近似，建议评估字号维权。',
-   time:'昨天 15:10',timeX:'2026-04-09 15:10',unread:true,urg:'mid',
-   tags:[{l:'字号近似',c:'r'},{l:'新疆',c:'o'}],
-   det:{desc:'监测到新注册企业"新疆蓝山屯禾新材料有限公司"，企业字号与本司"蓝山屯河"高度近似，存在混淆风险。',
-     data:[{l:'企业名称',v:'蓝山屯禾新材料'},{l:'注册地',v:'新疆'},{l:'字号近似',v:'高'}],
-     advice:'建议法务部评估是否提起企业名称争议或不正当竞争维权。'}},
-  {id:'m9',cat:'pub-warn',catN:'舆情预警',group:'舆情预警',ico:'🏢',icoCls:'ico-pub',ctag:'ctag-pub',
-   title:'【舆情预警】竞对企业核心技术高管离职',
-   sum:'博纳新材料研发副总监离职，或影响其在研PBAT改性项目进度。',
-   time:'昨天 13:20',timeX:'2026-04-09 13:20',unread:true,urg:'low',
-   tags:[{l:'高管变动',c:'o'},{l:'博纳新材料',c:'b'}],
-   det:{desc:'据公开信息，博纳新材料科技有限公司研发副总监（PBAT方向）已离职。',
-     data:[{l:'企业',v:'博纳新材料'},{l:'岗位',v:'研发副总监'}],
-     advice:'建议关注其研发进度变化，评估人才引进机会。'}},
-  {id:'m10',cat:'pub-warn',catN:'舆情预警',group:'舆情预警',ico:'📄',icoCls:'ico-pub',ctag:'ctag-pub',
-   title:'【舆情预警】行业协会通报个别企业降解率不达标',
-   sum:'行业协会抽检通报3家企业可降解产品降解率不达标，引发行业信任度讨论。',
-   time:'2天前',timeX:'2026-04-08 09:10',unread:true,urg:'mid',
-   tags:[{l:'行业风险',c:'c'},{l:'抽检通报',c:'r'}],
-   det:{desc:'行业协会发布季度抽检通报，3家企业可降解产品降解率不达标，媒体转载引发讨论。',
-     data:[{l:'来源',v:'行业协会'},{l:'不达标',v:'3家'}],
-     advice:'建议准备本司第三方检测报告以备询问。'}},
-  {id:'m11',cat:'pub-warn',catN:'舆情预警',group:'舆情预警',ico:'🏢',icoCls:'ico-pub',ctag:'ctag-pub',
-   title:'【舆情预警】竞对企业停产检修影响区域供给',
-   sum:'金晖兆隆PBAT装置计划停产检修约20天，区域现货供给或阶段性偏紧。',
-   time:'3天前',timeX:'2026-04-07 09:30',unread:true,urg:'low',
-   tags:[{l:'停产检修',c:'o'}],
-   det:{desc:'金晖兆隆一套PBAT装置计划停产检修约20天，区域供给阶段性收紧。',
-     data:[{l:'企业',v:'金晖兆隆'},{l:'时长',v:'约20天'}],
-     advice:'建议营销把握窗口期开拓客户。'}},
-  {id:'m12',cat:'pub-warn',catN:'舆情预警',group:'舆情预警',ico:'⚠',icoCls:'ico-pub',ctag:'ctag-pub',
-   title:'【舆情预警】竞对企业被列入经营异常（失信预警）',
-   sum:'某竞品企业因未履行行政处罚决定被列入失信名单，合作与招投标资格或受限。',
-   time:'4天前',timeX:'2026-04-06 09:00',unread:true,urg:'mid',
-   tags:[{l:'失信预警',c:'r'}],
-   det:{desc:'某竞品企业因未履行行政处罚被列入失信被执行人名单，或影响其招投标资格。',
-     data:[{l:'状态',v:'失信名单'}],
-     advice:'建议关注对招投标格局的影响。'}},
-  {id:'m13',cat:'tm-warn',catN:'商标侵权预警',group:'商标侵权预警',ico:'™',icoCls:'ico-ent',ctag:'ctag-ent',
-   title:'【商标预警】电商平台出现仿冒品牌店铺',
-   sum:'监测到电商平台出现疑似仿冒"蓝山屯河"品牌的降解袋店铺，建议投诉下架。',
-   time:'6天前',timeX:'2026-04-04 14:00',unread:true,urg:'mid',
-   tags:[{l:'疑似仿冒',c:'r'},{l:'电商',c:'o'}],
-   det:{desc:'监测到某电商平台出现疑似仿冒本司品牌的可降解袋店铺，使用近似标识。',
-     data:[{l:'渠道',v:'电商平台'},{l:'风险',v:'品牌仿冒'}],
-     advice:'建议法务与品牌部发起平台投诉与下架。'}},
-  {id:'n1',cat:'brief-notice',catN:'技术简报通知',group:'技术简报通知',ico:'📝',icoCls:'ico-comp',ctag:'ctag-comp',
-   title:'【技术简报】"高强度可降解购物袋材料"已配置完成，可查看',
+  {id:'b1',cat:'brief-notice',catN:'技术简报通知',group:'技术简报通知',ico:'📝',icoCls:'ico-comp',ctag:'ctag-comp',
+   title:'【技术简报通知】"高强度可降解购物袋材料"已配置完成，可查看',
    sum:'您提交的技术简报创建申请已完成配置，简报内容已可正常查看。',
-   time:'20分钟前',timeX:'2026-04-10 09:35',unread:true,urg:'mid',
-   tags:[{l:'创建完成',c:'g'},{l:'技术简报',c:'b'}],
+   time:'25分钟前',timeX:'2026-04-10 09:35',unread:true,urg:'mid',
+   tags:[{l:'创建完成',c:'g'}, {l:'技术简报',c:'b'}],
    det:{desc:'您于 2026-04-08 提交的技术简报创建申请「高强度可降解购物袋材料」已完成配置，可进入战略研判 > 技术简报查看简报内容。',
-     data:[{l:'简报主题',v:'高强度可降解购物袋材料'},{l:'申请时间',v:'2026-04-08 09:24'},{l:'完成时间',v:'2026-04-10 09:35'},{l:'处理人',v:'系统管理员'}],
+     data:[{l:'简报主题',v:'高强度可降解购物袋材料'},{l:'申请时间',v:'2026-04-08 09:24'},{l:'处理人',v:'系统管理员'}],
      advice:'可前往「战略研判 > 技术简报」查看简报内容。'}},
 
-  {id:'n2',cat:'brief-notice',catN:'技术简报通知',group:'技术简报通知',ico:'📝',icoCls:'ico-comp',ctag:'ctag-comp',
-   title:'【技术简报】"PBAT 改性料耐候性提升"修改已生效',
+  {id:'g1',cat:'report-notice',catN:'报告生成通知',group:'报告生成通知',ico:'📊',icoCls:'ico-pol',ctag:'ctag-pol',
+   title:'【报告生成通知】主题"PGA 材料的研究"生成新报告',
+   sum:'该研究主题已生成新一期报告，可查看或下载。',
+   time:'2小时前',timeX:'2026-04-10 08:00',unread:true,urg:'low',
+   tags:[{l:'新报告',c:'g'}, {l:'主题研究报告',c:'b'}],
+   det:{desc:'研究主题「PGA 材料的研究」已生成新一期报告（2026-04-10），内容涵盖该方向近一个周期的专利、文献与竞对动态。',
+     data:[{l:'报告主题',v:'PGA 材料的研究'}],
+     advice:'可前往「战略研判 > 主题研究报告」查看或下载。'}},
+
+  {id:'b2',cat:'brief-notice',catN:'技术简报通知',group:'技术简报通知',ico:'📝',icoCls:'ico-comp',ctag:'ctag-comp',
+   title:'【技术简报通知】"PBAT 改性料耐候与耐水解性能提升"修改已生效',
    sum:'您提交的简报修改申请已处理完成，主题与监控内容已按新要求更新。',
-   time:'3小时前',timeX:'2026-04-10 07:10',unread:true,urg:'low',
-   tags:[{l:'修改完成',c:'g'},{l:'技术简报',c:'b'}],
+   time:'2小时前',timeX:'2026-04-10 07:10',unread:true,urg:'low',
+   tags:[{l:'修改完成',c:'g'}, {l:'技术简报',c:'b'}],
    det:{desc:'您提交的修改申请已处理完成。简报主题已更新为「PBAT 改性料耐候与耐水解性能提升」，监控内容同步调整，后续推送将按新范围执行。',
-     data:[{l:'原主题',v:'PBAT 改性料耐候性提升'},{l:'新主题',v:'PBAT 改性料耐候与耐水解性能提升'},{l:'完成时间',v:'2026-04-10 07:10'},{l:'处理人',v:'系统管理员'}],
+     data:[{l:'简报主题',v:'PBAT 改性料耐候与耐水解性能提升'},{l:'申请时间',v:'2026-04-09 15:41'},{l:'处理人',v:'系统管理员'},{l:'原主题',v:'PBAT 改性料耐候性提升'}],
      advice:'如内容与预期不符，可再次提交修改申请。'}},
 
-  {id:'n3',cat:'brief-notice',catN:'技术简报通知',group:'技术简报通知',ico:'📝',icoCls:'ico-comp',ctag:'ctag-comp',
-   title:'【技术简报】"生物基 PBS 合成工艺"已删除，释放 1 个监控名额',
-   sum:'您提交的删除申请已处理完成，该简报已移除，当前剩余可创建监控数：2。',
-   time:'昨天 15:20',timeX:'2026-04-09 15:20',unread:false,urg:'low',
-   tags:[{l:'删除完成',c:'o'},{l:'名额已释放',c:'g'}],
-   det:{desc:'您提交的删除申请已由管理员确认执行，简报「生物基 PBS 合成工艺」及其监控已移除，占用的 1 个监控名额已释放。',
-     data:[{l:'简报主题',v:'生物基 PBS 合成工艺'},{l:'申请时间',v:'2026-04-08 11:07'},{l:'完成时间',v:'2026-04-09 15:20'},{l:'剩余名额',v:'2'}],
+  {id:'c1',cat:'cus-notice',catN:'客诉处理通知',group:'客诉处理通知',ico:'📞',icoCls:'ico-cus',ctag:'ctag-cus',
+   title:'【客诉处理通知】沃尔玛集团·聚乙烯材料 客诉：CRM 处理完成',
+   sum:'该客诉已由 CRM 系统处置完毕并回写平台，当前状态：已归档-完成。',
+   time:'昨天 17:40',timeX:'2026-04-09 17:40',unread:true,urg:'mid',
+   tags:[{l:'已归档-完成',c:'g'}, {l:'质量问题',c:'o'}],
+   det:{desc:'您完成分类并推送至 CRM 的客诉（客户单位：沃尔玛集团），CRM 已处置完毕并回写平台，状态更新为「已归档-完成」。',
+     data:[{l:'客户单位',v:'沃尔玛集团'},{l:'产品名称',v:'聚乙烯材料'},{l:'问题类型',v:'质量问题'},{l:'反馈时间',v:'2026-04-08 10:20'},{l:'问题描述',full:true,v:'用采购的塑料颗粒生产的瓶罐比较脆，容易破损！近期发货的三个批次均有出现，客户已停止使用该批次料并要求给出处理方案。'}],
+     advice:'可在「客情洞察 > 客诉反馈信息管理」查看该客诉的完整处理记录。'}},
+
+  {id:'b3',cat:'brief-notice',catN:'技术简报通知',group:'技术简报通知',ico:'📝',icoCls:'ico-comp',ctag:'ctag-comp',
+   title:'【技术简报通知】"生物基 PBS 合成工艺"已删除，释放 1 个监控名额',
+   sum:'您提交的删除申请已处理完成，该简报已移除，当前剩余可创建监控数：3。',
+   time:'昨天 15:20',timeX:'2026-04-09 15:20',unread:true,urg:'low',
+   tags:[{l:'删除完成',c:'o'}, {l:'名额已释放',c:'g'}],
+   det:{desc:'您提交的删除申请已确认执行，简报「生物基 PBS 合成工艺」及其监控已移除，占用的 1 个监控名额已释放。',
+     data:[{l:'简报主题',v:'生物基 PBS 合成工艺'},{l:'申请时间',v:'2026-04-08 11:07'},{l:'处理人',v:'系统管理员'},{l:'剩余名额',v:'3'}],
      advice:'如需新建监控主题，可前往「战略研判 > 技术简报」创建。'}},
 
-  {id:'n4',cat:'brief-notice',catN:'技术简报通知',group:'技术简报通知',ico:'📝',icoCls:'ico-comp',ctag:'ctag-comp',
-   title:'【技术简报】"可降解农用地膜配方与工艺"已被管理员删除',
+  {id:'m1',cat:'tm-warn',catN:'商标侵权预警',group:'商标侵权预警',ico:'™',icoCls:'ico-ent',ctag:'ctag-ent',
+   title:'【商标侵权预警】发现高风险近似企业名称"新疆蓝山屯禾新材料有限公司"',
+   sum:'新注册企业"新疆蓝山屯禾新材料有限公司"，其字号与本司商标"蓝山屯河"经比对判定为高风险，请重点关注。',
+   time:'昨天 15:10',timeX:'2026-04-09 15:10',unread:true,urg:'high',
+   tags:[{l:'风险等级：高',c:'r'}, {l:'新疆',c:'o'}],
+   det:{desc:'监测到新注册企业"新疆蓝山屯禾新材料有限公司"，其企业字号"蓝山屯禾"与本司商标"蓝山屯河"经比对判定为高风险，存在市场混淆可能。',
+     data:[{l:'本司商标',v:'蓝山屯河'},{l:'新注册企业名称',v:'新疆蓝山屯禾新材料有限公司'},{l:'企业字号',v:'蓝山屯禾'},{l:'风险等级',v:'高'},{l:'注册日期',v:'2026-04-08'},{l:'注册地',v:'新疆'}],
+     advice:'该企业名称与本司商标近似度较高，请重点关注，可结合实际经营情况判断是否需要进一步处理。'}},
+
+  {id:'r1',cat:'req-notice',catN:'需求处理通知',group:'需求处理通知',ico:'✅',icoCls:'ico-req',ctag:'ctag-req',
+   title:'【需求处理通知】需求"PBAT 柔性薄膜配方改良"已通过审核并进入需求池',
+   sum:'您提报的"PBAT 柔性薄膜配方改良"需求已通过审核，已进入研发需求池。',
+   time:'昨天 11:05',timeX:'2026-04-09 11:05',unread:true,urg:'mid',
+   tags:[{l:'审核通过',c:'g'}, {l:'已入池',c:'b'}],
+   det:{desc:'您于 2026-04-07 提报的技术需求「PBAT 柔性薄膜配方改良」已通过审核并进入研发需求池。',
+     data:[{l:'需求标题',v:'PBAT 柔性薄膜配方改良'},{l:'产品名称',v:'PBAT 柔性薄膜'},{l:'提报时间',v:'2026-04-07 14:20'},{l:'审核结果',v:'通过'},{l:'审核人',v:'研发负责人'}],
+     advice:'可前往「研发创新 > 研发需求池」查看该需求在全景分析中的分布情况。'}},
+
+  {id:'r3',cat:'req-notice',catN:'需求处理通知',group:'需求处理通知',ico:'✅',icoCls:'ico-req',ctag:'ctag-req',
+   title:'【需求处理通知】需求"农用地膜低温韧性改进"已通过审核并进入需求池',
+   sum:'您提报的"农用地膜低温韧性改进"需求已通过审核，已进入研发需求池。',
+   time:'昨天 09:15',timeX:'2026-04-09 09:15',unread:true,urg:'mid',
+   tags:[{l:'审核通过',c:'g'}, {l:'已入池',c:'b'}],
+   det:{desc:'您于 2026-04-07 提报的技术需求「农用地膜低温韧性改进」已通过审核并进入研发需求池。',
+     data:[{l:'需求标题',v:'农用地膜低温韧性改进'},{l:'产品名称',v:'可降解农用地膜'},{l:'提报时间',v:'2026-04-07 10:40'},{l:'审核结果',v:'通过'},{l:'审核人',v:'研发负责人'}],
+     advice:'可前往「研发创新 > 研发需求池」查看该需求在全景分析中的分布情况。'}},
+
+  {id:'b4',cat:'brief-notice',catN:'技术简报通知',group:'技术简报通知',ico:'📝',icoCls:'ico-comp',ctag:'ctag-comp',
+   title:'【技术简报通知】"可降解农用地膜配方与工艺"已被管理员删除',
    sum:'该简报由管理员在后台直接删除，已释放 1 个监控名额，如仍需监控请重新创建。',
-   time:'2天前',timeX:'2026-04-08 16:40',unread:false,urg:'mid',
-   tags:[{l:'管理员操作',c:'r'},{l:'名额已释放',c:'g'}],
-   det:{desc:'简报「可降解农用地膜配方与工艺」已由系统管理员在后台删除，对应监控同步移除。如该方向仍需持续跟踪，请重新提交创建申请。',
-     data:[{l:'简报主题',v:'可降解农用地膜配方与工艺'},{l:'创建人',v:'本人'},{l:'删除时间',v:'2026-04-08 16:40'},{l:'操作人',v:'系统管理员'}],
+   time:'2天前',timeX:'2026-04-08 16:40',unread:true,urg:'mid',
+   tags:[{l:'管理员操作',c:'r'}, {l:'名额已释放',c:'g'}],
+   det:{desc:'简报「可降解农用地膜配方与工艺」已由系统管理员删除。如该方向仍需持续跟踪，请重新提交创建申请。',
+     data:[{l:'简报主题',v:'可降解农用地膜配方与工艺'},{l:'申请时间',v:'—（管理员直接删除，无申请）'},{l:'处理人',v:'系统管理员'},{l:'创建人',v:'本人'},{l:'剩余名额',v:'3'}],
      advice:'建议先与管理员确认删除原因，再决定是否重新创建。'}},
 
-  {id:'n5',cat:'req-notice',catN:'需求处理通知',group:'需求处理通知',ico:'✅',icoCls:'ico-req',ctag:'ctag-req',
-   title:'【需求处理】技术需求 #RD-2026-0298 已通过审核并进入需求池',
-   sum:'您提报的"PBAT 柔性薄膜配方改良"需求已通过审核，当前处理状态：评估中。',
-   time:'昨天 11:05',timeX:'2026-04-09 11:05',unread:true,urg:'mid',
-   tags:[{l:'审核通过',c:'g'},{l:'评估中',c:'b'}],
-   det:{desc:'您提报的技术需求单 #RD-2026-0298「PBAT 柔性薄膜配方改良」已通过审核并进入研发需求池，当前处理状态为"评估中"，后续状态变更将另行通知。',
-     data:[{l:'需求单号',v:'#RD-2026-0298'},{l:'需求标题',v:'PBAT 柔性薄膜配方改良'},{l:'审核结果',v:'通过'},{l:'当前状态',v:'评估中'}],
-     advice:'可前往「研发创新 > 研发需求池」查看需求在全景分析中的分布情况。'}},
-
-  {id:'n6',cat:'req-notice',catN:'需求处理通知',group:'需求处理通知',ico:'✅',icoCls:'ico-req',ctag:'ctag-req',
-   title:'【需求处理】技术需求 #RD-2026-0287 未通过审核',
-   sum:'需求描述中技术难题部分信息不完整，请补充后重新提交。',
-   time:'2天前',timeX:'2026-04-08 15:22',unread:false,urg:'mid',
-   tags:[{l:'未通过',c:'r'},{l:'需补充',c:'o'}],
-   det:{desc:'您提报的技术需求单 #RD-2026-0287 未通过审核。审核意见：技术难题描述缺少目标性能指标与限制条件，无法进入后续评估，请补充后重新提交。',
-     data:[{l:'需求单号',v:'#RD-2026-0287'},{l:'审核结果',v:'未通过'},{l:'审核人',v:'研发负责人'},{l:'审核时间',v:'2026-04-08 15:22'}],
+  {id:'r2',cat:'req-notice',catN:'需求处理通知',group:'需求处理通知',ico:'✅',icoCls:'ico-req',ctag:'ctag-req',
+   title:'【需求处理通知】需求"可降解餐盒耐热性提升"未通过审核',
+   sum:'技术难题描述缺少目标性能指标与限制条件，请补充后重新提交。',
+   time:'2天前',timeX:'2026-04-08 15:22',unread:true,urg:'mid',
+   tags:[{l:'未通过',c:'r'}, {l:'需补充',c:'o'}],
+   det:{desc:'您提报的技术需求「可降解餐盒耐热性提升」未通过审核。审核意见：技术难题描述缺少目标性能指标与限制条件，请补充后重新提交。',
+     data:[{l:'需求标题',v:'可降解餐盒耐热性提升'},{l:'产品名称',v:'可降解餐盒'},{l:'提报时间',v:'2026-04-06 09:15'},{l:'审核结果',v:'未通过'},{l:'审核人',v:'研发负责人'}],
      advice:'请在「研发创新 > 技术需求管理」中补充信息后重新提交。'}},
 
-  {id:'n7',cat:'req-notice',catN:'需求处理通知',group:'需求处理通知',ico:'📌',icoCls:'ico-req',ctag:'ctag-req',
-   title:'【需求处理】技术需求 #RD-2026-0245 状态变更为"已立项"',
-   sum:'您提报的"可降解地膜降解速率可控化"需求已完成评估并立项，进入研发排期。',
-   time:'3天前',timeX:'2026-04-07 10:15',unread:false,urg:'low',
-   tags:[{l:'已立项',c:'g'}],
-   det:{desc:'您提报的技术需求 #RD-2026-0245「可降解地膜降解速率可控化」已完成评估，处理状态由"评估中"变更为"已立项"。',
-     data:[{l:'需求单号',v:'#RD-2026-0245'},{l:'原状态',v:'评估中'},{l:'新状态',v:'已立项'},{l:'变更时间',v:'2026-04-07 10:15'}],
-     advice:'后续研发进展可在需求信息维护中跟踪。'}},
+  {id:'b5',cat:'brief-notice',catN:'技术简报通知',group:'技术简报通知',ico:'📝',icoCls:'ico-comp',ctag:'ctag-comp',
+   title:'【技术简报通知】"PLA 注塑级改性技术跟踪"已配置完成，可查看',
+   sum:'您提交的技术简报创建申请已完成配置，简报内容已可正常查看。',
+   time:'2天前',timeX:'2026-04-08 11:20',unread:true,urg:'mid',
+   tags:[{l:'创建完成',c:'g'}, {l:'技术简报',c:'b'}],
+   det:{desc:'您于 2026-04-06 提交的技术简报创建申请「PLA 注塑级改性技术跟踪」已完成配置，可进入战略研判 > 技术简报查看简报内容。',
+     data:[{l:'简报主题',v:'PLA 注塑级改性技术跟踪'},{l:'申请时间',v:'2026-04-06 14:02'},{l:'处理人',v:'系统管理员'}],
+     advice:'可前往「战略研判 > 技术简报」查看简报内容。'}},
 
-  {id:'n8',cat:'cus-notice',catN:'客诉处理通知',group:'客诉处理通知',ico:'📞',icoCls:'ico-cus',ctag:'ctag-cus',
-   title:'【客诉处理】客诉单 #CUS-20260402-112 已处理完成',
-   sum:'苏州绿联包装批次质量投诉已闭环，处理结论：批次工艺参数偏差，已补发并调整工艺。',
-   time:'昨天 17:40',timeX:'2026-04-09 17:40',unread:true,urg:'mid',
-   tags:[{l:'已闭环',c:'g'},{l:'苏州绿联包装',c:'b'}],
-   det:{desc:'您发起的客诉单 #CUS-20260402-112 已由品控处理完成。根因分析为该批次挤出工艺参数偏差导致降解速率异常，已完成补发并调整工艺参数。',
-     data:[{l:'客诉单号',v:'#CUS-20260402-112'},{l:'客户名称',v:'苏州绿联包装'},{l:'处理结论',v:'工艺参数偏差'},{l:'完成时间',v:'2026-04-09 17:40'}],
-     advice:'可在「客情洞察 > 客诉反馈信息管理」查看完整处理过程与根因分析。'}},
+  {id:'c2',cat:'cus-notice',catN:'客诉处理通知',group:'客诉处理通知',ico:'📞',icoCls:'ico-cus',ctag:'ctag-cus',
+   title:'【客诉处理通知】杭州联和包装·PBAT 吹膜料 客诉：CRM 判定无效',
+   sum:'该客诉经 CRM 核实后判定无效，作废状态已回传平台，当前状态：已归档-作废。',
+   time:'2天前',timeX:'2026-04-08 09:30',unread:true,urg:'mid',
+   tags:[{l:'已归档-作废',c:'o'}, {l:'物流问题',c:'b'}],
+   det:{desc:'您完成分类并推送至 CRM 的客诉（客户单位：杭州联和包装），CRM 核实后判定为无效，作废状态已回传平台，状态更新为「已归档-作废（CRM判定）」。',
+     data:[{l:'客户单位',v:'杭州联和包装'},{l:'产品名称',v:'PBAT 吹膜料'},{l:'问题类型',v:'物流问题'},{l:'反馈时间',v:'2026-04-05 16:10'},{l:'问题描述',full:true,v:'到货数量与订单不符，实收比订单少 12 件，随货单据与实物对不上，请核实发货记录并说明原因。'}],
+     advice:'可在「客情洞察 > 客诉反馈信息管理」查看该客诉的处理记录。'}},
 
-  {id:'n9',cat:'cus-notice',catN:'客诉处理通知',group:'客诉处理通知',ico:'↩',icoCls:'ico-cus',ctag:'ctag-cus',
-   title:'【客诉处理】客诉单 #CUS-20260405-118 被退回，请补充信息',
-   sum:'退回原因：缺少批次号与现场照片，无法定位问题批次，请补充后重新提交。',
-   time:'2天前',timeX:'2026-04-08 09:30',unread:true,urg:'high',
-   tags:[{l:'已退回',c:'r'},{l:'需补充',c:'o'}],
-   det:{desc:'您提交的客诉单 #CUS-20260405-118 被品控退回。退回意见：客户投诉内容中未提供产品批次号及现场照片，无法定位问题批次，请补充后重新提交。',
-     data:[{l:'客诉单号',v:'#CUS-20260405-118'},{l:'退回人',v:'品控部'},{l:'退回时间',v:'2026-04-08 09:30'},{l:'需补充',v:'批次号、现场照片'}],
-     advice:'请联系客户补充批次信息后，在客诉反馈信息管理中重新提交。'}},
-
-  {id:'n10',cat:'report-notice',catN:'报告生成通知',group:'报告生成通知',ico:'📊',icoCls:'ico-pol',ctag:'ctag-pol',
-   title:'【报告生成】主题"PGA 材料的研究"生成新报告',
-   sum:'您创建的研究主题已生成 2026 年 4 月期报告，可查看或下载。',
-   time:'今天 08:00',timeX:'2026-04-10 08:00',unread:true,urg:'low',
-   tags:[{l:'新报告',c:'g'},{l:'主题研究报告',c:'b'}],
-   det:{desc:'您创建的研究主题「PGA 材料的研究」已生成新一期报告（2026-04-10），内容涵盖该方向近一个月的专利、文献与竞对动态。',
-     data:[{l:'报告主题',v:'PGA 材料的研究'},{l:'报告期次',v:'2026 年 4 月期'},{l:'生成时间',v:'2026-04-10 08:00'},{l:'累计报告数',v:'12'}],
+  {id:'g2',cat:'report-notice',catN:'报告生成通知',group:'报告生成通知',ico:'📊',icoCls:'ico-pol',ctag:'ctag-pol',
+   title:'【报告生成通知】主题"可降解地膜技术路线跟踪"生成新报告',
+   sum:'该研究主题已生成新一期报告，可查看或下载。',
+   time:'2天前',timeX:'2026-04-08 08:00',unread:true,urg:'low',
+   tags:[{l:'新报告',c:'g'}, {l:'主题研究报告',c:'b'}],
+   det:{desc:'研究主题「可降解地膜技术路线跟踪」已生成新一期报告（2026-04-08），内容涵盖该方向近一个周期的专利、文献与竞对动态。',
+     data:[{l:'报告主题',v:'可降解地膜技术路线跟踪'}],
      advice:'可前往「战略研判 > 主题研究报告」查看或下载。'}},
 
-  {id:'n11',cat:'report-notice',catN:'报告生成通知',group:'报告生成通知',ico:'📊',icoCls:'ico-pol',ctag:'ctag-pol',
-   title:'【报告生成】主题"可降解地膜技术路线跟踪"生成新报告',
-   sum:'您创建的研究主题已生成 2026 年 4 月期报告，可查看或下载。',
-   time:'2天前',timeX:'2026-04-08 08:00',unread:false,urg:'low',
-   tags:[{l:'新报告',c:'g'},{l:'主题研究报告',c:'b'}],
-   det:{desc:'您创建的研究主题「可降解地膜技术路线跟踪」已生成新一期报告（2026-04-08），内容涵盖该方向近一个月的专利、文献与竞对动态。',
-     data:[{l:'报告主题',v:'可降解地膜技术路线跟踪'},{l:'报告期次',v:'2026 年 4 月期'},{l:'生成时间',v:'2026-04-08 08:00'},{l:'累计报告数',v:'7'}],
+  {id:'r4',cat:'req-notice',catN:'需求处理通知',group:'需求处理通知',ico:'✅',icoCls:'ico-req',ctag:'ctag-req',
+   title:'【需求处理通知】需求"降解袋印刷附着力改善"未通过审核',
+   sum:'需求详情缺少具体技术指标与验收标准，请补充后重新提交。',
+   time:'3天前',timeX:'2026-04-07 16:05',unread:true,urg:'mid',
+   tags:[{l:'未通过',c:'r'}, {l:'需补充',c:'o'}],
+   det:{desc:'您提报的技术需求「降解袋印刷附着力改善」未通过审核。审核意见：需求详情缺少具体技术指标与验收标准，请补充后重新提交。',
+     data:[{l:'需求标题',v:'降解袋印刷附着力改善'},{l:'产品名称',v:'可降解购物袋'},{l:'提报时间',v:'2026-04-06 15:30'},{l:'审核结果',v:'未通过'},{l:'审核人',v:'研发负责人'}],
+     advice:'请在「研发创新 > 技术需求管理」中补充信息后重新提交。'}},
+
+  {id:'c3',cat:'cus-notice',catN:'客诉处理通知',group:'客诉处理通知',ico:'📞',icoCls:'ico-cus',ctag:'ctag-cus',
+   title:'【客诉处理通知】苏州绿联包装·可降解购物袋 客诉：CRM 处理完成',
+   sum:'该客诉已由 CRM 系统处置完毕并回写平台，当前状态：已归档-完成。',
+   time:'3天前',timeX:'2026-04-07 15:20',unread:true,urg:'mid',
+   tags:[{l:'已归档-完成',c:'g'}, {l:'质量问题',c:'o'}],
+   det:{desc:'您完成分类并推送至 CRM 的客诉（客户单位：苏州绿联包装），CRM 已处置完毕并回写平台，状态更新为「已归档-完成」。',
+     data:[{l:'客户单位',v:'苏州绿联包装'},{l:'产品名称',v:'可降解购物袋'},{l:'问题类型',v:'质量问题'},{l:'反馈时间',v:'2026-04-03 09:30'},{l:'问题描述',full:true,v:'第三批次降解袋在存储期内提前降解，尚未使用即出现粉化开裂，影响正常出货。'}],
+     advice:'可在「客情洞察 > 客诉反馈信息管理」查看该客诉的完整处理记录。'}},
+
+  {id:'b6',cat:'brief-notice',catN:'技术简报通知',group:'技术简报通知',ico:'📝',icoCls:'ico-comp',ctag:'ctag-comp',
+   title:'【技术简报通知】"PBS 系列产品应用拓展"修改已生效',
+   sum:'您提交的简报修改申请已处理完成，主题与监控内容已按新要求更新。',
+   time:'3天前',timeX:'2026-04-07 14:55',unread:true,urg:'low',
+   tags:[{l:'修改完成',c:'g'}, {l:'技术简报',c:'b'}],
+   det:{desc:'您提交的修改申请已处理完成。简报主题已更新为「PBS 系列产品应用拓展」，监控内容同步调整，后续推送将按新范围执行。',
+     data:[{l:'简报主题',v:'PBS 系列产品应用拓展'},{l:'申请时间',v:'2026-04-06 10:18'},{l:'处理人',v:'系统管理员'},{l:'原主题',v:'PBS 应用跟踪'}],
+     advice:'如内容与预期不符，可再次提交修改申请。'}},
+
+  {id:'m2',cat:'tm-warn',catN:'商标侵权预警',group:'商标侵权预警',ico:'™',icoCls:'ico-ent',ctag:'ctag-ent',
+   title:'【商标侵权预警】发现高风险近似企业名称"蓝山屯合材料科技有限公司"',
+   sum:'新注册企业"蓝山屯合材料科技有限公司"，其字号与本司商标"蓝山屯河"经比对判定为高风险，请重点关注。',
+   time:'3天前',timeX:'2026-04-07 14:03',unread:true,urg:'high',
+   tags:[{l:'风险等级：高',c:'r'}, {l:'江苏',c:'o'}],
+   det:{desc:'监测到新注册企业"蓝山屯合材料科技有限公司"，其企业字号"蓝山屯合"与本司商标"蓝山屯河"经比对判定为高风险，存在市场混淆可能。',
+     data:[{l:'本司商标',v:'蓝山屯河'},{l:'新注册企业名称',v:'蓝山屯合材料科技有限公司'},{l:'企业字号',v:'蓝山屯合'},{l:'风险等级',v:'高'},{l:'注册日期',v:'2026-04-06'},{l:'注册地',v:'江苏'}],
+     advice:'该企业名称与本司商标近似度较高，请重点关注，可结合实际经营情况判断是否需要进一步处理。'}},
+
+  {id:'c4',cat:'cus-notice',catN:'客诉处理通知',group:'客诉处理通知',ico:'📞',icoCls:'ico-cus',ctag:'ctag-cus',
+   title:'【客诉处理通知】内蒙古禾丰农资·可降解农用地膜 客诉：CRM 处理完成',
+   sum:'该客诉已由 CRM 系统处置完毕并回写平台，当前状态：已归档-完成。',
+   time:'4天前',timeX:'2026-04-06 11:10',unread:true,urg:'mid',
+   tags:[{l:'已归档-完成',c:'g'}, {l:'质量问题',c:'o'}],
+   det:{desc:'您完成分类并推送至 CRM 的客诉（客户单位：内蒙古禾丰农资），CRM 已处置完毕并回写平台，状态更新为「已归档-完成」。',
+     data:[{l:'客户单位',v:'内蒙古禾丰农资'},{l:'产品名称',v:'可降解农用地膜'},{l:'问题类型',v:'质量问题'},{l:'反馈时间',v:'2026-04-01 14:50'},{l:'问题描述',full:true,v:'地膜铺设后低温环境下开裂严重，田间覆盖效果不达预期，已影响春播进度。'}],
+     advice:'可在「客情洞察 > 客诉反馈信息管理」查看该客诉的完整处理记录。'}},
+
+  {id:'r5',cat:'req-notice',catN:'需求处理通知',group:'需求处理通知',ico:'✅',icoCls:'ico-req',ctag:'ctag-req',
+   title:'【需求处理通知】需求"PBS 注塑件收缩率控制"已通过审核并进入需求池',
+   sum:'您提报的"PBS 注塑件收缩率控制"需求已通过审核，已进入研发需求池。',
+   time:'4天前',timeX:'2026-04-06 10:20',unread:true,urg:'mid',
+   tags:[{l:'审核通过',c:'g'}, {l:'已入池',c:'b'}],
+   det:{desc:'您于 2026-04-03 提报的技术需求「PBS 注塑件收缩率控制」已通过审核并进入研发需求池。',
+     data:[{l:'需求标题',v:'PBS 注塑件收缩率控制'},{l:'产品名称',v:'PBS 注塑料'},{l:'提报时间',v:'2026-04-03 11:10'},{l:'审核结果',v:'通过'},{l:'审核人',v:'研发负责人'}],
+     advice:'可前往「研发创新 > 研发需求池」查看该需求在全景分析中的分布情况。'}},
+
+  {id:'b7',cat:'brief-notice',catN:'技术简报通知',group:'技术简报通知',ico:'📝',icoCls:'ico-comp',ctag:'ctag-comp',
+   title:'【技术简报通知】"淀粉基复合材料工艺"已删除，释放 1 个监控名额',
+   sum:'您提交的删除申请已处理完成，该简报已移除，当前剩余可创建监控数：4。',
+   time:'4天前',timeX:'2026-04-06 09:45',unread:false,urg:'low',
+   tags:[{l:'删除完成',c:'o'}, {l:'名额已释放',c:'g'}],
+   det:{desc:'您提交的删除申请已确认执行，简报「淀粉基复合材料工艺」及其监控已移除，占用的 1 个监控名额已释放。',
+     data:[{l:'简报主题',v:'淀粉基复合材料工艺'},{l:'申请时间',v:'2026-04-05 16:30'},{l:'处理人',v:'系统管理员'},{l:'剩余名额',v:'4'}],
+     advice:'如需新建监控主题，可前往「战略研判 > 技术简报」创建。'}},
+
+  {id:'r6',cat:'req-notice',catN:'需求处理通知',group:'需求处理通知',ico:'✅',icoCls:'ico-req',ctag:'ctag-req',
+   title:'【需求处理通知】需求"快递袋抗撕裂性能提升"已通过审核并进入需求池',
+   sum:'您提报的"快递袋抗撕裂性能提升"需求已通过审核，已进入研发需求池。',
+   time:'5天前',timeX:'2026-04-05 14:30',unread:false,urg:'mid',
+   tags:[{l:'审核通过',c:'g'}, {l:'已入池',c:'b'}],
+   det:{desc:'您于 2026-04-02 提报的技术需求「快递袋抗撕裂性能提升」已通过审核并进入研发需求池。',
+     data:[{l:'需求标题',v:'快递袋抗撕裂性能提升'},{l:'产品名称',v:'可降解快递袋'},{l:'提报时间',v:'2026-04-02 16:45'},{l:'审核结果',v:'通过'},{l:'审核人',v:'研发负责人'}],
+     advice:'可前往「研发创新 > 研发需求池」查看该需求在全景分析中的分布情况。'}},
+
+  {id:'m3',cat:'tm-warn',catN:'商标侵权预警',group:'商标侵权预警',ico:'™',icoCls:'ico-ent',ctag:'ctag-ent',
+   title:'【商标侵权预警】发现高风险近似企业名称"广东蓝山吞河环保科技有限公司"',
+   sum:'新注册企业"广东蓝山吞河环保科技有限公司"，其字号与本司商标"蓝山屯河"经比对判定为高风险，请重点关注。',
+   time:'5天前',timeX:'2026-04-05 12:56',unread:true,urg:'high',
+   tags:[{l:'风险等级：高',c:'r'}, {l:'广东',c:'o'}],
+   det:{desc:'监测到新注册企业"广东蓝山吞河环保科技有限公司"，其企业字号"蓝山吞河"与本司商标"蓝山屯河"经比对判定为高风险，存在市场混淆可能。',
+     data:[{l:'本司商标',v:'蓝山屯河'},{l:'新注册企业名称',v:'广东蓝山吞河环保科技有限公司'},{l:'企业字号',v:'蓝山吞河'},{l:'风险等级',v:'高'},{l:'注册日期',v:'2026-04-03'},{l:'注册地',v:'广东'}],
+     advice:'该企业名称与本司商标近似度较高，请重点关注，可结合实际经营情况判断是否需要进一步处理。'}},
+
+  {id:'g3',cat:'report-notice',catN:'报告生成通知',group:'报告生成通知',ico:'📊',icoCls:'ico-pol',ctag:'ctag-pol',
+   title:'【报告生成通知】主题"PBAT 改性技术进展"生成新报告',
+   sum:'该研究主题已生成新一期报告，可查看或下载。',
+   time:'5天前',timeX:'2026-04-05 08:00',unread:true,urg:'low',
+   tags:[{l:'新报告',c:'g'}, {l:'主题研究报告',c:'b'}],
+   det:{desc:'研究主题「PBAT 改性技术进展」已生成新一期报告（2026-04-05），内容涵盖该方向近一个周期的专利、文献与竞对动态。',
+     data:[{l:'报告主题',v:'PBAT 改性技术进展'}],
      advice:'可前往「战略研判 > 主题研究报告」查看或下载。'}},
+
+  {id:'c5',cat:'cus-notice',catN:'客诉处理通知',group:'客诉处理通知',ico:'📞',icoCls:'ico-cus',ctag:'ctag-cus',
+   title:'【客诉处理通知】佛山鑫翔包装·PBAT 改性料 客诉：CRM 判定无效',
+   sum:'该客诉经 CRM 核实后判定无效，作废状态已回传平台，当前状态：已归档-作废。',
+   time:'6天前',timeX:'2026-04-04 16:40',unread:false,urg:'mid',
+   tags:[{l:'已归档-作废',c:'o'}, {l:'售后问题',c:'b'}],
+   det:{desc:'您完成分类并推送至 CRM 的客诉（客户单位：佛山鑫翔包装），CRM 核实后判定为无效，作废状态已回传平台，状态更新为「已归档-作废（CRM判定）」。',
+     data:[{l:'客户单位',v:'佛山鑫翔包装'},{l:'产品名称',v:'PBAT 改性料'},{l:'问题类型',v:'售后问题'},{l:'反馈时间',v:'2026-03-30 11:20'},{l:'问题描述',full:true,v:'技术支持响应慢，加工参数调整方案迟迟未给出，生产线已停机等待两天。'}],
+     advice:'可在「客情洞察 > 客诉反馈信息管理」查看该客诉的处理记录。'}},
+
+  {id:'b8',cat:'brief-notice',catN:'技术简报通知',group:'技术简报通知',ico:'📝',icoCls:'ico-comp',ctag:'ctag-comp',
+   title:'【技术简报通知】"可堆肥餐具材料监控"已被管理员删除',
+   sum:'该简报由管理员在后台直接删除，已释放 1 个监控名额，如仍需监控请重新创建。',
+   time:'6天前',timeX:'2026-04-04 15:10',unread:false,urg:'mid',
+   tags:[{l:'管理员操作',c:'r'}, {l:'名额已释放',c:'g'}],
+   det:{desc:'简报「可堆肥餐具材料监控」已由系统管理员删除。如该方向仍需持续跟踪，请重新提交创建申请。',
+     data:[{l:'简报主题',v:'可堆肥餐具材料监控'},{l:'申请时间',v:'—（管理员直接删除，无申请）'},{l:'处理人',v:'系统管理员'},{l:'创建人',v:'本人'},{l:'剩余名额',v:'3'}],
+     advice:'建议先与管理员确认删除原因，再决定是否重新创建。'}},
+
+  {id:'r7',cat:'req-notice',catN:'需求处理通知',group:'需求处理通知',ico:'✅',icoCls:'ico-req',ctag:'ctag-req',
+   title:'【需求处理通知】需求"吸管口感与耐温改善"未通过审核',
+   sum:'未说明现有产品的具体缺陷数据，请补充后重新提交。',
+   time:'6天前',timeX:'2026-04-04 11:15',unread:false,urg:'mid',
+   tags:[{l:'未通过',c:'r'}, {l:'需补充',c:'o'}],
+   det:{desc:'您提报的技术需求「吸管口感与耐温改善」未通过审核。审核意见：未说明现有产品的具体缺陷数据，请补充后重新提交。',
+     data:[{l:'需求标题',v:'吸管口感与耐温改善'},{l:'产品名称',v:'可降解吸管'},{l:'提报时间',v:'2026-04-01 09:20'},{l:'审核结果',v:'未通过'},{l:'审核人',v:'研发负责人'}],
+     advice:'请在「研发创新 > 技术需求管理」中补充信息后重新提交。'}},
+
+  {id:'m4',cat:'tm-warn',catN:'商标侵权预警',group:'商标侵权预警',ico:'™',icoCls:'ico-ent',ctag:'ctag-ent',
+   title:'【商标侵权预警】发现高风险近似企业名称"山东蓝山屯河新材料有限公司"',
+   sum:'新注册企业"山东蓝山屯河新材料有限公司"，其字号与本司商标"蓝山屯河"经比对判定为高风险，请重点关注。',
+   time:'7天前',timeX:'2026-04-03 14:49',unread:true,urg:'high',
+   tags:[{l:'风险等级：高',c:'r'}, {l:'字号完全一致',c:'r'}, {l:'山东',c:'o'}],
+   det:{desc:'监测到新注册企业"山东蓝山屯河新材料有限公司"，其企业字号"蓝山屯河"与本司商标"蓝山屯河"经比对判定为高风险，存在市场混淆可能。',
+     data:[{l:'本司商标',v:'蓝山屯河'},{l:'新注册企业名称',v:'山东蓝山屯河新材料有限公司'},{l:'企业字号',v:'蓝山屯河'},{l:'风险等级',v:'高'},{l:'注册日期',v:'2026-04-02'},{l:'注册地',v:'山东'}],
+     advice:'该企业字号与本司商标完全一致，建议优先关注。'}},
+
+  {id:'b9',cat:'brief-notice',catN:'技术简报通知',group:'技术简报通知',ico:'📝',icoCls:'ico-comp',ctag:'ctag-comp',
+   title:'【技术简报通知】"PHA 生物合成路线监控"已配置完成，可查看',
+   sum:'您提交的技术简报创建申请已完成配置，简报内容已可正常查看。',
+   time:'7天前',timeX:'2026-04-03 10:05',unread:false,urg:'mid',
+   tags:[{l:'创建完成',c:'g'}, {l:'技术简报',c:'b'}],
+   det:{desc:'您于 2026-04-01 提交的技术简报创建申请「PHA 生物合成路线监控」已完成配置，可进入战略研判 > 技术简报查看简报内容。',
+     data:[{l:'简报主题',v:'PHA 生物合成路线监控'},{l:'申请时间',v:'2026-04-01 09:40'},{l:'处理人',v:'系统管理员'}],
+     advice:'可前往「战略研判 > 技术简报」查看简报内容。'}},
+
+  {id:'b10',cat:'brief-notice',catN:'技术简报通知',group:'技术简报通知',ico:'📝',icoCls:'ico-comp',ctag:'ctag-comp',
+   title:'【技术简报通知】"PGA 材料油田应用方向"修改已生效',
+   sum:'您提交的简报修改申请已处理完成，主题与监控内容已按新要求更新。',
+   time:'8天前',timeX:'2026-04-02 16:20',unread:false,urg:'low',
+   tags:[{l:'修改完成',c:'g'}, {l:'技术简报',c:'b'}],
+   det:{desc:'您提交的修改申请已处理完成。简报主题已更新为「PGA 材料油田应用方向」，监控内容同步调整，后续推送将按新范围执行。',
+     data:[{l:'简报主题',v:'PGA 材料油田应用方向'},{l:'申请时间',v:'2026-04-01 14:12'},{l:'处理人',v:'系统管理员'},{l:'原主题',v:'PGA 材料应用'}],
+     advice:'如内容与预期不符，可再次提交修改申请。'}},
+
+  {id:'c6',cat:'cus-notice',catN:'客诉处理通知',group:'客诉处理通知',ico:'📞',icoCls:'ico-cus',ctag:'ctag-cus',
+   title:'【客诉处理通知】青岛海通塑业·PBS 注塑料 客诉：CRM 处理完成',
+   sum:'该客诉已由 CRM 系统处置完毕并回写平台，当前状态：已归档-完成。',
+   time:'8天前',timeX:'2026-04-02 10:25',unread:false,urg:'mid',
+   tags:[{l:'已归档-完成',c:'g'}, {l:'质量问题',c:'o'}],
+   det:{desc:'您完成分类并推送至 CRM 的客诉（客户单位：青岛海通塑业），CRM 已处置完毕并回写平台，状态更新为「已归档-完成」。',
+     data:[{l:'客户单位',v:'青岛海通塑业'},{l:'产品名称',v:'PBS 注塑料'},{l:'问题类型',v:'质量问题'},{l:'反馈时间',v:'2026-03-28 15:40'},{l:'问题描述',full:true,v:'注塑成型后制品表面出现明显银纹，同批次料在不同机台上均有出现。'}],
+     advice:'可在「客情洞察 > 客诉反馈信息管理」查看该客诉的完整处理记录。'}},
+
+  {id:'r8',cat:'req-notice',catN:'需求处理通知',group:'需求处理通知',ico:'✅',icoCls:'ico-req',ctag:'ctag-req',
+   title:'【需求处理通知】需求"地膜降解周期可调控研究"已通过审核并进入需求池',
+   sum:'您提报的"地膜降解周期可调控研究"需求已通过审核，已进入研发需求池。',
+   time:'8天前',timeX:'2026-04-02 09:40',unread:false,urg:'mid',
+   tags:[{l:'审核通过',c:'g'}, {l:'已入池',c:'b'}],
+   det:{desc:'您于 2026-03-30 提报的技术需求「地膜降解周期可调控研究」已通过审核并进入研发需求池。',
+     data:[{l:'需求标题',v:'地膜降解周期可调控研究'},{l:'产品名称',v:'可降解农用地膜'},{l:'提报时间',v:'2026-03-30 14:00'},{l:'审核结果',v:'通过'},{l:'审核人',v:'研发负责人'}],
+     advice:'可前往「研发创新 > 研发需求池」查看该需求在全景分析中的分布情况。'}},
+
+  {id:'g4',cat:'report-notice',catN:'报告生成通知',group:'报告生成通知',ico:'📊',icoCls:'ico-pol',ctag:'ctag-pol',
+   title:'【报告生成通知】主题"生物基丁二酸产业化跟踪"生成新报告',
+   sum:'该研究主题已生成新一期报告，可查看或下载。',
+   time:'8天前',timeX:'2026-04-02 08:00',unread:false,urg:'low',
+   tags:[{l:'新报告',c:'g'}, {l:'主题研究报告',c:'b'}],
+   det:{desc:'研究主题「生物基丁二酸产业化跟踪」已生成新一期报告（2026-04-02），内容涵盖该方向近一个周期的专利、文献与竞对动态。',
+     data:[{l:'报告主题',v:'生物基丁二酸产业化跟踪'}],
+     advice:'可前往「战略研判 > 主题研究报告」查看或下载。'}},
+
+  {id:'m5',cat:'tm-warn',catN:'商标侵权预警',group:'商标侵权预警',ico:'™',icoCls:'ico-ent',ctag:'ctag-ent',
+   title:'【商标侵权预警】发现高风险近似企业名称"浙江兰山屯河高分子有限公司"',
+   sum:'新注册企业"浙江兰山屯河高分子有限公司"，其字号与本司商标"蓝山屯河"经比对判定为高风险，请重点关注。',
+   time:'9天前',timeX:'2026-04-01 13:42',unread:true,urg:'high',
+   tags:[{l:'风险等级：高',c:'r'}, {l:'浙江',c:'o'}],
+   det:{desc:'监测到新注册企业"浙江兰山屯河高分子有限公司"，其企业字号"兰山屯河"与本司商标"蓝山屯河"经比对判定为高风险，存在市场混淆可能。',
+     data:[{l:'本司商标',v:'蓝山屯河'},{l:'新注册企业名称',v:'浙江兰山屯河高分子有限公司'},{l:'企业字号',v:'兰山屯河'},{l:'风险等级',v:'高'},{l:'注册日期',v:'2026-03-31'},{l:'注册地',v:'浙江'}],
+     advice:'该企业名称与本司商标近似度较高，请重点关注，可结合实际经营情况判断是否需要进一步处理。'}},
+
+  {id:'r9',cat:'req-notice',catN:'需求处理通知',group:'需求处理通知',ico:'✅',icoCls:'ico-req',ctag:'ctag-req',
+   title:'【需求处理通知】需求"包装膜印刷色差控制"未通过审核',
+   sum:'缺少色差检测标准与合格判定依据，请补充后重新提交。',
+   time:'10天前',timeX:'2026-03-31 15:50',unread:false,urg:'mid',
+   tags:[{l:'未通过',c:'r'}, {l:'需补充',c:'o'}],
+   det:{desc:'您提报的技术需求「包装膜印刷色差控制」未通过审核。审核意见：缺少色差检测标准与合格判定依据，请补充后重新提交。',
+     data:[{l:'需求标题',v:'包装膜印刷色差控制'},{l:'产品名称',v:'可降解包装膜'},{l:'提报时间',v:'2026-03-28 10:30'},{l:'审核结果',v:'未通过'},{l:'审核人',v:'研发负责人'}],
+     advice:'请在「研发创新 > 技术需求管理」中补充信息后重新提交。'}},
+
+  {id:'c7',cat:'cus-notice',catN:'客诉处理通知',group:'客诉处理通知',ico:'📞',icoCls:'ico-cus',ctag:'ctag-cus',
+   title:'【客诉处理通知】成都锦程包装·可降解快递袋 客诉：CRM 判定无效',
+   sum:'该客诉经 CRM 核实后判定无效，作废状态已回传平台，当前状态：已归档-作废。',
+   time:'10天前',timeX:'2026-03-31 14:50',unread:false,urg:'mid',
+   tags:[{l:'已归档-作废',c:'o'}, {l:'物流问题',c:'b'}],
+   det:{desc:'您完成分类并推送至 CRM 的客诉（客户单位：成都锦程包装），CRM 核实后判定为无效，作废状态已回传平台，状态更新为「已归档-作废（CRM判定）」。',
+     data:[{l:'客户单位',v:'成都锦程包装'},{l:'产品名称',v:'可降解快递袋'},{l:'问题类型',v:'物流问题'},{l:'反馈时间',v:'2026-03-26 10:15'},{l:'问题描述',full:true,v:'货物外包装破损严重，部分料袋受潮结块，怀疑运输过程中淋雨。'}],
+     advice:'可在「客情洞察 > 客诉反馈信息管理」查看该客诉的处理记录。'}},
+
+  {id:'b11',cat:'brief-notice',catN:'技术简报通知',group:'技术简报通知',ico:'📝',icoCls:'ico-comp',ctag:'ctag-comp',
+   title:'【技术简报通知】"PPC 二氧化碳基材料监控"已删除，释放 1 个监控名额',
+   sum:'您提交的删除申请已处理完成，该简报已移除，当前剩余可创建监控数：5。',
+   time:'10天前',timeX:'2026-03-31 11:30',unread:false,urg:'low',
+   tags:[{l:'删除完成',c:'o'}, {l:'名额已释放',c:'g'}],
+   det:{desc:'您提交的删除申请已确认执行，简报「PPC 二氧化碳基材料监控」及其监控已移除，占用的 1 个监控名额已释放。',
+     data:[{l:'简报主题',v:'PPC 二氧化碳基材料监控'},{l:'申请时间',v:'2026-03-30 09:55'},{l:'处理人',v:'系统管理员'},{l:'剩余名额',v:'5'}],
+     advice:'如需新建监控主题，可前往「战略研判 > 技术简报」创建。'}},
+
+  {id:'m6',cat:'tm-warn',catN:'商标侵权预警',group:'商标侵权预警',ico:'™',icoCls:'ico-ent',ctag:'ctag-ent',
+   title:'【商标侵权预警】发现高风险近似企业名称"河北蓝山屯和塑业有限公司"',
+   sum:'新注册企业"河北蓝山屯和塑业有限公司"，其字号与本司商标"蓝山屯河"经比对判定为高风险，请重点关注。',
+   time:'11天前',timeX:'2026-03-30 12:35',unread:false,urg:'high',
+   tags:[{l:'风险等级：高',c:'r'}, {l:'河北',c:'o'}],
+   det:{desc:'监测到新注册企业"河北蓝山屯和塑业有限公司"，其企业字号"蓝山屯和"与本司商标"蓝山屯河"经比对判定为高风险，存在市场混淆可能。',
+     data:[{l:'本司商标',v:'蓝山屯河'},{l:'新注册企业名称',v:'河北蓝山屯和塑业有限公司'},{l:'企业字号',v:'蓝山屯和'},{l:'风险等级',v:'高'},{l:'注册日期',v:'2026-03-29'},{l:'注册地',v:'河北'}],
+     advice:'该企业名称与本司商标近似度较高，请重点关注，可结合实际经营情况判断是否需要进一步处理。'}},
+
+  {id:'g5',cat:'report-notice',catN:'报告生成通知',group:'报告生成通知',ico:'📊',icoCls:'ico-pol',ctag:'ctag-pol',
+   title:'【报告生成通知】主题"PLA 下游应用拓展"生成新报告',
+   sum:'该研究主题已生成新一期报告，可查看或下载。',
+   time:'11天前',timeX:'2026-03-30 08:00',unread:false,urg:'low',
+   tags:[{l:'新报告',c:'g'}, {l:'主题研究报告',c:'b'}],
+   det:{desc:'研究主题「PLA 下游应用拓展」已生成新一期报告（2026-03-30），内容涵盖该方向近一个周期的专利、文献与竞对动态。',
+     data:[{l:'报告主题',v:'PLA 下游应用拓展'}],
+     advice:'可前往「战略研判 > 主题研究报告」查看或下载。'}},
+
+  {id:'r10',cat:'req-notice',catN:'需求处理通知',group:'需求处理通知',ico:'✅',icoCls:'ico-req',ctag:'ctag-req',
+   title:'【需求处理通知】需求"一次性餐具刚性提升"已通过审核并进入需求池',
+   sum:'您提报的"一次性餐具刚性提升"需求已通过审核，已进入研发需求池。',
+   time:'12天前',timeX:'2026-03-29 10:10',unread:false,urg:'mid',
+   tags:[{l:'审核通过',c:'g'}, {l:'已入池',c:'b'}],
+   det:{desc:'您于 2026-03-26 提报的技术需求「一次性餐具刚性提升」已通过审核并进入研发需求池。',
+     data:[{l:'需求标题',v:'一次性餐具刚性提升'},{l:'产品名称',v:'可堆肥餐具'},{l:'提报时间',v:'2026-03-26 15:20'},{l:'审核结果',v:'通过'},{l:'审核人',v:'研发负责人'}],
+     advice:'可前往「研发创新 > 研发需求池」查看该需求在全景分析中的分布情况。'}},
+
+  {id:'c8',cat:'cus-notice',catN:'客诉处理通知',group:'客诉处理通知',ico:'📞',icoCls:'ico-cus',ctag:'ctag-cus',
+   title:'【客诉处理通知】武汉长江新材·PLA 改性料 客诉：CRM 处理完成',
+   sum:'该客诉已由 CRM 系统处置完毕并回写平台，当前状态：已归档-完成。',
+   time:'12天前',timeX:'2026-03-29 09:20',unread:false,urg:'mid',
+   tags:[{l:'已归档-完成',c:'g'}, {l:'质量问题',c:'o'}],
+   det:{desc:'您完成分类并推送至 CRM 的客诉（客户单位：武汉长江新材），CRM 已处置完毕并回写平台，状态更新为「已归档-完成」。',
+     data:[{l:'客户单位',v:'武汉长江新材'},{l:'产品名称',v:'PLA 改性料'},{l:'问题类型',v:'质量问题'},{l:'反馈时间',v:'2026-03-24 16:30'},{l:'问题描述',full:true,v:'物料流动性与上一批差异明显，同样工艺参数下无法稳定成型，怀疑批次一致性有问题。'}],
+     advice:'可在「客情洞察 > 客诉反馈信息管理」查看该客诉的完整处理记录。'}},
+
+  {id:'m7',cat:'tm-warn',catN:'商标侵权预警',group:'商标侵权预警',ico:'™',icoCls:'ico-ent',ctag:'ctag-ent',
+   title:'【商标侵权预警】发现高风险近似企业名称"安徽蓝珊屯河材料有限公司"',
+   sum:'新注册企业"安徽蓝珊屯河材料有限公司"，其字号与本司商标"蓝山屯河"经比对判定为高风险，请重点关注。',
+   time:'13天前',timeX:'2026-03-28 14:28',unread:false,urg:'high',
+   tags:[{l:'风险等级：高',c:'r'}, {l:'安徽',c:'o'}],
+   det:{desc:'监测到新注册企业"安徽蓝珊屯河材料有限公司"，其企业字号"蓝珊屯河"与本司商标"蓝山屯河"经比对判定为高风险，存在市场混淆可能。',
+     data:[{l:'本司商标',v:'蓝山屯河'},{l:'新注册企业名称',v:'安徽蓝珊屯河材料有限公司'},{l:'企业字号',v:'蓝珊屯河'},{l:'风险等级',v:'高'},{l:'注册日期',v:'2026-03-27'},{l:'注册地',v:'安徽'}],
+     advice:'该企业名称与本司商标近似度较高，请重点关注，可结合实际经营情况判断是否需要进一步处理。'}},
+
+  {id:'b12',cat:'brief-notice',catN:'技术简报通知',group:'技术简报通知',ico:'📝',icoCls:'ico-comp',ctag:'ctag-comp',
+   title:'【技术简报通知】"纤维素基包装材料监控"已被管理员删除',
+   sum:'该简报由管理员在后台直接删除，已释放 1 个监控名额，如仍需监控请重新创建。',
+   time:'13天前',timeX:'2026-03-28 14:05',unread:false,urg:'mid',
+   tags:[{l:'管理员操作',c:'r'}, {l:'名额已释放',c:'g'}],
+   det:{desc:'简报「纤维素基包装材料监控」已由系统管理员删除。如该方向仍需持续跟踪，请重新提交创建申请。',
+     data:[{l:'简报主题',v:'纤维素基包装材料监控'},{l:'申请时间',v:'—（管理员直接删除，无申请）'},{l:'处理人',v:'系统管理员'},{l:'创建人',v:'本人'},{l:'剩余名额',v:'3'}],
+     advice:'建议先与管理员确认删除原因，再决定是否重新创建。'}},
+
+  {id:'m8',cat:'tm-warn',catN:'商标侵权预警',group:'商标侵权预警',ico:'™',icoCls:'ico-ent',ctag:'ctag-ent',
+   title:'【商标侵权预警】发现高风险近似企业名称"福建蓝山吞禾新材料有限公司"',
+   sum:'新注册企业"福建蓝山吞禾新材料有限公司"，其字号与本司商标"蓝山屯河"经比对判定为高风险，请重点关注。',
+   time:'15天前',timeX:'2026-03-26 13:21',unread:false,urg:'high',
+   tags:[{l:'风险等级：高',c:'r'}, {l:'福建',c:'o'}],
+   det:{desc:'监测到新注册企业"福建蓝山吞禾新材料有限公司"，其企业字号"蓝山吞禾"与本司商标"蓝山屯河"经比对判定为高风险，存在市场混淆可能。',
+     data:[{l:'本司商标',v:'蓝山屯河'},{l:'新注册企业名称',v:'福建蓝山吞禾新材料有限公司'},{l:'企业字号',v:'蓝山吞禾'},{l:'风险等级',v:'高'},{l:'注册日期',v:'2026-03-25'},{l:'注册地',v:'福建'}],
+     advice:'该企业名称与本司商标近似度较高，请重点关注，可结合实际经营情况判断是否需要进一步处理。'}},
+
+  {id:'g6',cat:'report-notice',catN:'报告生成通知',group:'报告生成通知',ico:'📊',icoCls:'ico-pol',ctag:'ctag-pol',
+   title:'【报告生成通知】主题"可堆肥认证标准动态"生成新报告',
+   sum:'该研究主题已生成新一期报告，可查看或下载。',
+   time:'15天前',timeX:'2026-03-26 08:00',unread:false,urg:'low',
+   tags:[{l:'新报告',c:'g'}, {l:'主题研究报告',c:'b'}],
+   det:{desc:'研究主题「可堆肥认证标准动态」已生成新一期报告（2026-03-26），内容涵盖该方向近一个周期的专利、文献与竞对动态。',
+     data:[{l:'报告主题',v:'可堆肥认证标准动态'}],
+     advice:'可前往「战略研判 > 主题研究报告」查看或下载。'}},
+
+  {id:'m9',cat:'tm-warn',catN:'商标侵权预警',group:'商标侵权预警',ico:'™',icoCls:'ico-ent',ctag:'ctag-ent',
+   title:'【商标侵权预警】发现高风险近似企业名称"湖南蓝山纯河科技有限公司"',
+   sum:'新注册企业"湖南蓝山纯河科技有限公司"，其字号与本司商标"蓝山屯河"经比对判定为高风险，请重点关注。',
+   time:'17天前',timeX:'2026-03-24 12:14',unread:false,urg:'high',
+   tags:[{l:'风险等级：高',c:'r'}, {l:'湖南',c:'o'}],
+   det:{desc:'监测到新注册企业"湖南蓝山纯河科技有限公司"，其企业字号"蓝山纯河"与本司商标"蓝山屯河"经比对判定为高风险，存在市场混淆可能。',
+     data:[{l:'本司商标',v:'蓝山屯河'},{l:'新注册企业名称',v:'湖南蓝山纯河科技有限公司'},{l:'企业字号',v:'蓝山纯河'},{l:'风险等级',v:'高'},{l:'注册日期',v:'2026-03-23'},{l:'注册地',v:'湖南'}],
+     advice:'该企业名称与本司商标近似度较高，请重点关注，可结合实际经营情况判断是否需要进一步处理。'}},
+
+  {id:'m10',cat:'tm-warn',catN:'商标侵权预警',group:'商标侵权预警',ico:'™',icoCls:'ico-ent',ctag:'ctag-ent',
+   title:'【商标侵权预警】发现高风险近似企业名称"江西蓝山屯河环保材料有限公司"',
+   sum:'新注册企业"江西蓝山屯河环保材料有限公司"，其字号与本司商标"蓝山屯河"经比对判定为高风险，请重点关注。',
+   time:'19天前',timeX:'2026-03-22 14:07',unread:false,urg:'high',
+   tags:[{l:'风险等级：高',c:'r'}, {l:'字号完全一致',c:'r'}, {l:'江西',c:'o'}],
+   det:{desc:'监测到新注册企业"江西蓝山屯河环保材料有限公司"，其企业字号"蓝山屯河"与本司商标"蓝山屯河"经比对判定为高风险，存在市场混淆可能。',
+     data:[{l:'本司商标',v:'蓝山屯河'},{l:'新注册企业名称',v:'江西蓝山屯河环保材料有限公司'},{l:'企业字号',v:'蓝山屯河'},{l:'风险等级',v:'高'},{l:'注册日期',v:'2026-03-21'},{l:'注册地',v:'江西'}],
+     advice:'该企业字号与本司商标完全一致，建议优先关注。'}},
+
+  {id:'m11',cat:'tm-warn',catN:'商标侵权预警',group:'商标侵权预警',ico:'™',icoCls:'ico-ent',ctag:'ctag-ent',
+   title:'【商标侵权预警】发现高风险近似企业名称"四川蓝三屯河新材料有限公司"',
+   sum:'新注册企业"四川蓝三屯河新材料有限公司"，其字号与本司商标"蓝山屯河"经比对判定为高风险，请重点关注。',
+   time:'21天前',timeX:'2026-03-20 13:00',unread:false,urg:'high',
+   tags:[{l:'风险等级：高',c:'r'}, {l:'四川',c:'o'}],
+   det:{desc:'监测到新注册企业"四川蓝三屯河新材料有限公司"，其企业字号"蓝三屯河"与本司商标"蓝山屯河"经比对判定为高风险，存在市场混淆可能。',
+     data:[{l:'本司商标',v:'蓝山屯河'},{l:'新注册企业名称',v:'四川蓝三屯河新材料有限公司'},{l:'企业字号',v:'蓝三屯河'},{l:'风险等级',v:'高'},{l:'注册日期',v:'2026-03-19'},{l:'注册地',v:'四川'}],
+     advice:'该企业名称与本司商标近似度较高，请重点关注，可结合实际经营情况判断是否需要进一步处理。'}},
+
+  {id:'m12',cat:'tm-warn',catN:'商标侵权预警',group:'商标侵权预警',ico:'™',icoCls:'ico-ent',ctag:'ctag-ent',
+   title:'【商标侵权预警】发现高风险近似企业名称"重庆蓝山囤河材料科技有限公司"',
+   sum:'新注册企业"重庆蓝山囤河材料科技有限公司"，其字号与本司商标"蓝山屯河"经比对判定为高风险，请重点关注。',
+   time:'23天前',timeX:'2026-03-18 11:53',unread:false,urg:'high',
+   tags:[{l:'风险等级：高',c:'r'}, {l:'重庆',c:'o'}],
+   det:{desc:'监测到新注册企业"重庆蓝山囤河材料科技有限公司"，其企业字号"蓝山囤河"与本司商标"蓝山屯河"经比对判定为高风险，存在市场混淆可能。',
+     data:[{l:'本司商标',v:'蓝山屯河'},{l:'新注册企业名称',v:'重庆蓝山囤河材料科技有限公司'},{l:'企业字号',v:'蓝山囤河'},{l:'风险等级',v:'高'},{l:'注册日期',v:'2026-03-17'},{l:'注册地',v:'重庆'}],
+     advice:'该企业名称与本司商标近似度较高，请重点关注，可结合实际经营情况判断是否需要进一步处理。'}},
 ];
 
 const TASKS=[
   {id:'t1',type:'approval',typeN:'需求审批',typeCls:'tt-approval',ico:'✅',
-   title:'技术需求单 #RD-2026-0312 等待审批',
-   desc:'研究院张明提交PBAT柔性薄膜配方改良技术需求单，涉及预算32万元，需求优先级：高。需负责人在3个工作日内完成审批。',
-   submitter:'张明 · 研究院',createTime:'2026-04-08 14:30',urg:'high',deadline:'2026-04-11',isNew:true,
+   title:'技术需求「可堆肥快递袋材料配方开发」等待审核',
+   desc:'研究院张明提交技术需求「可堆肥快递袋材料配方开发」，需求价值：高，市场紧急度：高。需由目标部门在 3 个工作日内完成审核。',
+   submitter:'张明 · 研究院',createTime:'2026-04-08 14:30',isNew:true,
    targetPage:'研发创新 > 技术需求管理',
-   data:[{l:'提交部门',v:'研究院'},{l:'提交时间',v:'2026-04-08 14:30'}]},
+   data:[{l:'需求标题',v:'可堆肥快递袋材料配方开发'},{l:'产品名称',v:'可堆肥快递袋'},{l:'需求来源',v:'客户反馈'},{l:'需求类型',v:'新产品开发'},{l:'需求提报部门',v:'研究院'},{l:'提报人员',v:'张明'},{l:'提报时间',v:'2026-04-08 14:30'},{l:'需求价值',v:'高'},{l:'市场紧急度',v:'高'},{l:'目标部门',v:'聚酯研发部'}]},
   {id:'t2',type:'complaint',typeN:'客诉反馈处理',typeCls:'tt-complaint',ico:'📞',
-   title:'苏州绿联包装客诉 #CUS-20260331-089 超时未处理',
-   desc:'客户苏州绿联包装3月31日提交批次质量投诉（第三批次降解袋提前降解），工单已超时72小时，系统自动升级至负责人，涉及货值约12万元。',
-   submitter:'客服系统 · 自动升级',createTime:'2026-03-31 10:00',urg:'high',deadline:'已超时 72h',isNew:true,
+   title:'沃尔玛集团 · 聚乙烯材料质量问题反馈待审核',
+   desc:'用采购的塑料颗粒生产的瓶罐比较脆，容易破损！',
+   submitter:'王xx · 沃尔玛集团（手机端提交）',createTime:'2026-04-08 10:20',isNew:true,
    targetPage:'客情洞察 > 客诉反馈信息管理',
-   data:[{l:'客户名称',v:'苏州绿联包装'},{l:'反馈时间',v:'2026-03-31 10:00'}]},
+   data:[{l:'客户单位',v:'沃尔玛集团'},{l:'产品名称',v:'聚乙烯材料'},{l:'问题类型',v:'质量问题'},{l:'反馈时间',v:'2026-04-08 10:20'},{l:'问题描述',full:true,v:'用采购的塑料颗粒生产的瓶罐比较脆，容易破损！近期发货的三个批次均有出现，客户已停止使用该批次料并要求给出处理方案。'}]},
   {id:'t3',type:'brief',typeN:'技术简报申请',typeCls:'tt-brief',ico:'📝',
    title:'技术简报「高强度可降解购物袋材料」创建申请待配置',
-   desc:'茵创公司张伟提交技术简报创建申请，需管理员在数据源平台建立对应监控并回填监控链接，配置完成后申请人即可查看简报内容。',
-   submitter:'张伟 · 茵创公司',createTime:'2026-04-10 09:24',urg:'high',deadline:'2026-04-12',isNew:true,
+   desc:'茵创公司张伟提交技术简报创建申请，需管理员完善主题监控链接，配置完成后申请人即可查看简报内容。',
+   submitter:'张伟 · 茵创公司',createTime:'2026-04-10 09:24',isNew:true,
    targetPage:'系统管理 > 技术简报接口管理',
    data:[{l:'申请类型',v:'创建申请'},{l:'申请人',v:'张伟'},{l:'简报主题',v:'高强度可降解购物袋材料'},{l:'当前状态',v:'待配置'}]},
   {id:'t4',type:'brief',typeN:'技术简报申请',typeCls:'tt-brief',ico:'📝',
    title:'技术简报「PBAT 改性料耐候性提升」修改申请待处理',
-   desc:'聚酯公司李敏申请调整该简报的监控范围，在原耐候性方向基础上增加耐水解与长期户外服役性能，需管理员按新描述调整监控后确认。',
-   submitter:'李敏 · 战略发展部',createTime:'2026-04-09 15:41',urg:'mid',deadline:'2026-04-11',isNew:true,
+   desc:'聚酯公司李敏申请调整该简报的监控范围，在原耐候性方向基础上增加耐水解与长期户外服役性能，需管理员按新描述调整后确认。',
+   submitter:'李敏 · 战略发展部',createTime:'2026-04-09 15:41',isNew:true,
    targetPage:'系统管理 > 技术简报接口管理',
    data:[{l:'申请类型',v:'修改申请'},{l:'申请人',v:'李敏'},{l:'原主题',v:'PBAT 改性料耐候性提升'},{l:'新主题',v:'PBAT 改性料耐候与耐水解性能提升'}]},
   {id:'t5',type:'brief',typeN:'技术简报申请',typeCls:'tt-brief',ico:'📝',
    title:'技术简报「生物基 PBS 合成工艺」删除申请待确认',
-   desc:'战略发展部王强提交删除申请，需管理员先在数据源平台删除对应监控后再执行删除，删除后释放该用户 1 个监控名额。',
-   submitter:'王强 · 战略发展部',createTime:'2026-04-08 11:07',urg:'low',deadline:'2026-04-12',isNew:false,
+   desc:'战略发展部王强提交删除申请，需管理员确认删除，删除后释放该用户 1 个监控名额。',
+   submitter:'王强 · 战略发展部',createTime:'2026-04-08 11:07',isNew:false,
    targetPage:'系统管理 > 技术简报接口管理',
    data:[{l:'申请类型',v:'删除申请'},{l:'申请人',v:'王强'},{l:'简报主题',v:'生物基 PBS 合成工艺'},{l:'当前状态',v:'待删除'}]},
+  {id:'t6',type:'approval',typeN:'需求审批',typeCls:'tt-approval',ico:'✅',
+   title:'技术需求「可降解地膜降解周期可调控」等待审核',
+   desc:'茵创公司刘敏提交技术需求「可降解地膜降解周期可调控」，需求价值：高，市场紧急度：中。需由目标部门在 3 个工作日内完成审核。',
+   submitter:'刘敏 · 茵创公司',createTime:'2026-04-07 09:50',isNew:false,
+   targetPage:'研发创新 > 技术需求管理',
+   data:[{l:'需求标题',v:'可降解地膜降解周期可调控'},{l:'产品名称',v:'可降解农用地膜'},{l:'需求来源',v:'市场反馈'},{l:'需求类型',v:'产品改进'},{l:'需求提报部门',v:'茵创公司'},{l:'提报人员',v:'刘敏'},{l:'提报时间',v:'2026-04-07 09:50'},{l:'需求价值',v:'高'},{l:'市场紧急度',v:'中'},{l:'目标部门',v:'聚酯研发部'}]},
+  {id:'t7',type:'approval',typeN:'需求审批',typeCls:'tt-approval',ico:'✅',
+   title:'技术需求「PBS 注塑件表面银纹消除」等待审核',
+   desc:'战略发展部陈涛提交技术需求「PBS 注塑件表面银纹消除」，需求价值：中，市场紧急度：高。需由目标部门在 3 个工作日内完成审核。',
+   submitter:'陈涛 · 战略发展部',createTime:'2026-04-05 16:20',isNew:false,
+   targetPage:'研发创新 > 技术需求管理',
+   data:[{l:'需求标题',v:'PBS 注塑件表面银纹消除'},{l:'产品名称',v:'PBS 注塑料'},{l:'需求来源',v:'客户反馈'},{l:'需求类型',v:'质量改进'},{l:'需求提报部门',v:'战略发展部'},{l:'提报人员',v:'陈涛'},{l:'提报时间',v:'2026-04-05 16:20'},{l:'需求价值',v:'中'},{l:'市场紧急度',v:'高'},{l:'目标部门',v:'聚酯研发部'}]},
+  {id:'t8',type:'complaint',typeN:'客诉反馈处理',typeCls:'tt-complaint',ico:'📞',
+   title:'青岛海通塑业 · PBS 注塑料质量问题反馈待审核',
+   desc:'注塑成型后制品表面出现明显银纹，同批次料在不同机台上均有出现。',
+   submitter:'刘xx · 青岛海通塑业（手机端提交）',createTime:'2026-04-06 11:30',isNew:false,
+   targetPage:'客情洞察 > 客诉反馈信息管理',
+   data:[{l:'客户单位',v:'青岛海通塑业'},{l:'产品名称',v:'PBS 注塑料'},{l:'问题类型',v:'质量问题'},{l:'反馈时间',v:'2026-04-06 11:30'},{l:'问题描述',full:true,v:'注塑成型后制品表面出现明显银纹，同批次料在不同机台上均有出现，已影响成品外观判定。'}]},
 ];
 
 const SUB=[
-  {key:'tm-warn',name:'商标侵权预警',ico:'™',desc:'监控企业商标申请、近似商标侵权风险预警提醒',en:true,lock:false},
-  {key:'pub-warn',name:'舆情预警',ico:'⚠',desc:'行业及本企业负面舆情、竞对企业关键动态预警',en:true,lock:false},
+  {key:'tm-warn',name:'商标侵权预警',ico:'™',desc:'新注册企业名称与本司商标近似的高风险侵权预警',en:true,lock:false},
   {key:'brief-notice',name:'技术简报通知',ico:'📝',desc:'本人提交的技术简报创建 / 修改 / 删除申请的处理结果通知',en:true,lock:true},
-  {key:'req-notice',name:'需求处理通知',ico:'✅',desc:'本人提报的技术需求审核结果与处理状态变更通知',en:true,lock:true},
-  {key:'cus-notice',name:'客诉处理通知',ico:'📞',desc:'本人发起的客诉单处理完成、被退回等结果通知',en:true,lock:true},
-  {key:'report-notice',name:'报告生成通知',ico:'📊',desc:'本人创建的研究主题生成新一期报告时的提醒',en:true,lock:true},
+  {key:'req-notice',name:'需求处理通知',ico:'✅',desc:'本人提报的技术需求审核通过 / 未通过的结果通知',en:true,lock:true},
+  {key:'cus-notice',name:'客诉处理通知',ico:'📞',desc:'客诉推送 CRM 后处理完成 / 判定无效的结果回传通知',en:true,lock:true},
+  {key:'report-notice',name:'报告生成通知',ico:'📊',desc:'主题研究报告生成新一期时的提醒（按模块权限接收）',en:true,lock:false},
 ];
 
 /* ═══════════════════════════
@@ -700,16 +948,20 @@ function renderMsg(){
           ${m.unread?'<div class="udot"></div>':''}
           <div class="mcard-time">${m.time}</div>
         </div>
-        <div class="mcard-catrow"><span class="tag ${m.ctag}" style="font-size:10px">${m.catN}</span></div>
         <div class="mcard-sum">${m.sum}</div>
         <div class="mtags">${th}</div>
       </div>
     </div>`;
   }).join('');
   if(pgEl){
-    if(pages<=1){pgEl.innerHTML='';}
-    else{let nums='';for(let i=1;i<=pages;i++)nums+=`<span class="mpg${i===msgPage?' on':''}" onclick="gotoMsgPage(${i})">${i}</span>`;
-      pgEl.innerHTML=`<span class="mpg${msgPage<=1?' dis':''}" ${msgPage<=1?'':`onclick="gotoMsgPage(${msgPage-1})"`}>‹</span>${nums}<span class="mpg${msgPage>=pages?' dis':''}" ${msgPage>=pages?'':`onclick="gotoMsgPage(${msgPage+1})"`}>›</span>`;}
+    // 分页组件：每页 10 条；仅一页时仍显示（禁用态），便于确认组件位置
+    let nums='';
+    for(let i=1;i<=pages;i++)nums+=`<span class="mpg${i===msgPage?' on':''}" onclick="gotoMsgPage(${i})">${i}</span>`;
+    pgEl.innerHTML=
+      `<span class="mpg${msgPage<=1?' dis':''}" ${msgPage<=1?'':`onclick="gotoMsgPage(${msgPage-1})"`}>‹</span>`+
+      nums+
+      `<span class="mpg${msgPage>=pages?' dis':''}" ${msgPage>=pages?'':`onclick="gotoMsgPage(${msgPage+1})"`}>›</span>`+
+      `<span class="mpg-info">第 ${msgPage} / ${pages} 页</span>`;
   }
 }
 function gotoMsgPage(p){msgPage=p;renderMsg();}
@@ -717,12 +969,16 @@ function gotoMsgPage(p){msgPage=p;renderMsg();}
 function selMsg(id){
   selMid=id;
   const m=MSGS.find(x=>x.id===id);if(!m)return;
-  renderMsg();showMsgDetail(m);
+  renderMsg();showMsgDetail(m);   // 打开详情不自动标记已读，由详情底部「标记已读」按钮触发
 }
 
 function resetMsgDetail(){
   document.getElementById('dp-empty-msg').classList.remove('hide');
   document.getElementById('dp-msg').classList.add('hide');
+}
+
+function cells(arr){
+  return (arr||[]).map(d=>`<div class="dp-cell${d.full?' full':''}"><div class="dp-cl">${d.l}</div><div class="dp-cv">${d.v}</div></div>`).join('');
 }
 
 function showMsgDetail(m){
@@ -738,6 +994,8 @@ function showMsgDetail(m){
       <div class="dp-time">📅 ${m.timeX}&nbsp;·&nbsp;站内信</div>
     </div>
     ${det.desc?`<div class="dp-sec"><div class="dp-text">${det.desc}</div></div>`:''}
+    ${det.data&&det.data.length?`<div class="dp-sec"><div class="dp-lbl">关键信息</div><div class="dp-grid">${cells(det.data)}</div></div>`:''}
+    ${det.advice?`<div class="dp-sec"><div class="dp-lbl">处理建议</div><div class="dp-advice">${det.advice}</div></div>`:''}
   </div>
   <div class="dp-actions">
     <button class="abtn abtn-s" onclick="removeMsg('${m.id}')">忽略</button>
@@ -764,7 +1022,7 @@ function markAllRead(){
 }
 
 function updateBadges(){
-  const cats=['tm-warn','pub-warn','brief-notice','req-notice','cus-notice','report-notice'];
+  const cats=['tm-warn','brief-notice','req-notice','cus-notice','report-notice'];
   const total=MSGS.filter(m=>m.unread).length;
   const badge=document.getElementById('badge-msg');
   badge.textContent=total;badge.style.display=total?'':'none';
@@ -790,8 +1048,22 @@ function getTasks(){
   return curTType==='all'?TASKS:TASKS.filter(t=>t.type===curTType);
 }
 
+function updateTaskBadges(){
+  const types=['approval','complaint','brief'];
+  const total=TASKS.length;
+  const tb=document.getElementById('badge-task');
+  if(tb){tb.textContent=total;tb.style.display=total?'':'none';}
+  const ta=document.getElementById('tcnt-all');
+  if(ta)ta.textContent=total;
+  types.forEach(t=>{
+    const el=document.getElementById('tcnt-'+t);
+    if(el)el.textContent=TASKS.filter(x=>x.type===t).length;
+  });
+}
+
 function renderTask(){
   const list=getTasks();
+  updateTaskBadges();
   document.getElementById('task-stat').textContent=`共 ${TASKS.length} 项待处理`;
   const el=document.getElementById('task-list');
   if(!list.length){el.innerHTML='<div class="lempty">暂无待处理任务</div>';return;}
@@ -803,7 +1075,7 @@ function renderTask(){
           ${t.isNew?'<span class="tnew">新</span>':''}
         </div>
         <div class="tcard-title">${t.title}</div>
-        <div class="tcard-meta"><span>提交：${t.submitter}</span><span>截止：${t.deadline}</span></div>
+        <div class="tcard-meta"><span>提交：${t.submitter}</span><span>${t.createTime}</span></div>
       </div>
       <div class="tcard-r">
         <div class="ttime">${t.createTime.slice(0,10)}</div>
@@ -828,7 +1100,7 @@ function showTaskDetail(t){
   document.getElementById('dp-empty-task').classList.add('hide');
   const dc=document.getElementById('dp-task');
   dc.classList.remove('hide');
-  const dh=(t.data||[]).map(d=>`<div class="dp-cell"><div class="dp-cl">${d.l}</div><div class="dp-cv">${d.v}</div></div>`).join('');
+  const dh=cells(t.data);
   dc.innerHTML=`
   <div class="dp-scroll">
     <div class="dp-head">
@@ -860,8 +1132,7 @@ function renderSub(){
   <div class="sub-head">
     <div class="sub-head-t">消息订阅设置</div>
     <div class="sub-head-s">管理各类消息的接收开关，所有消息均通过<b>站内信</b>方式推送。</div>
-  </div>
-  <div class="sub-notice">📬 消息接收方式固定为<b>站内信</b>。预警类消息可自行开启 / 关闭；与本人申请相关的处理结果通知为系统消息，不可关闭。</div>`;
+  </div>`;
   h+='<div class="sub-grp">';
   SUB.forEach(it=>{
     h+=`<div class="sub-row">
@@ -898,6 +1169,8 @@ function saveSub(btn){
    INIT
 ═══════════════════════════ */
 goSec('msg');
+updateBadges();
+updateTaskBadges();
 </script>
 </body>
 </html>
