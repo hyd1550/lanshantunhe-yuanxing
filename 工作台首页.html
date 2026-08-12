@@ -114,7 +114,7 @@ button{font-family:inherit;cursor:pointer}
 .stat-mini .bar.hi{opacity:.5}
 
 /* ── Grid ── */
-.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:22px}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:22px;align-items:stretch}
 
 /* ── Card ── */
 .card{background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);border:1px solid var(--border);overflow:hidden;display:flex;flex-direction:column}
@@ -141,9 +141,9 @@ button{font-family:inherit;cursor:pointer}
 .card-tab.active{color:var(--primary);border-bottom-color:var(--primary)}
 
 /* ── Message List ── */
-.msg-list{display:flex;flex-direction:column;gap:1px}
+.msg-list{display:flex;flex-direction:column;gap:3px}
 .msg-item{
-  display:flex;align-items:flex-start;gap:12px;padding:11px 10px;
+  display:flex;align-items:flex-start;gap:12px;padding:12px 10px;
   border-radius:8px;cursor:pointer;transition:all .15s;
   border-left:3px solid transparent;
 }
@@ -159,7 +159,6 @@ button{font-family:inherit;cursor:pointer}
 .msg-meta{display:flex;align-items:center;gap:6px;flex-shrink:0;margin-top:2px}
 .msg-time{font-size:10.5px;color:var(--text3)}
 .tag{display:inline-flex;align-items:center;font-size:10px;padding:1px 7px;border-radius:4px;font-weight:500;flex-shrink:0;line-height:1.6}
-.tag-yuqing{background:#fef2f2;color:#dc2626;border:1px solid #fecaca}
 .tag-jingdui{background:#fffbeb;color:#b45309;border:1px solid #fde68a}
 .tag-xuqiu{background:#eff6ff;color:#2563eb;border:1px solid #bfdbfe}
 .tag-zhanlue{background:#f5f3ff;color:#7c3aed;border:1px solid #ddd6fe}
@@ -172,9 +171,9 @@ button{font-family:inherit;cursor:pointer}
 .tag-report{background:#ecfdf5;color:#059669;border:1px solid #a7f3d0}
 
 /* ── Todo List ── */
-.todo-list{display:flex;flex-direction:column;gap:1px}
+.todo-list{display:flex;flex-direction:column;gap:3px}
 .todo-item{
-  display:flex;align-items:center;gap:12px;padding:11px 10px;
+  display:flex;align-items:center;gap:12px;padding:15px 10px;
   border-radius:8px;cursor:pointer;transition:all .15s;
 }
 .todo-item:hover{background:#f5f7fa}
@@ -295,7 +294,7 @@ button{font-family:inherit;cursor:pointer}
     <div class="banner anim">
       <div class="banner-left">
         <h2>你好，张工</h2>
-        <p>今日有 <strong>6</strong> 条未读消息，<strong>3</strong> 项待处理事项需要处理<br>平台运行正常，数据同步状态良好</p>
+        <p>今日有 <strong>6</strong> 条未读消息，<strong>8</strong> 项待处理事项需要处理</p>
       </div>
       <div class="banner-right">
         <button class="b-btn">
@@ -370,62 +369,78 @@ button{font-family:inherit;cursor:pointer}
           <div class="card-more">查看全部 <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></div>
         </div>
         <div class="card-tabs">
-          <div class="card-tab active">全部</div>
-          <div class="card-tab">未读</div>
-          <div class="card-tab">近7天</div>
+          <div class="card-tab active" data-f="unread">未读</div>
+          <div class="card-tab" data-f="7d">近7天</div>
         </div>
-        <div class="card-body" style="max-height:320px;padding:8px 14px">
+        <div class="card-body" style="padding:8px 14px;overflow:visible">
           <div class="msg-list">
-            <div class="msg-item">
-              <div class="msg-dot d-red"></div>
-              <div class="msg-body">
-                <div class="msg-title"><span class="tag tag-yuqing">舆情预警</span><span class="msg-title-text">监测到可降解材料行业负面舆情</span></div>
-                <div class="msg-desc">近24小时检测到涉及 PBAT / 可降解材料的负面舆情，建议关注核实</div>
-              </div>
-              <div class="msg-meta"><div class="msg-time">10:32</div></div>
-            </div>
-            <div class="msg-item">
-              <div class="msg-dot d-orange"></div>
-              <div class="msg-body">
-                <div class="msg-title"><span class="tag tag-shangbiao">商标侵权预警</span><span class="msg-title-text">发现"屯河"近似商标注册申请</span></div>
-                <div class="msg-desc">监测到与"蓝山屯河"近似的商标注册申请，建议核查处理</div>
-              </div>
-              <div class="msg-meta"><div class="msg-time">09:45</div></div>
-            </div>
-            <div class="msg-item">
+            <div class="msg-item" data-unread="1" data-days="0">
               <div class="msg-dot d-purple"></div>
               <div class="msg-body">
-                <div class="msg-title"><span class="tag tag-brief">技术简报通知</span><span class="msg-title-text">"高强度可降解购物袋材料"已配置完成</span></div>
-                <div class="msg-desc">您提交的技术简报创建申请已由管理员完成配置，简报内容已可查看</div>
+                <div class="msg-title"><span class="tag tag-brief">技术简报通知</span><span class="msg-title-text">"高强度可降解购物袋材料"已配置完成，可查看</span></div>
+                <div class="msg-desc">您提交的技术简报创建申请已完成配置，简报内容已可正常查看。</div>
               </div>
-              <div class="msg-meta"><div class="msg-time">09:35</div></div>
+              <div class="msg-meta"><div class="msg-time">25分钟前</div><button class="todo-btn btn-view" onclick="goMsg(this)">去查看</button></div>
             </div>
-            <div class="msg-item">
-              <div class="msg-dot d-blue"></div>
-              <div class="msg-body">
-                <div class="msg-title"><span class="tag tag-req">需求处理通知</span><span class="msg-title-text">技术需求 #RD-2026-0298 已通过审核并入池</span></div>
-                <div class="msg-desc">"PBAT 柔性薄膜配方改良"已进入研发需求池，当前处理状态：评估中</div>
-              </div>
-              <div class="msg-meta"><div class="msg-time">昨日</div></div>
-            </div>
-            <div class="msg-item">
-              <div class="msg-dot d-red"></div>
-              <div class="msg-body">
-                <div class="msg-title"><span class="tag tag-cus">客诉处理通知</span><span class="msg-title-text">客诉单 #CUS-20260402-112 已处理完成</span></div>
-                <div class="msg-desc">苏州绿联包装批次质量投诉已闭环，根因为挤出工艺参数偏差，已补发</div>
-              </div>
-              <div class="msg-meta"><div class="msg-time">昨日</div></div>
-            </div>
-            <div class="msg-item">
+            <div class="msg-item" data-unread="1" data-days="0">
               <div class="msg-dot d-green"></div>
               <div class="msg-body">
                 <div class="msg-title"><span class="tag tag-report">报告生成通知</span><span class="msg-title-text">主题"PGA 材料的研究"生成新报告</span></div>
-                <div class="msg-desc">您创建的研究主题已生成 2026 年 4 月期报告，可查看或下载</div>
+                <div class="msg-desc">该研究主题已生成 2026 年 4 月期 报告，可查看或下载。</div>
               </div>
-              <div class="msg-meta"><div class="msg-time">08:00</div></div>
+              <div class="msg-meta"><div class="msg-time">2小时前</div><button class="todo-btn btn-view" onclick="goMsg(this)">去查看</button></div>
+            </div>
+            <div class="msg-item" data-unread="1" data-days="0">
+              <div class="msg-dot d-purple"></div>
+              <div class="msg-body">
+                <div class="msg-title"><span class="tag tag-brief">技术简报通知</span><span class="msg-title-text">"PBAT 改性料耐候与耐水解性能提升"修改已生效</span></div>
+                <div class="msg-desc">您提交的简报修改申请已处理完成，主题与监控内容已按新要求更新。</div>
+              </div>
+              <div class="msg-meta"><div class="msg-time">2小时前</div><button class="todo-btn btn-view" onclick="goMsg(this)">去查看</button></div>
+            </div>
+            <div class="msg-item" data-unread="1" data-days="1">
+              <div class="msg-dot d-red"></div>
+              <div class="msg-body">
+                <div class="msg-title"><span class="tag tag-cus">客诉处理通知</span><span class="msg-title-text">沃尔玛集团·聚乙烯材料 客诉：CRM 处理完成</span></div>
+                <div class="msg-desc">该客诉已由 CRM 系统处置完毕并回写平台，当前状态：已归档-完成。</div>
+              </div>
+              <div class="msg-meta"><div class="msg-time">昨天 17:40</div><button class="todo-btn btn-view" onclick="goMsg(this)">去查看</button></div>
+            </div>
+            <div class="msg-item" data-unread="1" data-days="1">
+              <div class="msg-dot d-orange"></div>
+              <div class="msg-body">
+                <div class="msg-title"><span class="tag tag-shangbiao">商标侵权预警</span><span class="msg-title-text">发现高风险近似企业名称"新疆蓝山屯禾新材料有限公司"</span></div>
+                <div class="msg-desc">新注册企业"新疆蓝山屯禾新材料有限公司"，其字号与本司商标"蓝山屯河"经比对判定为高风险，请重点关注。</div>
+              </div>
+              <div class="msg-meta"><div class="msg-time">昨天 15:10</div><button class="todo-btn btn-view" onclick="goMsg(this)">去查看</button></div>
+            </div>
+            <div class="msg-item" data-unread="1" data-days="1">
+              <div class="msg-dot d-blue"></div>
+              <div class="msg-body">
+                <div class="msg-title"><span class="tag tag-req">需求处理通知</span><span class="msg-title-text">需求"PBAT 柔性薄膜配方改良"已通过审核并进入需求池</span></div>
+                <div class="msg-desc">您提报的"PBAT 柔性薄膜配方改良"需求已通过审核，已进入研发需求池。</div>
+              </div>
+              <div class="msg-meta"><div class="msg-time">昨天 11:05</div><button class="todo-btn btn-view" onclick="goMsg(this)">去查看</button></div>
+            </div>
+            <div class="msg-item" data-unread="0" data-days="4">
+              <div class="msg-dot d-purple" style="background:var(--border)"></div>
+              <div class="msg-body">
+                <div class="msg-title"><span class="tag tag-brief">技术简报通知</span><span class="msg-title-text">"淀粉基复合材料工艺"已删除，释放 1 个监控名额</span></div>
+                <div class="msg-desc">您提交的删除申请已处理完成，该简报已移除，当前剩余可创建监控数：3。</div>
+              </div>
+              <div class="msg-meta"><div class="msg-time">4天前</div><button class="todo-btn btn-view" onclick="goMsg(this)">去查看</button></div>
+            </div>
+            <div class="msg-item" data-unread="0" data-days="12">
+              <div class="msg-dot d-orange" style="background:var(--border)"></div>
+              <div class="msg-body">
+                <div class="msg-title"><span class="tag tag-shangbiao">商标侵权预警</span><span class="msg-title-text">发现高风险近似企业名称"重庆蓝山囤河材料科技有限公司"</span></div>
+                <div class="msg-desc">新注册企业"重庆蓝山囤河材料科技有限公司"，其字号与本司商标"蓝山屯河"经比对判定为高风险，请重点关注。</div>
+              </div>
+              <div class="msg-meta"><div class="msg-time">12天前</div><button class="todo-btn btn-view" onclick="goMsg(this)">去查看</button></div>
             </div>
           </div>
         </div>
+        <div class="card-pager" data-pager></div>
       </div>
 
       <!-- Todos -->
@@ -433,61 +448,119 @@ button{font-family:inherit;cursor:pointer}
         <div class="card-hd">
           <div class="card-title">
             <svg viewBox="0 0 24 24" fill="none" stroke="var(--orange)" stroke-width="1.8"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
-            待处理事项 <span class="cnt">3</span>
+            待处理事项 <span class="cnt">8</span>
           </div>
           <div class="card-more">查看全部 <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></div>
         </div>
-        <div class="card-tabs">
-          <div class="card-tab active">全部待办</div>
-          <div class="card-tab">待审核</div>
-          <div class="card-tab">近7天</div>
-        </div>
-        <div class="card-body" style="max-height:320px;padding:8px 14px">
+        <div class="card-body" style="padding:8px 14px;overflow:visible">
           <div class="todo-list">
-            <div class="todo-item">
-              <div class="todo-type type-audit">需求审批</div>
-              <div class="todo-body">
-                <div class="todo-title">可堆肥快递袋材料技术需求信息审批</div>
-                <div class="todo-meta">
-                  <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-                  李明 · 营销中心 &nbsp;|&nbsp; 今日 08:45
-                </div>
-              </div>
-              <div class="todo-actions">
-                <button class="todo-btn btn-pass">通过</button>
-                <button class="todo-btn btn-view">查看</button>
-              </div>
-            </div>
-            <div class="todo-item">
-              <div class="todo-type type-review">客诉反馈处理</div>
-              <div class="todo-body">
-                <div class="todo-title">TH-BM2025 农用地膜低温韧性客诉反馈处理</div>
-                <div class="todo-meta">
-                  <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-                  王丽 · 品控部 &nbsp;|&nbsp; 昨日 17:20
-                </div>
-              </div>
-              <div class="todo-actions">
-                <button class="todo-btn btn-pass">处理</button>
-                <button class="todo-btn btn-view">查看</button>
-              </div>
-            </div>
-            <div class="todo-item">
+            <div class="todo-item" data-days="0">
               <div class="todo-type type-brief">技术简报申请</div>
               <div class="todo-body">
-                <div class="todo-title">"高强度可降解购物袋材料"创建申请待配置</div>
+                <div class="todo-title">技术简报「高强度可降解购物袋材料」创建申请待配置</div>
                 <div class="todo-meta">
                   <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-                  张伟 · 茵创公司 &nbsp;|&nbsp; 今日 09:24
+                  张伟 · 茵创公司 &nbsp;|&nbsp; 2026-04-10 09:24
                 </div>
               </div>
               <div class="todo-actions">
-                <button class="todo-btn btn-pass">去配置</button>
-                <button class="todo-btn btn-view">查看</button>
+                <button class="todo-btn btn-view" onclick="goTodo(this)">去处理</button>
+              </div>
+            </div>
+            <div class="todo-item" data-days="1">
+              <div class="todo-type type-brief">技术简报申请</div>
+              <div class="todo-body">
+                <div class="todo-title">技术简报「PBAT 改性料耐候性提升」修改申请待处理</div>
+                <div class="todo-meta">
+                  <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                  李敏 · 战略发展部 &nbsp;|&nbsp; 2026-04-09 15:41
+                </div>
+              </div>
+              <div class="todo-actions">
+                <button class="todo-btn btn-view" onclick="goTodo(this)">去处理</button>
+              </div>
+            </div>
+            <div class="todo-item" data-days="2">
+              <div class="todo-type type-audit">需求审批</div>
+              <div class="todo-body">
+                <div class="todo-title">技术需求「可堆肥快递袋材料配方开发」等待审核</div>
+                <div class="todo-meta">
+                  <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                  张明 · 研究院 &nbsp;|&nbsp; 2026-04-08 14:30
+                </div>
+              </div>
+              <div class="todo-actions">
+                <button class="todo-btn btn-view" onclick="goTodo(this)">去处理</button>
+              </div>
+            </div>
+            <div class="todo-item" data-days="2">
+              <div class="todo-type type-review">客诉反馈处理</div>
+              <div class="todo-body">
+                <div class="todo-title">沃尔玛集团 · 聚乙烯材料质量问题反馈待审核</div>
+                <div class="todo-meta">
+                  <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                  王xx · 沃尔玛集团（手机端提交） &nbsp;|&nbsp; 2026-04-08 10:20
+                </div>
+              </div>
+              <div class="todo-actions">
+                <button class="todo-btn btn-view" onclick="goTodo(this)">去处理</button>
+              </div>
+            </div>
+            <div class="todo-item" data-days="2">
+              <div class="todo-type type-brief">技术简报申请</div>
+              <div class="todo-body">
+                <div class="todo-title">技术简报「生物基 PBS 合成工艺」删除申请待确认</div>
+                <div class="todo-meta">
+                  <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                  王强 · 战略发展部 &nbsp;|&nbsp; 2026-04-08 11:07
+                </div>
+              </div>
+              <div class="todo-actions">
+                <button class="todo-btn btn-view" onclick="goTodo(this)">去处理</button>
+              </div>
+            </div>
+            <div class="todo-item" data-days="3">
+              <div class="todo-type type-audit">需求审批</div>
+              <div class="todo-body">
+                <div class="todo-title">技术需求「可降解地膜降解周期可调控」等待审核</div>
+                <div class="todo-meta">
+                  <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                  刘敏 · 茵创公司 &nbsp;|&nbsp; 2026-04-07 09:50
+                </div>
+              </div>
+              <div class="todo-actions">
+                <button class="todo-btn btn-view" onclick="goTodo(this)">去处理</button>
+              </div>
+            </div>
+            <div class="todo-item" data-days="4">
+              <div class="todo-type type-review">客诉反馈处理</div>
+              <div class="todo-body">
+                <div class="todo-title">青岛海通塑业 · PBS 注塑料质量问题反馈待审核</div>
+                <div class="todo-meta">
+                  <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                  刘xx · 青岛海通塑业（手机端提交） &nbsp;|&nbsp; 2026-04-06 11:30
+                </div>
+              </div>
+              <div class="todo-actions">
+                <button class="todo-btn btn-view" onclick="goTodo(this)">去处理</button>
+              </div>
+            </div>
+            <div class="todo-item" data-days="5">
+              <div class="todo-type type-audit">需求审批</div>
+              <div class="todo-body">
+                <div class="todo-title">技术需求「PBS 注塑件表面银纹消除」等待审核</div>
+                <div class="todo-meta">
+                  <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                  陈涛 · 战略发展部 &nbsp;|&nbsp; 2026-04-05 16:20
+                </div>
+              </div>
+              <div class="todo-actions">
+                <button class="todo-btn btn-view" onclick="goTodo(this)">去处理</button>
               </div>
             </div>
           </div>
         </div>
+        <div class="card-pager" data-pager></div>
       </div>
 
     </div>
@@ -565,13 +638,130 @@ button{font-family:inherit;cursor:pointer}
   </div><!-- /content -->
 </div><!-- /main -->
 
+<style>
+.list-empty{padding:36px 0;text-align:center;color:var(--text3);font-size:12.5px}
+.msg-item,.todo-item{cursor:default}
+/* 已读消息整体置灰，与未读区分 */
+.msg-item[data-unread="0"] .msg-title-text{color:var(--text3);font-weight:400}
+.msg-item[data-unread="0"] .msg-desc{color:#b6b9c4}
+.msg-item[data-unread="0"] .msg-time{color:#b6b9c4}
+.msg-item[data-unread="0"] .tag{opacity:.55}
+.msg-item[data-unread="0"] .btn-view{background:#f5f6f8;color:var(--text3);border-color:var(--border)}
+.msg-item[data-unread="0"] .btn-view:hover{background:var(--primary);color:#fff;border-color:var(--primary)}
+.msg-meta{gap:8px}
+.card-pager{display:flex;align-items:center;justify-content:center;gap:5px;padding:8px 20px 12px;flex-shrink:0}
+.cpg{min-width:24px;height:24px;padding:0 7px;display:inline-flex;align-items:center;justify-content:center;
+  border:1px solid var(--border);border-radius:5px;background:#fff;font-size:11.5px;color:var(--text2);cursor:pointer}
+.cpg:hover{border-color:var(--primary);color:var(--primary)}
+.cpg.on{background:var(--primary);color:#fff;border-color:var(--primary)}
+.cpg.dis{color:var(--text3);background:#f7f8fa;cursor:default}
+.cpg.dis:hover{border-color:var(--border);color:var(--text3)}
+.cpg-info{font-size:11px;color:var(--text3);margin-left:6px}
+</style>
 <script>
-document.querySelectorAll('.card-tabs').forEach(tabs=>{
-  tabs.querySelectorAll('.card-tab').forEach(tab=>{
-    tab.addEventListener('click',()=>{
-      tabs.querySelectorAll('.card-tab').forEach(t=>t.classList.remove('active'));
-      tab.classList.add('active');
+/* ── 卡片 tab 筛选 + 分页（每页 5 条）──
+   最新消息：未读 = data-unread==1 ；近7天 = data-days<=7（含已读）
+   待处理事项：无 tab，展示全部未完成任务（列表中不含已处理项）  */
+var PAGE_SIZE=5;
+
+function filterOf(card){
+  var tab=card.querySelector('.card-tab.active');
+  var f=tab?tab.dataset.f:'';
+  var isMsg=!!card.querySelector('.msg-list');
+  var items=[].slice.call(card.querySelectorAll(isMsg?'.msg-item':'.todo-item'));
+  if(!f) return items;                       // 无 tab（待处理事项）：全部展示
+  return items.filter(function(it){
+    var days=parseInt(it.dataset.days||'0',10);
+    if(f==='7d') return days<=7;
+    return it.dataset.unread==='1';          // unread
+  });
+}
+
+function applyFilter(card){
+  var isMsg=!!card.querySelector('.msg-list');
+  var all=[].slice.call(card.querySelectorAll(isMsg?'.msg-item':'.todo-item'));
+  var list=filterOf(card);
+  var pages=Math.max(1,Math.ceil(list.length/PAGE_SIZE));
+  var page=parseInt(card.dataset.page||'1',10);
+  if(page>pages)page=pages; if(page<1)page=1;
+  card.dataset.page=page;
+  var start=(page-1)*PAGE_SIZE, end=start+PAGE_SIZE;
+
+  all.forEach(function(it){it.style.display='none';});
+  list.slice(start,end).forEach(function(it){it.style.display='';});
+
+  // 标题旁数字固定：消息=未读总数、待办=待处理总数，不随 tab 变化
+  var cnt=card.querySelector('.card-title .cnt');
+  if(cnt){
+    cnt.textContent = isMsg
+      ? all.filter(function(it){return it.dataset.unread==='1';}).length
+      : all.length;
+  }
+
+  var wrap=card.querySelector(isMsg?'.msg-list':'.todo-list');
+  var empty=wrap.querySelector('.list-empty');
+  if(!list.length){
+    if(!empty){empty=document.createElement('div');empty.className='list-empty';empty.textContent='暂无符合条件的内容';wrap.appendChild(empty);}
+  } else if(empty){empty.remove();}
+
+  var pg=card.querySelector('[data-pager]');
+  if(pg){
+    var nums='';
+    for(var i=1;i<=pages;i++) nums+='<span class="cpg'+(i===page?' on':'')+'" data-go="'+i+'">'+i+'</span>';
+    pg.innerHTML='<span class="cpg'+(page<=1?' dis':'')+'" data-go="'+(page-1)+'">‹</span>'+nums+
+                 '<span class="cpg'+(page>=pages?' dis':'')+'" data-go="'+(page+1)+'">›</span>'+
+                 '<span class="cpg-info">共 '+list.length+' 条 · 第 '+page+' / '+pages+' 页</span>';
+    pg.querySelectorAll('.cpg[data-go]').forEach(function(b){
+      b.addEventListener('click',function(){
+        var g=parseInt(b.dataset.go,10);
+        if(b.classList.contains('dis')||isNaN(g)||g<1||g>pages) return;
+        card.dataset.page=g; applyFilter(card);
+      });
     });
+  }
+}
+
+document.querySelectorAll('.card:has([data-pager]), .card').forEach(function(card){
+  if(!card.querySelector('[data-pager]')) return;
+  card.dataset.page='1';
+  var tabs=card.querySelector('.card-tabs');
+  if(tabs){
+    tabs.querySelectorAll('.card-tab').forEach(function(tab){
+      tab.addEventListener('click',function(){
+        tabs.querySelectorAll('.card-tab').forEach(function(t){t.classList.remove('active');});
+        tab.classList.add('active');
+        card.dataset.page='1';
+        applyFilter(card);
+      });
+    });
+  }
+  applyFilter(card);
+});
+
+/* ── 跳转（新开窗口）── */
+function goMsg(btn){
+  var it=btn.closest('.msg-item');
+  var t=it.querySelector('.msg-title-text').textContent;
+  // 点击「去查看」后即标记为已读：条目置灰、未读数 -1
+  if(it.dataset.unread==='1'){
+    it.dataset.unread='0';
+    var dot=it.querySelector('.msg-dot');
+    if(dot) dot.style.background='var(--border)';
+    var card=it.closest('.card');
+    card.dataset.page='1';
+    applyFilter(card);
+  }
+  alert('新开窗口跳转至「工作台 > 消息中心」，定位并展开该条消息：\n'+t+'\n（该条已标记为已读）');
+}
+function goTodo(btn){
+  var t=btn.closest('.todo-item').querySelector('.todo-title').textContent;
+  alert('新开窗口跳转至该任务的处理页面：\n'+t);
+}
+document.querySelectorAll('.card-more').forEach(function(m){
+  m.style.cursor='pointer';
+  m.addEventListener('click',function(){
+    var isMsg=!!m.closest('.card').querySelector('.msg-list');
+    alert('新开窗口跳转至「工作台 > 消息中心 > '+(isMsg?'消息提醒':'待处理任务提醒')+'」');
   });
 });
 </script>
