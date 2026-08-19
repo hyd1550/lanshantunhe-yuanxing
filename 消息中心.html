@@ -256,13 +256,11 @@ body{font-family:'PingFang SC','Microsoft YaHei',sans-serif;font-size:13px;color
 .tcard-top{display:flex;align-items:center;gap:5px;margin-bottom:5px;flex-wrap:wrap}
 .ttype-b{font-size:10.5px;padding:2px 6px;border-radius:3px;font-weight:600;white-space:nowrap}
 .turg{font-size:10.5px;padding:1px 5px;border-radius:3px;font-weight:600;white-space:nowrap}
-.tnew{font-size:10px;padding:1px 5px;border-radius:3px;font-weight:700;background:var(--purple-bg);color:var(--purple-t)}
 .tcard-title{font-size:12px;font-weight:600;color:var(--t1);line-height:1.4;margin-bottom:4px}
 .tcard.sel .tcard-title{color:var(--blue-t)}
 .tcard-meta{font-size:11px;color:var(--t3);display:flex;gap:9px;flex-wrap:wrap}
 .tcard-r{display:flex;flex-direction:column;align-items:flex-end;gap:5px;flex-shrink:0}
 .ttime{font-size:10.5px;color:var(--t3);white-space:nowrap}
-.tnewdot{width:6px;height:6px;border-radius:50%;background:var(--orange)}
 .tt-approval{background:var(--purple-bg);color:var(--purple-t)}
 .tt-complaint{background:var(--red-bg);color:var(--red-t)}
 .tt-brief{background:var(--orange-bg);color:var(--orange-t)}
@@ -817,49 +815,49 @@ const TASKS=[
   {id:'t1',type:'approval',typeN:'需求审批',typeCls:'tt-approval',ico:'✅',
    title:'技术需求「可堆肥快递袋材料配方开发」等待审核',
    desc:'研究院张明提交技术需求「可堆肥快递袋材料配方开发」，需求价值：高，市场紧急度：高。请及时完成审核。',
-   submitter:'张明 · 研究院',createTime:'2026-04-08 14:30',isNew:true,
+   submitter:'张明 · 研究院',createTime:'2026-04-08 14:30',
    targetPage:'研发创新 > 技术需求管理',
    data:[{l:'需求标题',v:'可堆肥快递袋材料配方开发'},{l:'产品名称',v:'可堆肥快递袋'},{l:'需求来源',v:'客户反馈'},{l:'需求类型',v:'新产品开发'},{l:'需求提报部门',v:'研究院'},{l:'提报人员',v:'张明'},{l:'提报时间',v:'2026-04-08 14:30'},{l:'需求价值',v:'高'},{l:'市场紧急度',v:'高'},{l:'目标部门',v:'聚酯研发部'}]},
   {id:'t2',type:'complaint',typeN:'客诉反馈处理',typeCls:'tt-complaint',ico:'📞',
    title:'沃尔玛集团 · 聚乙烯材料质量问题反馈待审核',
    desc:'用采购的塑料颗粒生产的瓶罐比较脆，容易破损！',
-   submitter:'王xx · 沃尔玛集团（手机端提交）',createTime:'2026-04-08 10:20',isNew:true,
+   submitter:'王xx · 沃尔玛集团（手机端提交）',createTime:'2026-04-08 10:20',
    targetPage:'客情洞察 > 客诉反馈信息管理',
    data:[{l:'客户单位',v:'沃尔玛集团'},{l:'产品名称',v:'聚乙烯材料'},{l:'问题类型',v:'质量问题'},{l:'反馈时间',v:'2026-04-08 10:20'},{l:'问题描述',full:true,v:'用采购的塑料颗粒生产的瓶罐比较脆，容易破损！近期发货的三个批次均有出现，客户已停止使用该批次料并要求给出处理方案。'}]},
   {id:'t3',type:'brief',typeN:'技术简报申请',typeCls:'tt-brief',ico:'📝',
    title:'技术简报「高强度可降解购物袋材料」创建申请待配置',
    desc:'茵创公司张伟提交技术简报创建申请，需管理员完善主题监控链接，配置完成后申请人即可查看简报内容。',
-   submitter:'张伟 · 茵创公司',createTime:'2026-04-10 09:24',isNew:true,
+   submitter:'张伟 · 茵创公司',createTime:'2026-04-10 09:24',
    targetPage:'系统管理 > 技术简报接口管理',
    data:[{l:'申请类型',v:'创建申请'},{l:'申请人',v:'张伟'},{l:'简报主题',v:'高强度可降解购物袋材料'},{l:'当前状态',v:'待配置'}]},
   {id:'t4',type:'brief',typeN:'技术简报申请',typeCls:'tt-brief',ico:'📝',
    title:'技术简报「PBAT 改性料耐候性提升」修改申请待处理',
    desc:'战略发展部李敏申请调整该简报的监控范围，在原耐候性方向基础上增加耐水解与长期户外服役性能，需管理员按新描述调整后确认。',
-   submitter:'李敏 · 战略发展部',createTime:'2026-04-09 15:41',isNew:true,
+   submitter:'李敏 · 战略发展部',createTime:'2026-04-09 15:41',
    targetPage:'系统管理 > 技术简报接口管理',
    data:[{l:'申请类型',v:'修改申请'},{l:'申请人',v:'李敏'},{l:'原主题',v:'PBAT 改性料耐候性提升'},{l:'新主题',v:'PBAT 改性料耐候与耐水解性能提升'}]},
   {id:'t5',type:'brief',typeN:'技术简报申请',typeCls:'tt-brief',ico:'📝',
    title:'技术简报「生物基 PBS 合成工艺」删除申请待确认',
    desc:'战略发展部王强提交删除申请，需管理员确认删除，删除后释放该用户 1 个监控名额。',
-   submitter:'王强 · 战略发展部',createTime:'2026-04-08 11:07',isNew:false,
+   submitter:'王强 · 战略发展部',createTime:'2026-04-08 11:07',
    targetPage:'系统管理 > 技术简报接口管理',
    data:[{l:'申请类型',v:'删除申请'},{l:'申请人',v:'王强'},{l:'简报主题',v:'生物基 PBS 合成工艺'},{l:'当前状态',v:'待删除'}]},
   {id:'t6',type:'approval',typeN:'需求审批',typeCls:'tt-approval',ico:'✅',
    title:'技术需求「可降解地膜降解周期可调控」等待审核',
    desc:'茵创公司刘敏提交技术需求「可降解地膜降解周期可调控」，需求价值：高，市场紧急度：中。请及时完成审核。',
-   submitter:'刘敏 · 茵创公司',createTime:'2026-04-07 09:50',isNew:false,
+   submitter:'刘敏 · 茵创公司',createTime:'2026-04-07 09:50',
    targetPage:'研发创新 > 技术需求管理',
    data:[{l:'需求标题',v:'可降解地膜降解周期可调控'},{l:'产品名称',v:'可降解农用地膜'},{l:'需求来源',v:'市场反馈'},{l:'需求类型',v:'产品改进'},{l:'需求提报部门',v:'茵创公司'},{l:'提报人员',v:'刘敏'},{l:'提报时间',v:'2026-04-07 09:50'},{l:'需求价值',v:'高'},{l:'市场紧急度',v:'中'},{l:'目标部门',v:'聚酯研发部'}]},
   {id:'t7',type:'approval',typeN:'需求审批',typeCls:'tt-approval',ico:'✅',
    title:'技术需求「PBS 注塑件表面银纹消除」等待审核',
    desc:'战略发展部陈涛提交技术需求「PBS 注塑件表面银纹消除」，需求价值：中，市场紧急度：高。请及时完成审核。',
-   submitter:'陈涛 · 战略发展部',createTime:'2026-04-05 16:20',isNew:false,
+   submitter:'陈涛 · 战略发展部',createTime:'2026-04-05 16:20',
    targetPage:'研发创新 > 技术需求管理',
    data:[{l:'需求标题',v:'PBS 注塑件表面银纹消除'},{l:'产品名称',v:'PBS 注塑料'},{l:'需求来源',v:'客户反馈'},{l:'需求类型',v:'质量改进'},{l:'需求提报部门',v:'战略发展部'},{l:'提报人员',v:'陈涛'},{l:'提报时间',v:'2026-04-05 16:20'},{l:'需求价值',v:'中'},{l:'市场紧急度',v:'高'},{l:'目标部门',v:'聚酯研发部'}]},
   {id:'t8',type:'complaint',typeN:'客诉反馈处理',typeCls:'tt-complaint',ico:'📞',
    title:'青岛海通塑业 · PBS 注塑料质量问题反馈待审核',
    desc:'注塑成型后制品表面出现明显银纹，同批次料在不同机台上均有出现。',
-   submitter:'刘xx · 青岛海通塑业（手机端提交）',createTime:'2026-04-06 11:30',isNew:false,
+   submitter:'刘xx · 青岛海通塑业（手机端提交）',createTime:'2026-04-06 11:30',
    targetPage:'客情洞察 > 客诉反馈信息管理',
    data:[{l:'客户单位',v:'青岛海通塑业'},{l:'产品名称',v:'PBS 注塑料'},{l:'问题类型',v:'质量问题'},{l:'反馈时间',v:'2026-04-06 11:30'},{l:'问题描述',full:true,v:'注塑成型后制品表面出现明显银纹，同批次料在不同机台上均有出现，已影响成品外观判定。'}]},
 ];
@@ -1072,14 +1070,12 @@ function renderTask(){
       <div class="tcard-body">
         <div class="tcard-top">
           <span class="ttype-b ${t.typeCls}">${t.typeN}</span>
-          ${t.isNew?'<span class="tnew">新</span>':''}
         </div>
         <div class="tcard-title">${t.title}</div>
         <div class="tcard-meta"><span>提交：${t.submitter}</span><span>${t.createTime}</span></div>
       </div>
       <div class="tcard-r">
         <div class="ttime">${t.createTime.slice(0,10)}</div>
-        ${t.isNew?'<div class="tnewdot"></div>':''}
       </div>
     </div>`;
   }).join('');
