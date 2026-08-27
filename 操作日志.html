@@ -116,7 +116,8 @@ body{font-family:-apple-system,BlinkMacSystemFont,'PingFang SC','Microsoft YaHei
 .change-item .val{color:var(--text)}
 .change-item .val.old{text-decoration:line-through;color:var(--danger)}
 .change-item .val.new{color:var(--success)}
-.tag-teal{background:#E3F2EF;color:#0B6B5D}
+.tag-teal{background:var(--teal-bg);color:var(--teal)}
+.tag-slate{background:#E8EAEF;color:#3E4859}
 .chgtbl{width:100%;border-collapse:collapse;font-size:11.5px;background:var(--bg);border:1px solid var(--border);border-radius:6px;overflow:hidden}
 .chgtbl th{text-align:left;padding:6px 10px;background:var(--bg3);color:var(--text2);font-weight:600;font-size:11px;white-space:nowrap}
 .chgtbl td{padding:6px 10px;border-top:1px solid var(--border);vertical-align:top;line-height:1.6;word-break:break-all}
@@ -184,7 +185,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'PingFang SC','Microsoft YaHei
     <div class="sn" onclick="filterLogs('dept', this)">部门操作</div>
     <div class="sn" onclick="filterLogs('role', this)">角色操作</div>
     <div class="sn" onclick="filterLogs('permission', this)">权限配置</div>
-    <div class="sn" onclick="filterLogs('system', this)">系统操作</div>
+    <div class="sn" onclick="filterLogs('business', this)">业务操作</div>
   </div>
   <div class="main">
     <div class="ph">
@@ -211,6 +212,10 @@ body{font-family:-apple-system,BlinkMacSystemFont,'PingFang SC','Microsoft YaHei
             <span id="personBtnText">全部操作人</span><span style="font-size:10px;color:var(--text3)">▼</span>
           </button>
         </div>
+        <span id="moduleBox" style="display:none">
+        <span class="filter-lbl" style="margin-left:20px">操作模块：</span>
+        <select class="filter-select" id="moduleSel" style="width:150px"><option>全部模块</option><option>客情洞察</option><option>研发创新</option><option>战略研判</option><option>解决方案</option><option>工作台</option></select>
+        </span>
         <span class="filter-lbl" style="margin-left:20px">操作结果：</span>
         <select class="filter-select"><option>全部</option><option>成功</option><option>失败</option></select>
         <button class="btn btn-p" style="margin-left:auto" onclick="doSearch()">查询</button>
@@ -223,6 +228,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'PingFang SC','Microsoft YaHei
           <th>操作人</th>
           <th>操作类型</th>
           <th>操作动作</th>
+          <th>操作模块</th>
           <th>IP地址</th>
           <th>结果</th>
           <th>操作</th>
@@ -234,6 +240,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'PingFang SC','Microsoft YaHei
           <td>李晓燕</td>
           <td><span class="tag tag-blue">账户操作</span></td>
           <td>编辑</td>
+          <td style="color:var(--text2)">系统管理</td>
           <td style="color:var(--text2);font-size:11px">192.168.1.105</td>
           <td><span style="display:inline-flex;align-items:center;font-size:11px"><span class="sdot" style="background:var(--success)"></span>成功</span></td>
           <td><button class="detail-btn" onclick="showDetail(0)">详情</button></td>
@@ -243,6 +250,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'PingFang SC','Microsoft YaHei
           <td>周总</td>
           <td><span class="tag tag-green">部门操作</span></td>
           <td>新增</td>
+          <td style="color:var(--text2)">系统管理</td>
           <td style="color:var(--text2);font-size:11px">192.168.1.100</td>
           <td><span style="display:inline-flex;align-items:center;font-size:11px"><span class="sdot" style="background:var(--success)"></span>成功</span></td>
           <td><button class="detail-btn" onclick="showDetail(1)">详情</button></td>
@@ -252,6 +260,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'PingFang SC','Microsoft YaHei
           <td>张明</td>
           <td><span class="tag tag-orange">权限配置</span></td>
           <td>授权变更</td>
+          <td style="color:var(--text2)">系统管理</td>
           <td style="color:var(--text2);font-size:11px">192.168.1.110</td>
           <td><span style="display:inline-flex;align-items:center;font-size:11px"><span class="sdot" style="background:var(--success)"></span>成功</span></td>
           <td><button class="detail-btn" onclick="showDetail(2)">详情</button></td>
@@ -261,16 +270,18 @@ body{font-family:-apple-system,BlinkMacSystemFont,'PingFang SC','Microsoft YaHei
           <td>李晓燕</td>
           <td><span class="tag tag-blue">账户操作</span></td>
           <td>新增</td>
+          <td style="color:var(--text2)">系统管理</td>
           <td style="color:var(--text2);font-size:11px">192.168.1.105</td>
           <td><span style="display:inline-flex;align-items:center;font-size:11px"><span class="sdot" style="background:var(--success)"></span>成功</span></td>
           <td><button class="detail-btn" onclick="showDetail(3)">详情</button></td>
         </tr>
         <tr>
           <td>2026-04-03 14:45:12</td>
-          <td>系统</td>
-          <td><span class="tag tag-gray">系统操作</span></td>
-          <td>定时任务</td>
-          <td style="color:var(--text2);font-size:11px">127.0.0.1</td>
+          <td>王霖东</td>
+          <td><span class="tag tag-slate">业务操作</span></td>
+          <td>作废</td>
+          <td style="color:var(--text2)">客情洞察</td>
+          <td style="color:var(--text2);font-size:11px">192.168.1.140</td>
           <td><span style="display:inline-flex;align-items:center;font-size:11px"><span class="sdot" style="background:var(--success)"></span>成功</span></td>
           <td><button class="detail-btn" onclick="showDetail(4)">详情</button></td>
         </tr>
@@ -279,6 +290,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'PingFang SC','Microsoft YaHei
           <td>张明</td>
           <td><span class="tag tag-teal">登录日志</span></td>
           <td>登录失败</td>
+          <td style="color:var(--text2)">用户认证</td>
           <td style="color:var(--text2);font-size:11px">192.168.1.112</td>
           <td><span style="display:inline-flex;align-items:center;font-size:11px"><span class="sdot" style="background:var(--danger)"></span>失败</span></td>
           <td><button class="detail-btn" onclick="showDetail(5)">详情</button></td>
@@ -288,70 +300,78 @@ body{font-family:-apple-system,BlinkMacSystemFont,'PingFang SC','Microsoft YaHei
           <td>刘洋</td>
           <td><span class="tag tag-blue">账户操作</span></td>
           <td>删除</td>
+          <td style="color:var(--text2)">系统管理</td>
           <td style="color:var(--text2);font-size:11px">192.168.1.108</td>
           <td><span style="display:inline-flex;align-items:center;font-size:11px"><span class="sdot" style="background:var(--success)"></span>成功</span></td>
           <td><button class="detail-btn" onclick="showDetail(6)">详情</button></td>
+        </tr>
+        <tr>
+          <td>2026-04-03 14:05:30</td>
+          <td>王霖东</td>
+          <td><span class="tag tag-slate">业务操作</span></td>
+          <td>恢复</td>
+          <td style="color:var(--text2)">客情洞察</td>
+          <td style="color:var(--text2);font-size:11px">192.168.1.140</td>
+          <td><span style="display:inline-flex;align-items:center;font-size:11px"><span class="sdot" style="background:var(--success)"></span>成功</span></td>
+          <td><button class="detail-btn" onclick="showDetail(7)">详情</button></td>
         </tr>
         <tr>
           <td>2026-04-03 13:55:41</td>
           <td>赵丽</td>
           <td><span class="tag tag-purple">角色操作</span></td>
           <td>新增</td>
+          <td style="color:var(--text2)">系统管理</td>
           <td style="color:var(--text2);font-size:11px">192.168.1.109</td>
           <td><span style="display:inline-flex;align-items:center;font-size:11px"><span class="sdot" style="background:var(--success)"></span>成功</span></td>
-          <td><button class="detail-btn" onclick="showDetail(7)">详情</button></td>
+          <td><button class="detail-btn" onclick="showDetail(8)">详情</button></td>
         </tr>
         <tr>
           <td>2026-04-03 13:40:22</td>
           <td>李晓燕</td>
           <td><span class="tag tag-teal">登录日志</span></td>
           <td>登录</td>
+          <td style="color:var(--text2)">用户认证</td>
           <td style="color:var(--text2);font-size:11px">192.168.1.105</td>
           <td><span style="display:inline-flex;align-items:center;font-size:11px"><span class="sdot" style="background:var(--success)"></span>成功</span></td>
-          <td><button class="detail-btn" onclick="showDetail(8)">详情</button></td>
+          <td><button class="detail-btn" onclick="showDetail(9)">详情</button></td>
         </tr>
         <tr>
           <td>2026-04-03 13:25:18</td>
           <td>周总</td>
           <td><span class="tag tag-orange">权限配置</span></td>
           <td>授权变更</td>
+          <td style="color:var(--text2)">系统管理</td>
           <td style="color:var(--text2);font-size:11px">192.168.1.100</td>
           <td><span style="display:inline-flex;align-items:center;font-size:11px"><span class="sdot" style="background:var(--success)"></span>成功</span></td>
-          <td><button class="detail-btn" onclick="showDetail(9)">详情</button></td>
+          <td><button class="detail-btn" onclick="showDetail(10)">详情</button></td>
         </tr>
         <tr>
           <td>2026-04-03 12:58:40</td>
           <td>李晓燕</td>
           <td><span class="tag tag-blue">账户操作</span></td>
           <td>停用</td>
+          <td style="color:var(--text2)">系统管理</td>
           <td style="color:var(--text2);font-size:11px">192.168.1.105</td>
           <td><span style="display:inline-flex;align-items:center;font-size:11px"><span class="sdot" style="background:var(--success)"></span>成功</span></td>
-          <td><button class="detail-btn" onclick="showDetail(10)">详情</button></td>
+          <td><button class="detail-btn" onclick="showDetail(11)">详情</button></td>
         </tr>
         <tr>
           <td>2026-04-03 12:31:07</td>
           <td>张明</td>
           <td><span class="tag tag-teal">登录日志</span></td>
           <td>登录</td>
+          <td style="color:var(--text2)">用户认证</td>
           <td style="color:var(--text2);font-size:11px">192.168.1.112</td>
           <td><span style="display:inline-flex;align-items:center;font-size:11px"><span class="sdot" style="background:var(--success)"></span>成功</span></td>
-          <td><button class="detail-btn" onclick="showDetail(11)">详情</button></td>
+          <td><button class="detail-btn" onclick="showDetail(12)">详情</button></td>
         </tr>
         <tr>
           <td>2026-04-03 11:47:55</td>
           <td>赵磊</td>
           <td><span class="tag tag-purple">角色操作</span></td>
           <td>授权变更</td>
+          <td style="color:var(--text2)">系统管理</td>
           <td style="color:var(--text2);font-size:11px">192.168.1.121</td>
-          <td><span style="display:inline-flex;align-items:center;font-size:11px"><span class="sdot" style="background:var(--success)"></span>成功</span></td>
-          <td><button class="detail-btn" onclick="showDetail(12)">详情</button></td>
-        </tr>
-        <tr>
-          <td>2026-04-03 11:20:33</td>
-          <td>系统</td>
-          <td><span class="tag tag-gray">系统操作</span></td>
-          <td>定时任务</td>
-          <td style="color:var(--text2);font-size:11px">—</td>
           <td><span style="display:inline-flex;align-items:center;font-size:11px"><span class="sdot" style="background:var(--success)"></span>成功</span></td>
           <td><button class="detail-btn" onclick="showDetail(13)">详情</button></td>
         </tr>
@@ -456,215 +476,230 @@ body{font-family:-apple-system,BlinkMacSystemFont,'PingFang SC','Microsoft YaHei
 
 <script>
 const logs=[
-  {time:'2026-04-03 15:32:18',user:'李晓燕',type:'account',typeTag:'账户操作',typeCls:'tag-blue',action:'编辑',content:'编辑账户「张明」信息',ip:'192.168.1.105',result:'success',resultText:'成功',
+  {time:'2026-04-03 15:32:18',user:'李晓燕',type:'account',typeTag:'账户操作',typeCls:'tag-blue',action:'编辑',module:'系统管理',object:'账户「张明」',ip:'192.168.1.105',result:'success',resultText:'成功',
     changes:[{field:'手机号',old:'138****6721',new:'139****8834'},{field:'所属部门',old:'研究院',new:'研究院·材料研发组'},{field:'账户状态',old:'停用',new:'启用'}],
     extra:[],
-    details:{userId:'ou_003',userAgent:'Chrome 120.0.6099 / Windows 11',location:'新疆·乌鲁木齐',device:'PC',module:'系统管理 > 账户管理',requestId:'req_20260403153218_a7f2'}
+    details:{userId:'ou_003',userAgent:'Chrome 120.0.6099 / Windows 11',location:'新疆·乌鲁木齐',device:'PC',module:'系统管理',requestId:'req_20260403153218_a7f2'}
   },
-  {time:'2026-04-03 15:28:45',user:'周总',type:'dept',typeTag:'部门操作',typeCls:'tag-green',action:'新增',content:'创建新部门「市场拓展部」',ip:'192.168.1.100',result:'success',resultText:'成功',
+  {time:'2026-04-03 15:28:45',user:'周总',type:'dept',typeTag:'部门操作',typeCls:'tag-green',action:'新增',module:'系统管理',object:'部门「市场拓展部」',ip:'192.168.1.100',result:'success',resultText:'成功',
     changes:[{field:'部门名称',old:'—',new:'市场拓展部'},{field:'上级部门',old:'—',new:'营销中心'},{field:'部门负责人',old:'—',new:'待指定'},{field:'部门编码',old:'—',new:'DEPT-MK-003'}],
     extra:[],
-    details:{userId:'ou_001',userAgent:'Chrome 120.0.6099 / Windows 11',location:'新疆·乌鲁木齐',device:'PC',module:'系统管理 > 部门管理',requestId:'req_20260403152845_b3e1'}
+    details:{userId:'ou_001',userAgent:'Chrome 120.0.6099 / Windows 11',location:'新疆·乌鲁木齐',device:'PC',module:'系统管理',requestId:'req_20260403152845_b3e1'}
   },
-  {time:'2026-04-03 15:15:22',user:'张明',type:'permission',typeTag:'权限配置',typeCls:'tag-orange',action:'授权变更',content:'修改角色「研发工程师」权限',ip:'192.168.1.110',result:'success',resultText:'成功',
+  {time:'2026-04-03 15:15:22',user:'张明',type:'permission',typeTag:'权限配置',typeCls:'tag-orange',action:'授权变更',module:'系统管理',object:'角色「研发工程师」',ip:'192.168.1.110',result:'success',resultText:'成功',
     changes:[{field:'功能权限·技术情报洞察',old:'—',new:'查看、导出'},{field:'功能权限·专利成果分析',old:'—',new:'查看'},{field:'数据范围',old:'仅本人数据',new:'本部门所有数据'}],
     extra:[],
-    details:{userId:'ou_003',userAgent:'Edge 120.0.2210 / Windows 11',location:'新疆·乌鲁木齐',device:'PC',module:'系统管理 > 权限配置管理',requestId:'req_20260403151522_c9d4'}
+    details:{userId:'ou_003',userAgent:'Edge 120.0.2210 / Windows 11',location:'新疆·乌鲁木齐',device:'PC',module:'系统管理',requestId:'req_20260403151522_c9d4'}
   },
-  {time:'2026-04-03 14:58:33',user:'李晓燕',type:'account',typeTag:'账户操作',typeCls:'tag-blue',action:'新增',content:'创建新账户「王建国」',ip:'192.168.1.105',result:'success',resultText:'成功',
+  {time:'2026-04-03 14:58:33',user:'李晓燕',type:'account',typeTag:'账户操作',typeCls:'tag-blue',action:'新增',module:'系统管理',object:'账户「王建国」',ip:'192.168.1.105',result:'success',resultText:'成功',
     changes:[{field:'姓名',old:'—',new:'王建国'},{field:'登录账号',old:'—',new:'wang.jianguo'},{field:'所属部门',old:'—',new:'茵创公司'},{field:'角色',old:'—',new:'普通用户（待分配）'}],
-    extra:[{k:'初始密码',v:'系统自动生成并发送至本人，密码内容不记录'}],
-    details:{userId:'ou_002',userAgent:'Chrome 120.0.6099 / Windows 11',location:'新疆·乌鲁木齐',device:'PC',module:'系统管理 > 账户管理',requestId:'req_20260403145833_d5a8'}
+    extra:[],
+    details:{userId:'ou_002',userAgent:'Chrome 120.0.6099 / Windows 11',location:'新疆·乌鲁木齐',device:'PC',module:'系统管理',requestId:'req_20260403145833_d5a8'}
   },
-  {time:'2026-04-03 14:45:12',user:'系统',type:'system',typeTag:'系统操作',typeCls:'tag-gray',action:'定时任务',content:'自动清理过期临时文件',ip:'127.0.0.1',result:'success',resultText:'成功',
+  {time:'2026-04-03 14:45:12',user:'王霖东',type:'business',typeTag:'业务操作',typeCls:'tag-slate',action:'作废',module:'客情洞察',object:'客诉「地膜使用中出现开裂」',ip:'192.168.1.140',result:'success',resultText:'成功',
     changes:[],
-    extra:[{k:'执行范围',v:'过期超过 7 天的临时缓存文件'},{k:'处理数量',v:'15 个文件'},{k:'耗时',v:'0.8 秒'}],
-    details:{userId:'system',userAgent:'System Scheduler v2.1',location:'本地服务器',device:'Server',module:'系统维护 > 定时任务',requestId:'req_20260403144512_sys1'}
+    extra:[{k:'作废原因',v:'重复提交（同一问题已于 04-01 提交并处理中）'}],
+    details:{userId:'ou_050',userAgent:'Chrome 120.0.6099 / Windows 11',location:'新疆·乌鲁木齐',device:'PC',module:'客情洞察',requestId:'req_20260403144512_b01'}
   },
-  {time:'2026-04-03 14:30:55',user:'张明',type:'login',typeTag:'登录日志',typeCls:'tag-teal',action:'登录失败',content:'登录失败：密码错误（第 3 次）',ip:'192.168.1.112',result:'fail',resultText:'失败',
+  {time:'2026-04-03 14:30:55',user:'张明',type:'login',typeTag:'登录日志',typeCls:'tag-teal',action:'登录失败',module:'用户认证',object:'—',ip:'192.168.1.112',result:'fail',resultText:'失败',
     changes:[],
-    extra:[{k:'失败原因',v:'密码错误'}],
+    extra:[],
     details:{userId:'ou_003',userAgent:'Chrome 119.0.6045 / Windows 11',location:'未知位置',device:'PC',module:'用户认证',requestId:'req_20260403143055_e2b7'}
   },
-  {time:'2026-04-03 14:15:08',user:'刘洋',type:'account',typeTag:'账户操作',typeCls:'tag-blue',action:'删除',content:'删除账户「陈晨」',ip:'192.168.1.108',result:'success',resultText:'成功',
-    changes:[{field:'姓名',old:'陈晨',new:'—'},{field:'登录账号',old:'chen.chen',new:'—'},{field:'账户状态',old:'启用',new:'已删除'}],
-    extra:[{k:'删除原因',v:'人员离职'},{k:'关联数据',v:'操作日志保留，业务数据仍显示原用户名'}],
-    details:{userId:'ou_004',userAgent:'Firefox 125.0 / Windows 11',location:'新疆·乌鲁木齐',device:'PC',module:'系统管理 > 账户管理',requestId:'req_20260403141508_f1c3'}
+  {time:'2026-04-03 14:15:08',user:'刘洋',type:'account',typeTag:'账户操作',typeCls:'tag-blue',action:'删除',module:'系统管理',object:'账户「陈晨」',ip:'192.168.1.108',result:'success',resultText:'成功',
+    changes:[],
+    extra:[],
+    details:{userId:'ou_004',userAgent:'Firefox 125.0 / Windows 11',location:'新疆·乌鲁木齐',device:'PC',module:'系统管理',requestId:'req_20260403141508_f1c3'}
   },
-  {time:'2026-04-03 13:55:41',user:'赵丽',type:'role',typeTag:'角色操作',typeCls:'tag-purple',action:'新增',content:'创建新角色「法务专员」',ip:'192.168.1.109',result:'success',resultText:'成功',
+  {time:'2026-04-03 14:05:30',user:'王霖东',type:'business',typeTag:'业务操作',typeCls:'tag-slate',action:'恢复',module:'客情洞察',object:'客诉「地膜使用中出现开裂」',ip:'192.168.1.140',result:'success',resultText:'成功',
+    changes:[],
+    extra:[],
+    details:{userId:'ou_051',userAgent:'Chrome 120.0.6099 / Windows 11',location:'新疆·乌鲁木齐',device:'PC',module:'客情洞察',requestId:'req_20260403140530_b02'}
+  },
+  {time:'2026-04-03 13:55:41',user:'赵丽',type:'role',typeTag:'角色操作',typeCls:'tag-purple',action:'新增',module:'系统管理',object:'角色「法务专员」',ip:'192.168.1.109',result:'success',resultText:'成功',
     changes:[{field:'角色名称',old:'—',new:'法务专员'},{field:'角色编码',old:'—',new:'ROLE_LEGAL_STAFF'},{field:'所属部门',old:'—',new:'法务部'},{field:'功能权限',old:'—',new:'侵权风险防控（查看、处理）、专利成果分析（查看）、研发知识库（查看）'},{field:'数据范围',old:'—',new:'本部门数据'}],
     extra:[],
-    details:{userId:'ou_005',userAgent:'Chrome 120.0.6099 / Windows 11',location:'新疆·乌鲁木齐',device:'PC',module:'系统管理 > 权限配置管理',requestId:'req_20260403135541_g8d2'}
+    details:{userId:'ou_005',userAgent:'Chrome 120.0.6099 / Windows 11',location:'新疆·乌鲁木齐',device:'PC',module:'系统管理',requestId:'req_20260403135541_g8d2'}
   },
-  {time:'2026-04-03 13:40:22',user:'李晓燕',type:'login',typeTag:'登录日志',typeCls:'tag-teal',action:'登录',content:'用户登录系统',ip:'192.168.1.105',result:'success',resultText:'成功',
+  {time:'2026-04-03 13:40:22',user:'李晓燕',type:'login',typeTag:'登录日志',typeCls:'tag-teal',action:'登录',module:'用户认证',object:'—',ip:'192.168.1.105',result:'success',resultText:'成功',
     changes:[],
-    extra:[{k:'上次登录',v:'2026-04-02 15:38:49 / 192.168.1.105'}],
+    extra:[],
     details:{userId:'ou_002',userAgent:'Chrome 120.0.6099 / Windows 11',location:'新疆·乌鲁木齐',device:'PC',module:'用户认证',requestId:'req_20260403134022_h4e9'}
   },
-  {time:'2026-04-03 13:25:18',user:'周总',type:'permission',typeTag:'权限配置',typeCls:'tag-orange',action:'授权变更',content:'修改部门「研究院」权限配置',ip:'192.168.1.100',result:'success',resultText:'成功',
+  {time:'2026-04-03 13:25:18',user:'周总',type:'permission',typeTag:'权限配置',typeCls:'tag-orange',action:'授权变更',module:'系统管理',object:'部门「研究院」',ip:'192.168.1.100',result:'success',resultText:'成功',
     changes:[{field:'功能权限·专利申请支持',old:'查看、编辑、提交',new:'—'}],
-    extra:[{k:'变更原因',v:'专利申请支持功能暂移交法务部管理'}],
-    details:{userId:'ou_001',userAgent:'Chrome 120.0.6099 / Windows 11',location:'新疆·乌鲁木齐',device:'PC',module:'系统管理 > 权限配置管理',requestId:'req_20260403132518_i6f1'}
+    extra:[],
+    details:{userId:'ou_001',userAgent:'Chrome 120.0.6099 / Windows 11',location:'新疆·乌鲁木齐',device:'PC',module:'系统管理',requestId:'req_20260403132518_i6f1'}
   },
-  {time:'2026-04-03 12:58:40',user:'李晓燕',type:'account',typeTag:'账户操作',typeCls:'tag-blue',action:'停用',content:'停用账户「王海」',ip:'192.168.1.105',result:'success',resultText:'成功',
-    changes:[{field:'账户状态',old:'启用',new:'停用'}],
-    extra:[{k:'影响',v:'停用后无法登录，账号与历史数据保留'}],
-    details:{userId:'ou_011',userAgent:'Chrome 120.0.6099 / Windows 11',location:'新疆·乌鲁木齐',device:'PC',module:'系统管理 > 账户管理',requestId:'req_20260403125840'}
-  },
-  {time:'2026-04-03 12:31:07',user:'张明',type:'login',typeTag:'登录日志',typeCls:'tag-teal',action:'登录',content:'用户登录系统',ip:'192.168.1.112',result:'success',resultText:'成功',
+  {time:'2026-04-03 12:58:40',user:'李晓燕',type:'account',typeTag:'账户操作',typeCls:'tag-blue',action:'停用',module:'系统管理',object:'账户「王海」',ip:'192.168.1.105',result:'success',resultText:'成功',
     changes:[],
-    extra:[{k:'上次登录',v:'2026-04-02 08:55:20 / 192.168.1.112'}],
+    extra:[],
+    details:{userId:'ou_011',userAgent:'Chrome 120.0.6099 / Windows 11',location:'新疆·乌鲁木齐',device:'PC',module:'系统管理',requestId:'req_20260403125840'}
+  },
+  {time:'2026-04-03 12:31:07',user:'张明',type:'login',typeTag:'登录日志',typeCls:'tag-teal',action:'登录',module:'用户认证',object:'—',ip:'192.168.1.112',result:'success',resultText:'成功',
+    changes:[],
+    extra:[],
     details:{userId:'ou_012',userAgent:'Chrome 120.0.6099 / Windows 11',location:'新疆·乌鲁木齐',device:'PC',module:'用户认证',requestId:'req_20260403123107'}
   },
-  {time:'2026-04-03 11:47:55',user:'赵磊',type:'role',typeTag:'角色操作',typeCls:'tag-purple',action:'授权变更',content:'为角色「研发工程师」新增 3 项功能权限',ip:'192.168.1.121',result:'success',resultText:'成功',
+  {time:'2026-04-03 11:47:55',user:'赵磊',type:'role',typeTag:'角色操作',typeCls:'tag-purple',action:'授权变更',module:'系统管理',object:'角色「研发工程师」',ip:'192.168.1.121',result:'success',resultText:'成功',
     changes:[{field:'功能权限·技术情报洞察',old:'—',new:'查看'},{field:'功能权限·专利成果分析',old:'—',new:'查看'},{field:'功能权限·研发知识库',old:'—',new:'查看、编辑'}],
     extra:[],
-    details:{userId:'ou_013',userAgent:'Chrome 120.0.6099 / Windows 11',location:'新疆·乌鲁木齐',device:'PC',module:'系统管理 > 权限配置管理',requestId:'req_20260403114755'}
+    details:{userId:'ou_013',userAgent:'Chrome 120.0.6099 / Windows 11',location:'新疆·乌鲁木齐',device:'PC',module:'系统管理',requestId:'req_20260403114755'}
   },
-  {time:'2026-04-03 11:20:33',user:'系统',type:'system',typeTag:'系统操作',typeCls:'tag-gray',action:'定时任务',content:'定时任务：生成主题研究报告',ip:'—',result:'success',resultText:'成功',
+  {time:'2026-04-03 11:20:33',user:'尤润菁',type:'business',typeTag:'业务操作',typeCls:'tag-slate',action:'删除',module:'解决方案',object:'场景化案例「PBAT 地膜在南疆棉田的应用」',ip:'192.168.1.115',result:'success',resultText:'成功',
     changes:[],
-    extra:[{k:'执行结果',v:'生成主题研究报告 6 份'},{k:'耗时',v:'42 秒'}],
-    details:{userId:'system',userAgent:'System Scheduler v2.1',location:'本地服务器',device:'Server',module:'系统维护 > 定时任务',requestId:'req_20260403112033'}
+    extra:[],
+    details:{userId:'ou_052',userAgent:'Chrome 120.0.6099 / Windows 11',location:'新疆·乌鲁木齐',device:'PC',module:'解决方案',requestId:'req_20260403112033_b03'}
   },
-  {time:'2026-04-03 10:55:12',user:'王丽',type:'account',typeTag:'账户操作',typeCls:'tag-blue',action:'重置密码',content:'重置账户「陈静」登录密码',ip:'192.168.1.108',result:'success',resultText:'成功',
+  {time:'2026-04-03 10:55:12',user:'王丽',type:'account',typeTag:'账户操作',typeCls:'tag-blue',action:'重置密码',module:'系统管理',object:'账户「陈静」',ip:'192.168.1.108',result:'success',resultText:'成功',
     changes:[],
-    extra:[{k:'重置方式',v:'管理员重置'},{k:'密码内容',v:'不记录（系统不留存密码明文或密文）'},{k:'后续要求',v:'该账户下次登录须强制修改密码'}],
-    details:{userId:'ou_015',userAgent:'Chrome 120.0.6099 / Windows 11',location:'新疆·乌鲁木齐',device:'PC',module:'系统管理 > 账户管理',requestId:'req_20260403105512'}
+    extra:[],
+    details:{userId:'ou_015',userAgent:'Chrome 120.0.6099 / Windows 11',location:'新疆·乌鲁木齐',device:'PC',module:'系统管理',requestId:'req_20260403105512'}
   },
-  {time:'2026-04-03 10:33:29',user:'刘敏',type:'login',typeTag:'登录日志',typeCls:'tag-teal',action:'登录失败',content:'用户登录失败：密码错误',ip:'192.168.1.130',result:'fail',resultText:'失败',
+  {time:'2026-04-03 10:33:29',user:'刘敏',type:'login',typeTag:'登录日志',typeCls:'tag-teal',action:'登录失败',module:'用户认证',object:'—',ip:'192.168.1.130',result:'fail',resultText:'失败',
     changes:[],
-    extra:[{k:'失败原因',v:'密码错误'}],
+    extra:[],
     details:{userId:'ou_016',userAgent:'Chrome 120.0.6099 / Windows 11',location:'新疆·乌鲁木齐',device:'PC',module:'用户认证',requestId:'req_20260403103329'}
   },
-  {time:'2026-04-03 10:12:04',user:'周总',type:'dept',typeTag:'部门操作',typeCls:'tag-green',action:'编辑',content:'调整部门「营销中心」上级为集团根节点',ip:'192.168.1.100',result:'success',resultText:'成功',
+  {time:'2026-04-03 10:12:04',user:'周总',type:'dept',typeTag:'部门操作',typeCls:'tag-green',action:'编辑',module:'系统管理',object:'部门「营销中心」',ip:'192.168.1.100',result:'success',resultText:'成功',
     changes:[{field:'上级部门',old:'集团总部·业务板块',new:'集团根节点'}],
     extra:[],
-    details:{userId:'ou_017',userAgent:'Chrome 120.0.6099 / Windows 11',location:'新疆·乌鲁木齐',device:'PC',module:'系统管理 > 部门管理',requestId:'req_20260403101204'}
+    details:{userId:'ou_017',userAgent:'Chrome 120.0.6099 / Windows 11',location:'新疆·乌鲁木齐',device:'PC',module:'系统管理',requestId:'req_20260403101204'}
   },
-  {time:'2026-04-03 09:48:51',user:'李晓燕',type:'permission',typeTag:'权限配置',typeCls:'tag-orange',action:'授权变更',content:'为部门「茵创公司」开放驾驶舱页签权限',ip:'192.168.1.105',result:'success',resultText:'成功',
+  {time:'2026-04-03 09:48:51',user:'李晓燕',type:'permission',typeTag:'权限配置',typeCls:'tag-orange',action:'授权变更',module:'系统管理',object:'部门「茵创公司」',ip:'192.168.1.105',result:'success',resultText:'成功',
     changes:[{field:'功能权限·驾驶舱-产业链版图',old:'—',new:'查看'},{field:'功能权限·驾驶舱-行业趋势总览',old:'—',new:'查看'}],
     extra:[],
-    details:{userId:'ou_018',userAgent:'Chrome 120.0.6099 / Windows 11',location:'新疆·乌鲁木齐',device:'PC',module:'系统管理 > 权限配置管理',requestId:'req_20260403094851'}
+    details:{userId:'ou_018',userAgent:'Chrome 120.0.6099 / Windows 11',location:'新疆·乌鲁木齐',device:'PC',module:'系统管理',requestId:'req_20260403094851'}
   },
-  {time:'2026-04-03 09:26:18',user:'陈涛',type:'login',typeTag:'登录日志',typeCls:'tag-teal',action:'登录',content:'用户登录系统',ip:'192.168.1.118',result:'success',resultText:'成功',
+  {time:'2026-04-03 09:26:18',user:'陈涛',type:'login',typeTag:'登录日志',typeCls:'tag-teal',action:'登录',module:'用户认证',object:'—',ip:'192.168.1.118',result:'success',resultText:'成功',
     changes:[],
-    extra:[{k:'上次登录',v:'2026-04-02 09:03:41 / 192.168.1.118'}],
+    extra:[],
     details:{userId:'ou_019',userAgent:'Chrome 120.0.6099 / Windows 11',location:'新疆·乌鲁木齐',device:'PC',module:'用户认证',requestId:'req_20260403092618'}
   },
-  {time:'2026-04-03 09:05:42',user:'系统',type:'system',typeTag:'系统操作',typeCls:'tag-gray',action:'定时任务',content:'定时任务：技术简报数据采集',ip:'—',result:'success',resultText:'成功',
+  {time:'2026-04-03 09:05:42',user:'张明',type:'business',typeTag:'业务操作',typeCls:'tag-slate',action:'下架',module:'解决方案',object:'场景化案例「可降解餐盒耐温性验证」',ip:'192.168.1.112',result:'success',resultText:'成功',
     changes:[],
-    extra:[{k:'执行结果',v:'采集简报 12 条'},{k:'耗时',v:'18 秒'}],
-    details:{userId:'system',userAgent:'System Scheduler v2.1',location:'本地服务器',device:'Server',module:'系统维护 > 定时任务',requestId:'req_20260403090542'}
+    extra:[],
+    details:{userId:'ou_053',userAgent:'Chrome 120.0.6099 / Windows 11',location:'新疆·乌鲁木齐',device:'PC',module:'解决方案',requestId:'req_20260403090542_b04'}
   },
-  {time:'2026-04-02 17:52:36',user:'张明',type:'account',typeTag:'账户操作',typeCls:'tag-blue',action:'新增',content:'新建账户「孙悦」并分配角色',ip:'192.168.1.112',result:'success',resultText:'成功',
+  {time:'2026-04-02 17:52:36',user:'张明',type:'account',typeTag:'账户操作',typeCls:'tag-blue',action:'新增',module:'系统管理',object:'账户「孙悦」',ip:'192.168.1.112',result:'success',resultText:'成功',
     changes:[{field:'姓名',old:'—',new:'孙悦'},{field:'登录账号',old:'—',new:'sun.yue'},{field:'所属部门',old:'—',new:'营销中心'},{field:'角色',old:'—',new:'市场专员'}],
     extra:[],
-    details:{userId:'ou_021',userAgent:'Chrome 120.0.6099 / Windows 11',location:'新疆·乌鲁木齐',device:'PC',module:'系统管理 > 账户管理',requestId:'req_20260402175236'}
+    details:{userId:'ou_021',userAgent:'Chrome 120.0.6099 / Windows 11',location:'新疆·乌鲁木齐',device:'PC',module:'系统管理',requestId:'req_20260402175236'}
   },
-  {time:'2026-04-02 17:20:15',user:'赵磊',type:'role',typeTag:'角色操作',typeCls:'tag-purple',action:'删除',content:'删除角色「临时访客」',ip:'192.168.1.121',result:'success',resultText:'成功',
-    changes:[{field:'角色名称',old:'临时访客',new:'—'},{field:'角色编码',old:'ROLE_TEMP_GUEST',new:'—'}],
-    extra:[{k:'关联账户',v:'该角色下无在用账户，删除不影响现有授权'}],
-    details:{userId:'ou_022',userAgent:'Chrome 120.0.6099 / Windows 11',location:'新疆·乌鲁木齐',device:'PC',module:'系统管理 > 权限配置管理',requestId:'req_20260402172015'}
+  {time:'2026-04-02 17:20:15',user:'赵磊',type:'role',typeTag:'角色操作',typeCls:'tag-purple',action:'删除',module:'系统管理',object:'角色「临时访客」',ip:'192.168.1.121',result:'success',resultText:'成功',
+    changes:[],
+    extra:[{k:'持有该角色的账号',v:'0 个'}],
+    details:{userId:'ou_022',userAgent:'Chrome 120.0.6099 / Windows 11',location:'新疆·乌鲁木齐',device:'PC',module:'系统管理',requestId:'req_20260402172015'}
   },
-  {time:'2026-04-02 16:44:03',user:'王丽',type:'dept',typeTag:'部门操作',typeCls:'tag-green',action:'新增',content:'创建新部门「品控部」',ip:'192.168.1.108',result:'success',resultText:'成功',
+  {time:'2026-04-02 16:55:12',user:'王建国',type:'business',typeTag:'业务操作',typeCls:'tag-slate',action:'下架',module:'研发创新',object:'知识库文档「PBAT 改性配方试验报告 V2」',ip:'192.168.1.117',result:'success',resultText:'成功',
+    changes:[],
+    extra:[],
+    details:{userId:'ou_054',userAgent:'Chrome 120.0.6099 / Windows 11',location:'新疆·乌鲁木齐',device:'PC',module:'研发创新',requestId:'req_20260402165512_b05'}
+  },
+  {time:'2026-04-02 16:44:03',user:'王丽',type:'dept',typeTag:'部门操作',typeCls:'tag-green',action:'新增',module:'系统管理',object:'部门「品控部」',ip:'192.168.1.108',result:'success',resultText:'成功',
     changes:[{field:'部门名称',old:'—',new:'品控部'},{field:'上级部门',old:'—',new:'集团总部'},{field:'部门编码',old:'—',new:'DEPT-QC-001'}],
     extra:[],
-    details:{userId:'ou_023',userAgent:'Chrome 120.0.6099 / Windows 11',location:'新疆·乌鲁木齐',device:'PC',module:'系统管理 > 部门管理',requestId:'req_20260402164403'}
+    details:{userId:'ou_023',userAgent:'Chrome 120.0.6099 / Windows 11',location:'新疆·乌鲁木齐',device:'PC',module:'系统管理',requestId:'req_20260402164403'}
   },
-  {time:'2026-04-02 16:10:27',user:'刘敏',type:'permission',typeTag:'权限配置',typeCls:'tag-orange',action:'授权变更',content:'修改角色「市场专员」数据可见范围',ip:'192.168.1.130',result:'success',resultText:'成功',
+  {time:'2026-04-02 16:10:27',user:'刘敏',type:'permission',typeTag:'权限配置',typeCls:'tag-orange',action:'授权变更',module:'系统管理',object:'角色「市场专员」',ip:'192.168.1.130',result:'success',resultText:'成功',
     changes:[{field:'数据范围',old:'仅本人数据',new:'本部门所有数据'}],
     extra:[],
-    details:{userId:'ou_024',userAgent:'Chrome 120.0.6099 / Windows 11',location:'新疆·乌鲁木齐',device:'PC',module:'系统管理 > 权限配置管理',requestId:'req_20260402161027'}
+    details:{userId:'ou_024',userAgent:'Chrome 120.0.6099 / Windows 11',location:'新疆·乌鲁木齐',device:'PC',module:'系统管理',requestId:'req_20260402161027'}
   },
-  {time:'2026-04-02 15:38:49',user:'李晓燕',type:'login',typeTag:'登录日志',typeCls:'tag-teal',action:'登录',content:'用户登录系统',ip:'192.168.1.105',result:'success',resultText:'成功',
+  {time:'2026-04-02 15:38:49',user:'李晓燕',type:'login',typeTag:'登录日志',typeCls:'tag-teal',action:'登录',module:'用户认证',object:'—',ip:'192.168.1.105',result:'success',resultText:'成功',
     changes:[],
-    extra:[{k:'上次登录',v:'2026-04-01 09:20:14 / 192.168.1.105'}],
+    extra:[],
     details:{userId:'ou_025',userAgent:'Chrome 120.0.6099 / Windows 11',location:'新疆·乌鲁木齐',device:'PC',module:'用户认证',requestId:'req_20260402153849'}
   },
-  {time:'2026-04-02 15:02:11',user:'系统',type:'system',typeTag:'系统操作',typeCls:'tag-gray',action:'接口调用',content:'第三方接口调用失败：专利检索',ip:'—',result:'fail',resultText:'失败',
+  {time:'2026-04-02 15:02:11',user:'杨艺',type:'business',typeTag:'业务操作',typeCls:'tag-slate',action:'删除',module:'战略研判',object:'研究主题「生物降解材料替代政策跟踪」',ip:'192.168.1.122',result:'success',resultText:'成功',
     changes:[],
-    extra:[{k:'失败原因',v:'接口返回超时（30 秒）'},{k:'影响功能',v:'专利成果分析-专利总量对比'},{k:'重试策略',v:'下次访问时重新调用，本次缓存未写入'}],
-    details:{userId:'system',userAgent:'System Scheduler v2.1',location:'本地服务器',device:'Server',module:'系统维护 > 外部接口',requestId:'req_20260402150211'}
-  },
-  {time:'2026-04-02 14:29:58',user:'周总',type:'account',typeTag:'账户操作',typeCls:'tag-blue',action:'启用',content:'启用账户「王海」',ip:'192.168.1.100',result:'success',resultText:'成功',
-    changes:[{field:'账户状态',old:'停用',new:'启用'}],
     extra:[],
-    details:{userId:'ou_027',userAgent:'Chrome 120.0.6099 / Windows 11',location:'新疆·乌鲁木齐',device:'PC',module:'系统管理 > 账户管理',requestId:'req_20260402142958'}
+    details:{userId:'ou_055',userAgent:'Chrome 120.0.6099 / Windows 11',location:'新疆·乌鲁木齐',device:'PC',module:'战略研判',requestId:'req_20260402150211_b06'}
   },
-  {time:'2026-04-02 13:55:22',user:'陈涛',type:'role',typeTag:'角色操作',typeCls:'tag-purple',action:'新增',content:'新建角色「战略分析师」',ip:'192.168.1.118',result:'success',resultText:'成功',
+  {time:'2026-04-02 14:29:58',user:'周总',type:'account',typeTag:'账户操作',typeCls:'tag-blue',action:'启用',module:'系统管理',object:'账户「王海」',ip:'192.168.1.100',result:'success',resultText:'成功',
+    changes:[],
+    extra:[],
+    details:{userId:'ou_027',userAgent:'Chrome 120.0.6099 / Windows 11',location:'新疆·乌鲁木齐',device:'PC',module:'系统管理',requestId:'req_20260402142958'}
+  },
+  {time:'2026-04-02 13:55:22',user:'陈涛',type:'role',typeTag:'角色操作',typeCls:'tag-purple',action:'新增',module:'系统管理',object:'角色「战略分析师」',ip:'192.168.1.118',result:'success',resultText:'成功',
     changes:[{field:'角色名称',old:'—',new:'战略分析师'},{field:'角色编码',old:'—',new:'ROLE_STRATEGY_ANALYST'},{field:'所属部门',old:'—',new:'战略发展部'},{field:'数据范围',old:'—',new:'全集团数据'}],
     extra:[],
-    details:{userId:'ou_028',userAgent:'Chrome 120.0.6099 / Windows 11',location:'新疆·乌鲁木齐',device:'PC',module:'系统管理 > 权限配置管理',requestId:'req_20260402135522'}
+    details:{userId:'ou_028',userAgent:'Chrome 120.0.6099 / Windows 11',location:'新疆·乌鲁木齐',device:'PC',module:'系统管理',requestId:'req_20260402135522'}
   },
-  {time:'2026-04-02 11:33:07',user:'张明',type:'permission',typeTag:'权限配置',typeCls:'tag-orange',action:'授权变更',content:'为角色「研究院主管」新增需求审核权限',ip:'192.168.1.112',result:'success',resultText:'成功',
+  {time:'2026-04-02 11:33:07',user:'张明',type:'permission',typeTag:'权限配置',typeCls:'tag-orange',action:'授权变更',module:'系统管理',object:'角色「研究院主管」',ip:'192.168.1.112',result:'success',resultText:'成功',
     changes:[{field:'功能权限·技术需求管理-需求审核',old:'—',new:'查看、审批'}],
     extra:[],
-    details:{userId:'ou_029',userAgent:'Chrome 120.0.6099 / Windows 11',location:'新疆·乌鲁木齐',device:'PC',module:'系统管理 > 权限配置管理',requestId:'req_20260402113307'}
+    details:{userId:'ou_029',userAgent:'Chrome 120.0.6099 / Windows 11',location:'新疆·乌鲁木齐',device:'PC',module:'系统管理',requestId:'req_20260402113307'}
   },
-  {time:'2026-04-02 10:47:40',user:'王丽',type:'login',typeTag:'登录日志',typeCls:'tag-teal',action:'登录',content:'用户登录系统',ip:'192.168.1.108',result:'success',resultText:'成功',
+  {time:'2026-04-02 10:47:40',user:'王丽',type:'login',typeTag:'登录日志',typeCls:'tag-teal',action:'登录',module:'用户认证',object:'—',ip:'192.168.1.108',result:'success',resultText:'成功',
     changes:[],
-    extra:[{k:'上次登录',v:'2026-04-01 09:36:57 / 192.168.1.108'}],
+    extra:[],
     details:{userId:'ou_030',userAgent:'Chrome 120.0.6099 / Windows 11',location:'新疆·乌鲁木齐',device:'PC',module:'用户认证',requestId:'req_20260402104740'}
   },
-  {time:'2026-04-02 09:58:16',user:'系统',type:'system',typeTag:'系统操作',typeCls:'tag-gray',action:'定时任务',content:'定时任务：竞对企业工商信息同步',ip:'—',result:'success',resultText:'成功',
+  {time:'2026-04-02 09:58:16',user:'尤润菁',type:'business',typeTag:'业务操作',typeCls:'tag-slate',action:'删除',module:'研发创新',object:'配方推演方案「PBAT/PLA 共混增韧」',ip:'192.168.1.115',result:'success',resultText:'成功',
     changes:[],
-    extra:[{k:'执行结果',v:'同步竞对企业 18 家'},{k:'耗时',v:'27 秒'}],
-    details:{userId:'system',userAgent:'System Scheduler v2.1',location:'本地服务器',device:'Server',module:'系统维护 > 定时任务',requestId:'req_20260402095816'}
+    extra:[],
+    details:{userId:'ou_056',userAgent:'Chrome 120.0.6099 / Windows 11',location:'新疆·乌鲁木齐',device:'PC',module:'研发创新',requestId:'req_20260402095816_b07'}
   },
-  {time:'2026-04-01 18:06:33',user:'赵磊',type:'dept',typeTag:'部门操作',typeCls:'tag-green',action:'编辑',content:'编辑部门「研究院」描述信息',ip:'192.168.1.121',result:'success',resultText:'成功',
+  {time:'2026-04-01 18:06:33',user:'赵磊',type:'dept',typeTag:'部门操作',typeCls:'tag-green',action:'编辑',module:'系统管理',object:'部门「研究院」',ip:'192.168.1.121',result:'success',resultText:'成功',
     changes:[{field:'部门描述',old:'负责集团材料研发',new:'负责集团生物降解材料及新产品研发'}],
     extra:[],
-    details:{userId:'ou_032',userAgent:'Chrome 120.0.6099 / Windows 11',location:'新疆·乌鲁木齐',device:'PC',module:'系统管理 > 部门管理',requestId:'req_20260401180633'}
+    details:{userId:'ou_032',userAgent:'Chrome 120.0.6099 / Windows 11',location:'新疆·乌鲁木齐',device:'PC',module:'系统管理',requestId:'req_20260401180633'}
   },
-  {time:'2026-04-01 17:22:05',user:'刘敏',type:'account',typeTag:'账户操作',typeCls:'tag-blue',action:'编辑',content:'编辑账户「李敏」所属部门',ip:'192.168.1.130',result:'success',resultText:'成功',
+  {time:'2026-04-01 17:22:05',user:'刘敏',type:'account',typeTag:'账户操作',typeCls:'tag-blue',action:'编辑',module:'系统管理',object:'账户「李敏」',ip:'192.168.1.130',result:'success',resultText:'成功',
     changes:[{field:'所属部门',old:'综合管理部',new:'品控部'}],
     extra:[],
-    details:{userId:'ou_033',userAgent:'Chrome 120.0.6099 / Windows 11',location:'新疆·乌鲁木齐',device:'PC',module:'系统管理 > 账户管理',requestId:'req_20260401172205'}
+    details:{userId:'ou_033',userAgent:'Chrome 120.0.6099 / Windows 11',location:'新疆·乌鲁木齐',device:'PC',module:'系统管理',requestId:'req_20260401172205'}
   },
-  {time:'2026-04-01 16:39:51',user:'李晓燕',type:'login',typeTag:'登录日志',typeCls:'tag-teal',action:'退出',content:'用户退出登录',ip:'192.168.1.105',result:'success',resultText:'成功',
+  {time:'2026-04-01 16:39:51',user:'李晓燕',type:'login',typeTag:'登录日志',typeCls:'tag-teal',action:'退出',module:'用户认证',object:'—',ip:'192.168.1.105',result:'success',resultText:'成功',
     changes:[],
     extra:[],
     details:{userId:'ou_034',userAgent:'Chrome 120.0.6099 / Windows 11',location:'新疆·乌鲁木齐',device:'PC',module:'用户认证',requestId:'req_20260401163951'}
   },
-  {time:'2026-04-01 15:14:28',user:'周总',type:'permission',typeTag:'权限配置',typeCls:'tag-orange',action:'停用',content:'停用功能模块「内部价格监测」',ip:'192.168.1.100',result:'success',resultText:'成功',
-    changes:[{field:'模块状态',old:'启用',new:'停用'}],
-    extra:[{k:'影响范围',v:'竞对监测下的内部价格监测入口对全部角色隐藏'}],
-    details:{userId:'ou_035',userAgent:'Chrome 120.0.6099 / Windows 11',location:'新疆·乌鲁木齐',device:'PC',module:'系统管理 > 功能管理',requestId:'req_20260401151428'}
-  },
-  {time:'2026-04-01 14:03:19',user:'系统',type:'system',typeTag:'系统操作',typeCls:'tag-gray',action:'定时任务',content:'定时任务：出口数据同步',ip:'—',result:'success',resultText:'成功',
+  {time:'2026-04-01 16:05:44',user:'孙磊',type:'business',typeTag:'业务操作',typeCls:'tag-slate',action:'停用',module:'工作台',object:'竞对企业「金发科技股份有限公司」',ip:'192.168.1.123',result:'success',resultText:'成功',
     changes:[],
-    extra:[{k:'执行结果',v:'同步出口明细 1,311 条'},{k:'耗时',v:'1 分 05 秒'}],
-    details:{userId:'system',userAgent:'System Scheduler v2.1',location:'本地服务器',device:'Server',module:'系统维护 > 定时任务',requestId:'req_20260401140319'}
+    extra:[],
+    details:{userId:'ou_057',userAgent:'Chrome 120.0.6099 / Windows 11',location:'新疆·乌鲁木齐',device:'PC',module:'工作台',requestId:'req_20260401160544_b08'}
   },
-  {time:'2026-04-01 11:47:02',user:'陈涛',type:'account',typeTag:'账户操作',typeCls:'tag-blue',action:'批量导入',content:'批量导入账户 12 条',ip:'192.168.1.118',result:'success',resultText:'成功',
+  {time:'2026-04-01 15:14:28',user:'周总',type:'permission',typeTag:'权限配置',typeCls:'tag-orange',action:'停用',module:'系统管理',object:'功能模块「内部价格监测」',ip:'192.168.1.100',result:'success',resultText:'成功',
+    changes:[],
+    extra:[],
+    details:{userId:'ou_035',userAgent:'Chrome 120.0.6099 / Windows 11',location:'新疆·乌鲁木齐',device:'PC',module:'系统管理',requestId:'req_20260401151428'}
+  },
+  {time:'2026-04-01 14:03:19',user:'李晓燕',type:'business',typeTag:'业务操作',typeCls:'tag-slate',action:'删除',module:'工作台',object:'月度出口数据「乌兹别克斯坦 · 2026-02」',ip:'192.168.1.105',result:'success',resultText:'成功',
+    changes:[],
+    extra:[],
+    details:{userId:'ou_058',userAgent:'Chrome 120.0.6099 / Windows 11',location:'新疆·乌鲁木齐',device:'PC',module:'工作台',requestId:'req_20260401140319_b09'}
+  },
+  {time:'2026-04-01 11:47:02',user:'陈涛',type:'account',typeTag:'账户操作',typeCls:'tag-blue',action:'批量导入',module:'系统管理',object:'账户（批量 12 条）',ip:'192.168.1.118',result:'success',resultText:'成功',
     changes:[],
     extra:[{k:'导入文件',v:'账户导入模板_20260401.xlsx'},{k:'成功条数',v:'12 条'},{k:'失败条数',v:'0 条'}],
-    details:{userId:'ou_037',userAgent:'Chrome 120.0.6099 / Windows 11',location:'新疆·乌鲁木齐',device:'PC',module:'系统管理 > 账户管理',requestId:'req_20260401114702'}
+    details:{userId:'ou_037',userAgent:'Chrome 120.0.6099 / Windows 11',location:'新疆·乌鲁木齐',device:'PC',module:'系统管理',requestId:'req_20260401114702'}
   },
-  {time:'2026-04-01 10:25:44',user:'张明',type:'role',typeTag:'角色操作',typeCls:'tag-purple',action:'编辑',content:'调整角色「品控专员」职级为中级',ip:'192.168.1.112',result:'success',resultText:'成功',
+  {time:'2026-04-01 10:25:44',user:'张明',type:'role',typeTag:'角色操作',typeCls:'tag-purple',action:'编辑',module:'系统管理',object:'角色「品控专员」',ip:'192.168.1.112',result:'success',resultText:'成功',
     changes:[{field:'角色职级',old:'初级',new:'中级'}],
     extra:[],
-    details:{userId:'ou_038',userAgent:'Chrome 120.0.6099 / Windows 11',location:'新疆·乌鲁木齐',device:'PC',module:'系统管理 > 权限配置管理',requestId:'req_20260401102544'}
+    details:{userId:'ou_038',userAgent:'Chrome 120.0.6099 / Windows 11',location:'新疆·乌鲁木齐',device:'PC',module:'系统管理',requestId:'req_20260401102544'}
   },
-  {time:'2026-04-01 09:36:57',user:'王丽',type:'login',typeTag:'登录日志',typeCls:'tag-teal',action:'登录',content:'用户登录系统',ip:'192.168.1.108',result:'success',resultText:'成功',
+  {time:'2026-04-01 09:36:57',user:'王丽',type:'login',typeTag:'登录日志',typeCls:'tag-teal',action:'登录',module:'用户认证',object:'—',ip:'192.168.1.108',result:'success',resultText:'成功',
     changes:[],
-    extra:[{k:'上次登录',v:'2026-03-31 09:14:02 / 192.168.1.108'}],
+    extra:[],
     details:{userId:'ou_039',userAgent:'Chrome 120.0.6099 / Windows 11',location:'新疆·乌鲁木齐',device:'PC',module:'用户认证',requestId:'req_20260401093657'}
   },
-  {time:'2026-03-31 17:58:13',user:'刘敏',type:'dept',typeTag:'部门操作',typeCls:'tag-green',action:'删除',content:'删除部门「筹备组」',ip:'192.168.1.130',result:'success',resultText:'成功',
-    changes:[{field:'部门名称',old:'筹备组',new:'—'},{field:'部门编码',old:'DEPT-PREP-001',new:'—'}],
-    extra:[{k:'关联账户',v:'该部门下无在职账户'}],
-    details:{userId:'ou_040',userAgent:'Chrome 120.0.6099 / Windows 11',location:'新疆·乌鲁木齐',device:'PC',module:'系统管理 > 部门管理',requestId:'req_20260331175813'}
-  },
-  {time:'2026-03-31 16:20:35',user:'系统',type:'system',typeTag:'系统操作',typeCls:'tag-gray',action:'定时任务',content:'定时任务：商标侵权监测',ip:'—',result:'success',resultText:'成功',
+  {time:'2026-03-31 17:58:13',user:'刘敏',type:'dept',typeTag:'部门操作',typeCls:'tag-green',action:'删除',module:'系统管理',object:'部门「筹备组」',ip:'192.168.1.130',result:'success',resultText:'成功',
     changes:[],
-    extra:[{k:'执行结果',v:'扫描商标 36 件，命中相似预警 2 条'},{k:'耗时',v:'51 秒'}],
-    details:{userId:'system',userAgent:'System Scheduler v2.1',location:'本地服务器',device:'Server',module:'系统维护 > 定时任务',requestId:'req_20260331162035'}
+    extra:[{k:'该部门下账号',v:'0 个'}],
+    details:{userId:'ou_040',userAgent:'Chrome 120.0.6099 / Windows 11',location:'新疆·乌鲁木齐',device:'PC',module:'系统管理',requestId:'req_20260331175813'}
   },
-  {time:'2026-03-31 15:07:48',user:'赵磊',type:'permission',typeTag:'权限配置',typeCls:'tag-orange',action:'授权变更',content:'为账户「孙悦」单独授予数据维护权限',ip:'192.168.1.121',result:'success',resultText:'成功',
+  {time:'2026-03-31 16:20:35',user:'韩磊',type:'business',typeTag:'业务操作',typeCls:'tag-slate',action:'删除',module:'研发创新',object:'需求草稿「PBS 注塑级低温韧性提升」',ip:'192.168.1.126',result:'success',resultText:'成功',
+    changes:[],
+    extra:[],
+    details:{userId:'ou_059',userAgent:'Chrome 120.0.6099 / Windows 11',location:'新疆·乌鲁木齐',device:'PC',module:'研发创新',requestId:'req_20260331162035_b10'}
+  },
+  {time:'2026-03-31 15:07:48',user:'赵磊',type:'permission',typeTag:'权限配置',typeCls:'tag-orange',action:'授权变更',module:'系统管理',object:'账户「孙悦」',ip:'192.168.1.121',result:'success',resultText:'成功',
     changes:[{field:'功能权限·工作台-数据维护',old:'—',new:'查看、编辑'}],
     extra:[],
-    details:{userId:'ou_042',userAgent:'Chrome 120.0.6099 / Windows 11',location:'新疆·乌鲁木齐',device:'PC',module:'系统管理 > 权限配置管理',requestId:'req_20260331150748'}
+    details:{userId:'ou_042',userAgent:'Chrome 120.0.6099 / Windows 11',location:'新疆·乌鲁木齐',device:'PC',module:'系统管理',requestId:'req_20260331150748'}
   },
 ];
 
@@ -675,6 +710,9 @@ let totalPages=1;
 
 function filterLogs(type,el){
   currentFilter=type; currentPage=1;
+  const mb=document.getElementById('moduleBox');
+  if(type==='business'){mb.style.display='inline'}
+  else{mb.style.display='none';document.getElementById('moduleSel').value='全部模块'}
   document.querySelectorAll('.sb .sn').forEach(s=>s.classList.remove('on'));
   el.classList.add('on');
   renderLogs();
@@ -686,7 +724,9 @@ function renderLogs(){
   const tbody=document.getElementById('logBody');
   const empty=document.getElementById('emptyState');
   tbody.innerHTML='';
-  const all=currentFilter==='all'?logs:logs.filter(l=>l.type===currentFilter);
+  const ms=document.getElementById('moduleSel');
+  const mv=ms&&ms.value!=='全部模块'?ms.value:'';
+  const all=logs.filter(l=>(currentFilter==='all'||l.type===currentFilter)&&(!mv||l.module===mv));
   totalPages=Math.max(1,Math.ceil(all.length/PER_PAGE));
   if(currentPage>totalPages)currentPage=totalPages;
   const filtered=all.slice((currentPage-1)*PER_PAGE,currentPage*PER_PAGE);
@@ -705,6 +745,7 @@ function renderLogs(){
         <td>${l.user}</td>
         <td><span class="tag ${l.typeCls}">${l.typeTag}</span></td>
         <td>${l.action}</td>
+        <td style="color:var(--text2)">${l.module}</td>
         <td style="color:var(--text2);font-size:11px">${l.ip}</td>
         <td><span style="display:inline-flex;align-items:center;font-size:11px"><span class="sdot" style="background:${l.result==='success'?'var(--success)':'var(--danger)'}"></span>${l.resultText}</span></td>
         <td><button class="detail-btn" onclick="showDetail(${logs.indexOf(l)})">详情</button></td>
@@ -743,7 +784,7 @@ function showDetail(idx){
       <div class="detail-row"><div class="detail-lbl">终端设备</div><div class="detail-val">${d.device}</div></div>
       <div class="detail-row"><div class="detail-lbl">浏览器</div><div class="detail-val">${d.userAgent}</div></div>
       <div class="detail-row"><div class="detail-lbl">请求ID</div><div class="detail-val" style="font-family:monospace;font-size:11px;color:var(--text3)">${d.requestId}</div></div>
-      <div class="detail-row"><div class="detail-lbl">操作描述</div><div class="detail-val">${l.content}</div></div>
+      <div class="detail-row"><div class="detail-lbl">操作对象</div><div class="detail-val">${l.object}</div></div>
     </div>
     ${chgHtml}
     ${exHtml}
@@ -757,7 +798,7 @@ function closeOverlay(id){
 }
 
 /* ========== 当前查询筛选条件摘要 ========== */
-const TYPE_LABELS={all:'全部日志',login:'登录日志',account:'账户操作',dept:'部门操作',role:'角色操作',permission:'权限配置',system:'系统操作'};
+const TYPE_LABELS={all:'全部日志',login:'登录日志',account:'账户操作',dept:'部门操作',role:'角色操作',permission:'权限配置',business:'业务操作'};
 function getFilterSummary(){
   const ds=document.querySelectorAll('.filter-input[type="date"]');
   const sel=document.querySelectorAll('.filters select');
@@ -765,9 +806,11 @@ function getFilterSummary(){
   return {
     range:ds[0].value+' 至 '+ds[1].value,
     type:TYPE_LABELS[currentFilter]||'全部日志',
+    module:(function(){const e=document.getElementById('moduleSel');return e?e.value:'全部模块'})(),
     person:pb?pb.textContent.trim():'全部操作人',
     result:sel.length?sel[sel.length-1].value:'全部',
-    count:(currentFilter==='all'?logs:logs.filter(l=>l.type===currentFilter)).length
+    count:(function(){const e=document.getElementById('moduleSel');const mv=e&&e.value!=='全部模块'?e.value:'';
+      return logs.filter(l=>(currentFilter==='all'||l.type===currentFilter)&&(!mv||l.module===mv)).length})()
   };
 }
 function renderScope(id){
@@ -775,6 +818,7 @@ function renderScope(id){
   document.getElementById(id).innerHTML=
     `<div class="scope-row"><span class="scope-k">时间范围</span><span class="scope-v">${s.range}</span></div>`+
     `<div class="scope-row"><span class="scope-k">日志类型</span><span class="scope-v">${s.type}</span></div>`+
+    (currentFilter==='business'?`<div class="scope-row"><span class="scope-k">操作模块</span><span class="scope-v">${s.module}</span></div>`:'')+
     `<div class="scope-row"><span class="scope-k">操作人</span><span class="scope-v">${s.person}</span></div>`+
     `<div class="scope-row"><span class="scope-k">操作结果</span><span class="scope-v">${s.result}</span></div>`+
     `<div class="scope-row"><span class="scope-k">记录条数</span><span class="scope-v scope-num">${s.count} 条</span></div>`;
