@@ -714,7 +714,11 @@ const NODE_CAP_DATA = {
     out:{val:0.18, date:'2026-08-31'},
     util:{val:38.50, date:'2026-09-18'},
     cost:[{k:'生产成本',v:38500.00,date:'2026-09-18'},{k:'生产毛利',v:2100.00,date:'2026-09-18'}],
-    price:{dims:['地区','类型'], rows:v3PriceRows('PHA',['地区','类型'],[['华东','PHBV'],['华东','PHBHHx'],['华南','PHBV']],function(c,i){return [42000,46500,42600][i];},0.006)}},
+    price:{dims:['地区','规格','标准'], rows:v3PriceRows('PHA',['地区','规格','标准'],[
+      ['华东','PHBV','优级品'],['华东','PHBV','合格品'],['华东','PHBHHx','优级品'],['华东','PHBHHx','合格品'],['华东','P34HB','优级品'],
+      ['华南','PHBV','优级品'],['华南','PHBHHx','优级品'],['华南','PHBHHx','合格品'],
+      ['华北','PHBV','合格品'],['华北','P34HB','优级品']],
+      function(c){ var b={PHBV:42000,PHBHHx:46500,P34HB:44200}[c[1]]; if(c[2]==='合格品') b-=1800; if(c[0]==='华南') b+=600; if(c[0]==='华北') b-=400; return b; },0.006)}},
   'PBS': {alias:['PBS','PBSA','PBST','聚丁二酸丁二酯','聚丁二酸'], unit:'万吨',
     cap:null, ent:null, out:null, util:null, cost:[],
     price:{dims:['类型'], rows:v3PriceRows('PBS',['类型'],[['PBS'],['PBSA']],function(c,i){return i?21500:19800;},0.006)}}
@@ -887,18 +891,23 @@ function renderCapPane(bodyId, key){
     var rowsP=d.price.rows, dims=d.price.dims, sel={};
     dims.forEach(function(dm){ sel[dm]=rowsP[0].dims[dm]; });
     var allVals=function(dm){ var out=[]; rowsP.forEach(function(r){ if(out.indexOf(r.dims[dm])<0) out.push(r.dims[dm]); }); return out; };
-    var optsFor=function(dm){ var out=[]; rowsP.forEach(function(r){ var ok=dims.every(function(o){ return o===dm || r.dims[o]===sel[o]; }); if(ok && out.indexOf(r.dims[dm])<0) out.push(r.dims[dm]); }); return out; };
+    /* 级联下拉：每个下拉只列出在前面各维度已选值下实际存在的取值 */
+    var optsFor=function(dm){ var i=dims.indexOf(dm), out=[]; rowsP.forEach(function(r){ var ok=dims.slice(0,i).every(function(p){ return r.dims[p]===sel[p]; }); if(ok && out.indexOf(r.dims[dm])<0) out.push(r.dims[dm]); }); return out; };
     var current=function(){ return rowsP.filter(function(r){ return dims.every(function(o){ return r.dims[o]===sel[o]; }); })[0]; };
     var drawPrice=function(){
-      dims.forEach(function(dm){ var o=optsFor(dm); if(o.indexOf(sel[dm])<0) sel[dm]=o[0]; });
+      dims.forEach(function(dm, i){ var o=rowsP.filter(function(r){ return dims.slice(0,i).every(function(p){ return r.dims[p]===sel[p]; }); }).map(function(r){ return r.dims[dm]; }); if(o.indexOf(sel[dm])<0) sel[dm]=o[0]; });
       var flt=document.getElementById('v3PriceFlt'), fixedLbl=[];
       flt.innerHTML = dims.map(function(dm){
         var all=allVals(dm);
         if (all.length<=1) { fixedLbl.push(dm+'：'+all[0]); return ''; }
         var o=optsFor(dm);
-        return '<label>'+dm+'<select data-dim="'+dm+'">'+all.map(function(v){ return '<option value="'+v+'"'+(v===sel[dm]?' selected':'')+(o.indexOf(v)<0?' disabled':'')+'>'+v+'</option>'; }).join('')+'</select></label>';
+        return '<label>'+dm+'<select data-dim="'+dm+'">'+o.map(function(v){ return '<option value="'+v+'"'+(v===sel[dm]?' selected':'')+'>'+v+'</option>'; }).join('')+'</select></label>';
       }).join('') + (fixedLbl.length?'<span class="v3-fixed">'+fixedLbl.join('　')+'</span>':'');
-      flt.querySelectorAll('select').forEach(function(sl){ sl.addEventListener('change', function(){ sel[sl.dataset.dim]=sl.value; drawPrice(); }); });
+      flt.querySelectorAll('select').forEach(function(sl){ sl.addEventListener('change', function(){
+        var dm=sl.dataset.dim, i=dims.indexOf(dm); sel[dm]=sl.value;
+        /* 级联：只保留前面维度的选择，后面的维度重置为该组合下第一个可选值 */
+        for (var j=i+1;j<dims.length;j++) sel[dims[j]]=null;
+        drawPrice(); }); });
       var r=current(), s=r.series, last=s[s.length-1];
       var hi=Math.max.apply(null,s), lo=Math.min.apply(null,s), chg=last-s[0];
       document.getElementById('v3PriceKpi').innerHTML =
