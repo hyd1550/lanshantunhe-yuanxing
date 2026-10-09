@@ -874,6 +874,12 @@ table.dl-tbl tbody tr:nth-child(-n+3) .dl-row-num{color:#fcd34d;background:rgba(
 .dl-bar-track{flex:1;height:7px;background:rgba(60,160,200,.1);border-radius:3px;overflow:hidden}
 .dl-bar-fill{height:100%;border-radius:3px;background:linear-gradient(90deg,#3ad4ff,#1797b8);box-shadow:0 0 6px rgba(58,212,255,.4)}
 .dl-bar-pct{width:40px;text-align:right;color:#3ad4ff;font-family:'DIN','Arial';font-weight:600}
+
+/* 最新报价（行业价）：列表统一居中；中文描述悬浮 */
+#priceTable{table-layout:fixed;width:100%}
+#priceTable th,#priceTable td{text-align:center !important;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#priceTable .pdesc{display:inline-block;width:13px;height:13px;line-height:13px;border-radius:50%;background:rgba(58,212,255,.18);color:#7fd0ff;font-size:10px;font-style:normal;font-family:Arial;text-align:center;margin-left:4px;cursor:help;vertical-align:1px;font-weight:400}
+#priceCatSel .sel-dd-list{min-width:220px}
 </style>
 </head>
 <body>
@@ -1120,7 +1126,7 @@ table.dl-tbl tbody tr:nth-child(-n+3) .dl-row-num{color:#fcd34d;background:rgba(
           </div>
         </div>
 
-        <!-- 最新报价（按反馈：可降解材料七大类报价；产品/地区下拉，去掉时间筛选） -->
+        <!-- 最新报价（行业价：字段与价格数据一致——品种名称 / 标准名称 / 规格名称 / 地区名称 / 指标当前值 / 数据时间；中文描述悬浮显示） -->
         <div class="card tbl-card" id="priceCard">
           <div class="card-title">可降解材料最新报价</div>
           <div class="tbl-tools">
@@ -1129,30 +1135,28 @@ table.dl-tbl tbody tr:nth-child(-n+3) .dl-row-num{color:#fcd34d;background:rgba(
               <div class="sel-dd-list" id="priceCatDd"></div>
             </div>
             <div class="sel sel-dd" id="priceAreaSel" data-val="all">
-              <span class="sel-lbl">地区：</span><span class="sel-val">全国</span><span class="sel-arr">▾</span>
+              <span class="sel-lbl">地区：</span><span class="sel-val">全部</span><span class="sel-arr">▾</span>
               <div class="sel-dd-list" id="priceAreaDd"></div>
             </div>
             <div class="sp"></div>
           </div>
           <div class="tbl-wrap">
             <table id="priceTable">
+              <colgroup><col style="width:30%"><col style="width:12%"><col style="width:12%"><col style="width:15%"><col style="width:17%"><col style="width:14%"></colgroup>
               <thead>
                 <tr>
-                  <th>产品名称</th>
-                  <th>产品型号</th>
-                  <th>企业名称</th>
+                  <th>产品</th>
+                  <th>标准名称</th>
+                  <th>规格名称</th>
                   <th>地区</th>
-                  <th style="text-align:right">价格(元/吨)</th>
-                  <th>日期</th>
+                  <th>指标当前值(元/吨)</th>
+                  <th>数据时间</th>
                 </tr>
               </thead>
               <tbody id="priceTbody"></tbody>
             </table>
           </div>
-          <div class="pag">
-            共 <b id="priceTotal" style="color:#3ad4ff;font-family:DIN,Arial;margin:0 3px">—</b> 条
-            <span class="pg">‹</span><span class="pg cur">1</span><span class="pg">2</span><span class="pg">3</span><span class="pg">…</span><span class="pg" id="pricePages">—</span><span class="pg">›</span>
-          </div>
+          <div class="pag" id="pricePag"></div>
         </div>
 
         <!-- 行业产量（与"行业产能"模块换位 — 先看产能、再看产量） -->
@@ -3865,92 +3869,93 @@ window.openDetail=function(name){
   dlMask.classList.add('show');dlPanel.classList.add('show');
 }
 
-// ══════════════ 最新报价模块 ══════════════
-// 七大类降解材料 + 假数据（保留产品名称/型号/企业名称/地区/价格/日期）
-const priceCategories=[
-  {key:'all',  name:'全部'},
-  {key:'PBAT', name:'PBAT'},
-  {key:'PLA',  name:'PLA'},
-  {key:'PBS',  name:'PBS/PBSA'},
-  {key:'PHA',  name:'PHA'},
-  {key:'PGA',  name:'PGA'},
-  {key:'PCL',  name:'PCL'},
-  {key:'PPC',  name:'PPC'}
-];
+// ══════════════ 最新报价模块（行业价） ══════════════
+// 字段与价格数据（行业价·市场价格·日度）一致：品种名称 / 标准名称 / 规格名称 / 地区名称 / 指标当前值 / 数据时间；
+// 度量名称均为「市场价格」，不单列；中文描述（送到价、承兑送到价、出厂自提价、现货成交价等口径）在价格旁「i」悬浮显示
 const priceData=[
-  // PBAT
-  {cat:'PBAT', name:'PBAT 通用注塑级', model:'TH-801F',       enterprise:'蓝山屯河化工股份有限公司', area:'新疆 · 昌吉', price:13800, date:'2026-05-12'},
-  {cat:'PBAT', name:'PBAT 农膜专用料', model:'TH-806A',       enterprise:'蓝山屯河化工股份有限公司', area:'新疆 · 昌吉', price:13950, date:'2026-05-12'},
-  {cat:'PBAT', name:'PBAT 吹膜级',     model:'JF-PBAT-700',   enterprise:'金发科技股份有限公司',     area:'广东 · 广州', price:13650, date:'2026-05-12'},
-  {cat:'PBAT', name:'PBAT 共混料',     model:'WH-PBAT-805',   enterprise:'万华化学集团股份有限公司', area:'山东 · 烟台', price:13780, date:'2026-05-11'},
-  {cat:'PBAT', name:'PBAT 一次性餐具级', model:'JS-PBAT-T20', enterprise:'江苏盛虹石化',           area:'江苏 · 苏州', price:14100, date:'2026-05-11'},
-  // PLA
-  {cat:'PLA',  name:'PLA 注塑级',      model:'4032D',         enterprise:'NatureWorks 中国',        area:'上海 · 浦东', price:18600, date:'2026-05-12'},
-  {cat:'PLA',  name:'PLA 吹膜级',      model:'4043D',         enterprise:'NatureWorks 中国',        area:'上海 · 浦东', price:18900, date:'2026-05-12'},
-  {cat:'PLA',  name:'PLA 食品包装级',  model:'TJ-PLA-200',    enterprise:'丰原生物',               area:'安徽 · 蚌埠', price:17800, date:'2026-05-11'},
-  {cat:'PLA',  name:'PLA 纤维级',      model:'TJ-PLA-F300',   enterprise:'丰原生物',               area:'安徽 · 蚌埠', price:18200, date:'2026-05-10'},
-  // PBS
-  {cat:'PBS',  name:'PBS 通用级',      model:'BiONLY-100',    enterprise:'三菱化学（杭州）',        area:'浙江 · 杭州', price:21500, date:'2026-05-12'},
-  {cat:'PBS',  name:'PBSA 农膜级',     model:'BiONLY-200A',   enterprise:'三菱化学（杭州）',        area:'浙江 · 杭州', price:22800, date:'2026-05-12'},
-  {cat:'PBS',  name:'PBS 注塑级',      model:'XH-PBS-N30',    enterprise:'新疆蓝山屯河聚酯',       area:'新疆 · 昌吉', price:21200, date:'2026-05-11'},
-  // PHA
-  {cat:'PHA',  name:'PHA 通用级',      model:'BlueP-100',     enterprise:'蓝晶微生物',             area:'北京 · 海淀', price:48000, date:'2026-05-12'},
-  {cat:'PHA',  name:'PHA 医用级',      model:'BlueP-M200',    enterprise:'蓝晶微生物',             area:'北京 · 海淀', price:62000, date:'2026-05-11'},
-  // PGA
-  {cat:'PGA',  name:'PGA 通用级',      model:'SH-PGA-100',    enterprise:'上海化学工业研究院',     area:'上海 · 浦东', price:46500, date:'2026-05-12'},
-  {cat:'PGA',  name:'PGA 油田用',      model:'SH-PGA-300P',   enterprise:'上海化学工业研究院',     area:'上海 · 浦东', price:52000, date:'2026-05-10'},
-  // PCL
-  {cat:'PCL',  name:'PCL 通用级',      model:'CAPA-6500',     enterprise:'Perstorp 中国',          area:'江苏 · 苏州', price:38900, date:'2026-05-12'},
-  {cat:'PCL',  name:'PCL 医用级',      model:'CAPA-6800',     enterprise:'Perstorp 中国',          area:'江苏 · 苏州', price:56000, date:'2026-05-11'},
-  // PPC
-  {cat:'PPC',  name:'PPC 通用级',      model:'CHN-PPC-100',   enterprise:'中科金龙',               area:'河南 · 郑州', price:23800, date:'2026-05-12'},
-  {cat:'PPC',  name:'PPC 高阻隔级',    model:'CHN-PPC-300H',  enterprise:'中科金龙',               area:'河南 · 郑州', price:26500, date:'2026-05-10'}
+  {"breed": "聚己二酸/对苯二甲酸丁二醇酯", "std": "薄膜料", "spec": "", "area": "广东省", "price": 11600, "date": "2026-09-30", "desc": "送到价；2026-06-11前为市场价"},
+  {"breed": "聚己二酸/对苯二甲酸丁二醇酯", "std": "薄膜料", "spec": "", "area": "江苏省", "price": 11600, "date": "2026-09-30", "desc": "送到价；2026-06-11前为市场价"},
+  {"breed": "聚丁二酸丁二醇酯", "std": "", "spec": "", "area": "广东省", "price": 16500, "date": "2026-09-30", "desc": "送到价"},
+  {"breed": "聚丁二酸丁二醇酯", "std": "", "spec": "", "area": "江苏省", "price": 16500, "date": "2026-09-30", "desc": "送到价"},
+  {"breed": "聚乳酸", "std": "国产", "spec": "中光纯", "area": "广东省", "price": 18000, "date": "2026-09-30", "desc": "送到价"},
+  {"breed": "聚乳酸", "std": "国产", "spec": "低光纯", "area": "广东省", "price": 18000, "date": "2026-09-30", "desc": "送到价"},
+  {"breed": "聚乳酸", "std": "国产", "spec": "高光纯", "area": "广东省", "price": 18000, "date": "2026-09-30", "desc": "送到价"},
+  {"breed": "聚乳酸", "std": "进口", "spec": "中光纯", "area": "广东省", "price": 20500, "date": "2026-09-30", "desc": "送到价"},
+  {"breed": "聚乳酸", "std": "进口", "spec": "低光纯", "area": "广东省", "price": 20000, "date": "2026-09-30", "desc": "送到价"},
+  {"breed": "聚乳酸", "std": "进口", "spec": "高光纯", "area": "广东省", "price": 21000, "date": "2026-09-30", "desc": "送到价"},
+  {"breed": "聚乳酸", "std": "国产", "spec": "中光纯", "area": "江苏省", "price": 18000, "date": "2026-09-30", "desc": "送到价"},
+  {"breed": "聚乳酸", "std": "国产", "spec": "低光纯", "area": "江苏省", "price": 18000, "date": "2026-09-30", "desc": "送到价"},
+  {"breed": "聚乳酸", "std": "国产", "spec": "高光纯", "area": "江苏省", "price": 18000, "date": "2026-09-30", "desc": "送到价"},
+  {"breed": "聚乳酸", "std": "进口", "spec": "中光纯", "area": "江苏省", "price": 20500, "date": "2026-09-30", "desc": "送到价"},
+  {"breed": "聚乳酸", "std": "进口", "spec": "低光纯", "area": "江苏省", "price": 20000, "date": "2026-09-30", "desc": "送到价"},
+  {"breed": "聚乳酸", "std": "进口", "spec": "高光纯", "area": "江苏省", "price": 21000, "date": "2026-09-30", "desc": "送到价"},
+  {"breed": "1,4-丁二醇", "std": "", "spec": "散水", "area": "华东地区", "price": 10300, "date": "2026-09-30", "desc": "承兑送到价；2026-05-29前为市场价"},
+  {"breed": "1,4-丁二醇", "std": "", "spec": "桶装", "area": "华东地区", "price": 10800, "date": "2026-09-30", "desc": "承兑送到价；2026-05-29前为承兑价"},
+  {"breed": "1,4-丁二醇", "std": "", "spec": "散水", "area": "华南地区", "price": 10400, "date": "2026-09-30", "desc": "承兑送到价；2026-05-29前为市场价"},
+  {"breed": "1,4-丁二醇", "std": "", "spec": "桶装", "area": "华南地区", "price": 10900, "date": "2026-09-30", "desc": "承兑送到价；2024-10-17前为承兑价"},
+  {"breed": "己二酸", "std": "", "spec": "", "area": "华东地区", "price": 9950, "date": "2026-09-30", "desc": ""},
+  {"breed": "己二酸", "std": "", "spec": "", "area": "华北地区", "price": 9950, "date": "2026-09-30", "desc": "承兑价"},
+  {"breed": "己二酸", "std": "", "spec": "", "area": "华南地区", "price": 9950, "date": "2026-09-30", "desc": ""},
+  {"breed": "丁二酸", "std": "优级", "spec": "", "area": "山东省", "price": 13000, "date": "2026-09-30", "desc": ""},
+  {"breed": "丁二酸", "std": "合格品", "spec": "", "area": "山东省", "price": 10500, "date": "2026-09-30", "desc": ""},
+  {"breed": "精对苯二甲酸", "std": "", "spec": "", "area": "华东地区", "price": 7170, "date": "2026-09-30", "desc": "现货成交价"},
+  {"breed": "碳化钙", "std": "", "spec": "", "area": "东北地区", "price": 3145, "date": "2026-09-30", "desc": "送到价；2024-08-26前为到货价"},
+  {"breed": "碳化钙", "std": "", "spec": "", "area": "乌兰察布市", "price": 2875, "date": "2026-09-30", "desc": "出厂自提价"},
+  {"breed": "碳化钙", "std": "", "spec": "", "area": "乌海市", "price": 2675, "date": "2026-09-30", "desc": "出厂自提价"},
+  {"breed": "碳化钙", "std": "", "spec": "", "area": "四川省", "price": 3200, "date": "2026-09-30", "desc": "送到价；2024-08-22前为到货价"},
+  {"breed": "碳化钙", "std": "", "spec": "", "area": "宁夏回族自治区", "price": 2650, "date": "2026-09-30", "desc": "出厂自提价"},
+  {"breed": "碳化钙", "std": "", "spec": "", "area": "山东省", "price": 3030, "date": "2026-09-30", "desc": "送到价；2024-08-26前为到货价"},
+  {"breed": "碳化钙", "std": "", "spec": "", "area": "山西省", "price": 2650, "date": "2026-09-30", "desc": "自提价；2025-08-15前为送到价；2024-08-22前为到货价"},
+  {"breed": "碳化钙", "std": "", "spec": "", "area": "河北省", "price": 3040, "date": "2026-09-30", "desc": "送到价；2024-08-26前为到货价"},
+  {"breed": "碳化钙", "std": "", "spec": "", "area": "河南省", "price": 2950, "date": "2026-09-30", "desc": "送到价；2024-08-22前为到货价"},
+  {"breed": "碳化钙", "std": "", "spec": "", "area": "西北地区", "price": 2725, "date": "2026-09-30", "desc": "出厂自提价"},
+  {"breed": "碳化钙", "std": "", "spec": "", "area": "陕西省", "price": 2760, "date": "2026-09-30", "desc": "送到价；2024-08-22前为到货价"}
 ];
-let priceCurCat='all', priceCurArea='all';
-// 31 个省份/直辖市/特别行政区
-const priceAreas=[
-  {key:'all', name:'全国'},
-  {key:'新疆', name:'新疆'}, {key:'内蒙古', name:'内蒙古'}, {key:'黑龙江', name:'黑龙江'},
-  {key:'吉林', name:'吉林'}, {key:'辽宁', name:'辽宁'}, {key:'北京', name:'北京'},
-  {key:'天津', name:'天津'}, {key:'河北', name:'河北'}, {key:'山西', name:'山西'},
-  {key:'上海', name:'上海'}, {key:'江苏', name:'江苏'}, {key:'浙江', name:'浙江'},
-  {key:'安徽', name:'安徽'}, {key:'福建', name:'福建'}, {key:'江西', name:'江西'},
-  {key:'山东', name:'山东'}, {key:'河南', name:'河南'}, {key:'湖北', name:'湖北'},
-  {key:'湖南', name:'湖南'}, {key:'广东', name:'广东'}, {key:'广西', name:'广西'},
-  {key:'海南', name:'海南'}, {key:'重庆', name:'重庆'}, {key:'四川', name:'四川'},
-  {key:'贵州', name:'贵州'}, {key:'云南', name:'云南'}, {key:'西藏', name:'西藏'},
-  {key:'陕西', name:'陕西'}, {key:'甘肃', name:'甘肃'}, {key:'青海', name:'青海'},
-  {key:'宁夏', name:'宁夏'}
-];
+const PRICE_BREEDS=[...new Set(priceData.map(p=>p.breed))];
+let priceCurCat='all', priceCurArea='all', pricePage=1;
+const PRICE_SIZE=7;
+const priceCategories=()=>[{key:'all',name:'全部'}].concat(PRICE_BREEDS.map(b=>({key:b,name:b})));
+/* 地区名称：随所选品种联动，只列出有报价的地区 */
+const priceAreas=()=>[{key:'all',name:'全部'}].concat([...new Set(priceData.filter(p=>priceCurCat==='all'||p.breed===priceCurCat).map(p=>p.area))].map(a=>({key:a,name:a})));
 function renderPriceTable(){
   const tbody=document.getElementById('priceTbody');
   let filtered=priceData;
-  if(priceCurCat!=='all') filtered=filtered.filter(p=>p.cat===priceCurCat);
-  if(priceCurArea!=='all') filtered=filtered.filter(p=>p.area.indexOf(priceCurArea)>=0);
-  document.getElementById('priceTotal').textContent=filtered.length;
-  document.getElementById('pricePages').textContent=Math.max(1,Math.ceil(filtered.length/7));
+  if(priceCurCat!=='all') filtered=filtered.filter(p=>p.breed===priceCurCat);
+  if(priceCurArea!=='all') filtered=filtered.filter(p=>p.area===priceCurArea);
+  const pages=Math.max(1,Math.ceil(filtered.length/PRICE_SIZE));
+  if(pricePage>pages) pricePage=pages;
+  renderPricePag(filtered.length,pages);
   if(!filtered.length){
     tbody.innerHTML='<tr><td colspan="6" style="text-align:center;color:#5e85b0;padding:30px 0">⌕  当前筛选无报价数据</td></tr>';
     return;
   }
-  tbody.innerHTML=filtered.slice(0,7).map(p=>(
+  tbody.innerHTML=filtered.slice((pricePage-1)*PRICE_SIZE,pricePage*PRICE_SIZE).map(p=>(
     '<tr>'+
-      '<td>'+p.name+'</td>'+
-      '<td><span class="dl-cc">'+p.model+'</span></td>'+
-      '<td style="color:#cfe2f8">'+p.enterprise+'</td>'+
+      '<td title="'+p.breed+'">'+p.breed+'</td>'+
+      '<td>'+(p.std||'—')+'</td>'+
+      '<td>'+(p.spec||'—')+'</td>'+
       '<td>'+p.area+'</td>'+
-      '<td style="text-align:right" class="amt">'+p.price.toLocaleString()+'</td>'+
+      '<td class="amt">'+p.price.toLocaleString()+(p.desc?'<i class="pdesc" title="中文描述：'+p.desc+'">i</i>':'')+'</td>'+
       '<td>'+p.date+'</td>'+
     '</tr>'
   )).join('');
 }
-// 通用下拉初始化
+function renderPricePag(total,pages){
+  let h='共 <b style="color:#3ad4ff;font-family:DIN,Arial;margin:0 3px">'+total+'</b> 条'+
+    '<span class="pg" data-p="'+Math.max(1,pricePage-1)+'">‹</span>';
+  for(let i=1;i<=pages;i++) h+='<span class="pg'+(i===pricePage?' cur':'')+'" data-p="'+i+'">'+i+'</span>';
+  h+='<span class="pg" data-p="'+Math.min(pages,pricePage+1)+'">›</span>';
+  const el=document.getElementById('pricePag'); el.innerHTML=h;
+  el.querySelectorAll('.pg').forEach(x=>x.onclick=()=>{pricePage=+x.dataset.p;renderPriceTable()});
+}
+// 通用下拉初始化（选项可为函数，以便地区随品种联动）
 function bindPriceDd(selId, ddId, items, getCur, setCur, getLabel){
   const sel=document.getElementById(selId);
   const dd=document.getElementById(ddId);
   if(!sel||!dd) return;
+  const list=()=>typeof items==='function'?items():items;
   function render(){
-    dd.innerHTML=items.map(it=>(
+    dd.innerHTML=list().map(it=>(
       '<div class="sel-dd-it'+(it.key===getCur()?' cur':'')+'" data-key="'+it.key+'">'+it.name+'</div>'
     )).join('');
   }
@@ -3958,24 +3963,30 @@ function bindPriceDd(selId, ddId, items, getCur, setCur, getLabel){
   sel.addEventListener('click', e=>{
     if(e.target.classList.contains('sel-dd-it')){
       const k=e.target.dataset.key;
-      const it=items.find(x=>x.key===k);
+      const it=list().find(x=>x.key===k);
       if(it){
         setCur(k);
         sel.querySelector('.sel-val').textContent=getLabel(it);
         render();
+        pricePage=1;
         renderPriceTable();
       }
       sel.classList.remove('open');
       e.stopPropagation();
       return;
     }
+    render();
     document.querySelectorAll('.tbl-tools .sel.open').forEach(s=>{ if(s!==sel) s.classList.remove('open'); });
     sel.classList.toggle('open');
     e.stopPropagation();
   });
 }
 bindPriceDd('priceCatSel','priceCatDd', priceCategories,
-  ()=>priceCurCat, k=>{priceCurCat=k}, it=>it.name);
+  ()=>priceCurCat, k=>{
+    priceCurCat=k;
+    /* 品种切换后，若当前地区在该品种下无报价，地区重置为全部 */
+    if(priceCurArea!=='all' && !priceAreas().some(a=>a.key===priceCurArea)){ priceCurArea='all'; document.querySelector('#priceAreaSel .sel-val').textContent='全部'; }
+  }, it=>it.name);
 bindPriceDd('priceAreaSel','priceAreaDd', priceAreas,
   ()=>priceCurArea, k=>{priceCurArea=k}, it=>it.name);
 document.addEventListener('click',()=>{
