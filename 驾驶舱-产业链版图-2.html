@@ -324,6 +324,15 @@ body.is-main #tgroup{display:none}
 .evb{display:inline-block;font-weight:600;color:var(--txt2);border:1px solid var(--line);border-radius:2px;padding:0 5px;margin-right:4px;font-size:10.5px}
 .evk{margin-left:26px;font-size:12px;color:var(--txt2);line-height:1.6}
 .evnil{padding:30px 0;text-align:center;color:var(--txt3);font-size:12.5px;border:1px dashed var(--line);border-radius:4px}
+
+/* ── 含产能/产量数据的环节标识 ── */
+.capic{flex:0 0 auto;width:17px;height:17px;display:inline-flex;align-items:center;justify-content:center;border-radius:2px;cursor:pointer;
+  color:#e8fbff;border:1px solid rgba(232,251,255,.42);background:rgba(4,20,28,.26)}
+.capic svg{width:11px;height:11px;display:block}
+.nd .capic:hover{color:#fff;border-color:#3ad4ff;background:linear-gradient(180deg,#3ad4ff,#1797b8)}
+.legend .capic.lg{color:#9fd8e6;border-color:rgba(159,216,230,.5);background:transparent}
+.capic.lg{cursor:default;width:15px;height:15px}
+.capic.lg svg{width:10px;height:10px}
 </style>
 </head>
 <body>
@@ -363,6 +372,9 @@ body.is-main #tgroup{display:none}
       <span class="it"><i class="bar" style="background:var(--s-mature)"></i>技术成熟，行业主流</span>
       <span class="it"><i class="bar" style="background:var(--s-pending)"></i>技术可行，待产业化</span>
       <span class="it"><i class="bar" style="background:var(--s-lab)"></i>技术可行，实验室阶段</span>
+          </div>
+    <div class="rw"><b>节点标识</b>
+      <span class="it"><span class="capic lg"><svg viewBox="0 0 12 12"><path d="M1 11.2h10" stroke="currentColor" stroke-width="1" fill="none"/><rect x="2" y="7" width="2" height="3.6" rx=".3" fill="currentColor"/><rect x="5" y="4.6" width="2" height="6" rx=".3" fill="currentColor"/><rect x="8" y="2" width="2" height="8.6" rx=".3" fill="currentColor"/></svg></span>含产能 / 产量数据（点击节点查看）</span>
       <span class="it" id="lgEv"><span class="evbt lg"><svg class="evic" viewBox="0 0 12 12"><path d="M2.5.5h5l2.5 2.5v8.5h-7.5z" fill="none" stroke="currentColor"/><path d="M7.5.5v2.5h2.5M4 6h4M4 8h4M4 4h2" stroke="currentColor" fill="none"/></svg><i>N</i></span>适配性参考资料（悬浮看说明，点击查看）</span>
     </div>
   </div>
@@ -962,6 +974,7 @@ function fitPane(g, r) {
     ? '　·　<span class="lk" data-evm="">查看本工艺全部参考资料（' + evUniq(r) + ' 条）</span>' : ''}</div>`;
 }
 
+const CAPICON = '<svg viewBox="0 0 12 12"><path d="M1 11.2h10" stroke="currentColor" stroke-width="1" fill="none"/><rect x="2" y="7" width="2" height="3.6" rx=".3" fill="currentColor"/><rect x="5" y="4.6" width="2" height="6" rx=".3" fill="currentColor"/><rect x="8" y="2" width="2" height="8.6" rx=".3" fill="currentColor"/></svg>';
 const EVICON = '<svg class="evic" viewBox="0 0 12 12"><path d="M2.5.5h5l2.5 2.5v8.5h-7.5z" fill="none" stroke="currentColor"/><path d="M7.5.5v2.5h2.5M4 6h4M4 8h4M4 4h2" stroke="currentColor" fill="none"/></svg>';
 /* 资料图标悬浮提示 */
 (function () {
@@ -1240,6 +1253,8 @@ function nodeHTML(d) {
     (d.ev ? `<span class="evbt${d.ev.length ? '' : ' z'}" data-ev="1" data-tip="${d.ev.length ? '查看' + esc(d.row.p) + '工艺 · ' + d.n + ' 适配性参考资料（' + d.ev.length + ' 条）' : esc(d.row.p) + '工艺 · ' + d.n + '：暂无公开参考资料'}">${EVICON}${d.ev.length ? '<i>' + d.ev.length + '</i>' : ''}</span>` : '');
   let h = ICON + `<span class="lb">${esc(d.n)}</span>`;
   if (d.multi) h += '<span class="tg2">多路径</span>';
+  if (d.drill && d.drill.layer === '基础材料' && matchCapNode(d.drill.id, d.n))
+    h += `<span class="capic">${CAPICON}</span>`;
   if (d.t === 'mat') h += `<span class="locbt" data-loc="1" title="在生物可降解材料产业链中查看 ${esc(d.n)} 上游原料路径">↗</span>`;
   if (d.inl) h += `<span class="inbt" data-tg="1" title="${(d.icol ? '下拉展开' : '收起') + (d.inlName || '')}">${d.icol ? '+' + d.inl.length : '－'}</span>`;
   return h;
