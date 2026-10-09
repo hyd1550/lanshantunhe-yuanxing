@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>竞品监测</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--blue:#1a6cf0;--blue2:#2f7cf6;--line:#e5e9f2;--txt:#303133;--txt2:#606266;--txt3:#909399;--bg:#f2f4f8}
+html,body{height:100%}
+body{font-family:"PingFang SC","Microsoft YaHei",sans-serif;font-size:14px;color:var(--txt);background:var(--bg)}
+.app{width:1660px;height:990px;overflow-y:auto;overflow-x:hidden;background:var(--bg);position:relative}
+/* 主体 */
+.main{padding:12px}
+.card{background:#fff;border-radius:6px;box-shadow:0 1px 4px rgba(30,60,120,.06)}
+.qbar{display:flex;align-items:center;gap:12px;padding:16px 20px;margin-bottom:12px}
+.qbar label{color:var(--txt);font-size:14px;margin-right:2px}
+.inp,.sel{height:32px;border:1px solid #dcdfe6;border-radius:3px;padding:0 10px;font-size:13px;color:var(--txt2);background:#fff;font-family:inherit;outline:none}
+.sel{appearance:none;-webkit-appearance:none;padding-right:28px;background:#fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M1 1l4 4 4-4' fill='none' stroke='%23a8abb2' stroke-width='1.2'/%3E%3C/svg%3E") no-repeat right 10px center;cursor:pointer}
+.sel:focus,.inp:focus{border-color:var(--blue)}
+.btn{height:32px;padding:0 15px;border-radius:3px;border:1px solid #dcdfe6;background:#e9ebef;color:var(--txt);font-size:14px;cursor:pointer;font-family:inherit;letter-spacing:2px}
+.btn.pri{background:var(--blue);border-color:var(--blue);color:#fff}
+.grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:12px;align-items:stretch}
+.colL{display:flex;flex-direction:column;gap:12px;min-width:0}
+.ph{display:flex;align-items:center;gap:10px;padding:16px 20px 10px}
+.ph .ic{width:16px;height:16px;border:2px solid var(--blue);border-radius:2px;position:relative;margin-right:6px}
+.ph .ic:after{content:'';position:absolute;left:3px;top:3px;width:12px;height:12px;border:2px solid var(--blue);background:#fff;border-radius:1px}
+.ph h3{font-size:16px;font-weight:500;color:var(--txt)}
+.ph h3 em{font-style:normal;color:var(--blue);font-weight:600;margin-left:4px}
+.ph .sp{flex:1}
+.ph .sel{width:150px;font-size:12px}
+.ph .sel.pz{width:210px}
+.desc-i{display:inline-block;width:13px;height:13px;line-height:13px;border-radius:50%;background:#e6effd;color:#1a6cf0;font-size:10px;text-align:center;margin-left:3px;font-style:normal;cursor:help}
+.empty{display:flex;flex-direction:column;align-items:center;justify-content:center;color:var(--txt3);font-size:13px;gap:14px}
+.empty svg{width:150px;height:150px}
+/* 走势图 */
+.chart{position:relative;padding:0 12px 6px}
+.legend{display:flex;flex-wrap:wrap;justify-content:center;gap:6px 18px;padding:0 20px 16px;font-size:12px;color:var(--txt2)}
+.lg{display:inline-flex;align-items:center;gap:6px;cursor:pointer}
+.lg.off{opacity:.35}
+.tip{position:absolute;display:none;background:#fff;border:1px solid var(--line);box-shadow:0 2px 10px rgba(0,0,0,.12);border-radius:4px;padding:8px 10px;font-size:12px;line-height:1.8;pointer-events:none;z-index:5;min-width:210px}
+.tip b{font-weight:600}
+.tip div{display:flex;align-items:center;gap:6px}
+.tip i{width:8px;height:8px;border-radius:50%}
+.tip span{margin-left:auto;padding-left:16px;font-weight:600}
+/* 表格 */
+.tbwrap{margin:6px 20px 20px;border:1px solid var(--line);border-radius:2px}
+table{width:100%;border-collapse:collapse;table-layout:fixed;font-size:13px}
+th{height:52px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;background:#f5f7fa;color:var(--txt);font-weight:600;text-align:left;padding:0 8px;border-bottom:1px solid var(--line);position:relative}
+th+th:before{content:'';position:absolute;left:0;top:16px;height:20px;border-left:1px solid #dcdfe6}
+td{height:50px;padding:0 8px;border-bottom:1px solid #ebeef5;color:var(--txt2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+td.num,th.num{text-align:right}
+td.c,th.c{text-align:center}
+.link{color:var(--blue);cursor:pointer}
+.opb{height:26px;padding:0 10px;border:1px solid #dcdfe6;border-radius:3px;background:#fff;font-size:12px;color:var(--txt2);cursor:pointer}
+.pager{display:flex;justify-content:center;align-items:center;gap:8px;padding:12px 0 16px;font-size:12px;color:var(--txt3)}
+.pager b{display:inline-flex;align-items:center;justify-content:center;min-width:24px;height:24px;border:1px solid #dcdfe6;border-radius:2px;color:var(--txt2);font-weight:400;cursor:pointer;background:#fff}
+.pager b.on{border-color:var(--blue);color:var(--blue)}
+.pager .ar{cursor:pointer;color:var(--txt3);font-size:14px}
+/* 列表统一居中对齐 */
+th,td,td.num,th.num,td.c,th.c{text-align:center}
+/* 报价表：字段多，字号略小 */
+.qtb table{font-size:12px}.qtb th,.qtb td{padding:0 6px}
+/* 产品动态 */
+.dyn{margin:0 20px;height:206px;overflow-y:auto;padding-right:12px}
+.dit{display:flex;align-items:center;padding:12px 16px;border-bottom:1px dashed #dcdfe6}
+.dit .t{font-size:15px;color:var(--blue);margin-bottom:8px;cursor:pointer}
+.dit .m{font-size:13px;color:var(--txt3);display:flex;gap:16px}
+.dit .tag{margin-left:auto;width:70px;height:24px;line-height:24px;text-align:center;border-radius:2px;font-size:12px;color:#fff;background:#fd8a4b;flex-shrink:0}
+.dit .tag.pos{background:#3fbf7f}.dit .tag.neg{background:#f56c6c}
+/* 中标 */
+.bq{display:flex;gap:10px;padding:6px 20px 4px}
+.bq .inp{width:280px}
+.toast{position:absolute;top:16px;left:50%;transform:translateX(-50%);background:#f0f9eb;border:1px solid #e1f3d8;color:#67c23a;padding:9px 18px;border-radius:4px;font-size:13px;display:none;z-index:99}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="main">
+    <!-- 查询条件 -->
+    <div class="card qbar">
+      <label>监控范围</label>
+      <select class="sel" id="scopeSel" style="width:250px"></select>
+      <label style="margin-left:18px">监测时间</label>
+      <select class="sel" id="rangeSel" style="width:140px"><option>近一月</option><option>近三月</option><option>近半年</option><option selected>近一年</option></select>
+      <button class="btn pri" style="margin-left:18px" onclick="doQuery()">查 询</button>
+      <button class="btn" onclick="resetAll()">重 置</button>
+    </div>
+
+    <div class="grid">
+      <div class="colL">
+        <!-- 核心产品价格走势监控 -->
+        <div class="card">
+          <div class="ph"><span class="ic"></span><h3>核心产品价格走势监控<em>近7日</em></h3><span class="sp"></span>
+            <select class="sel pz" id="prodSel" onchange="onProd()"></select>
+            <select class="sel" id="areaSel" onchange="renderPrice()"></select>
+          </div>
+          <div class="chart" id="chart"></div>
+          <div class="legend" id="legend"></div>
+        </div>
+        <!-- 产品动态监控 -->
+        <div class="card">
+          <div class="ph"><span class="ic"></span><h3>产品动态监控</h3></div>
+          <div class="dyn" id="dyn"></div>
+          <div class="pager" id="dynPg"></div>
+        </div>
+      </div>
+
+      <!-- 产品最新报价 -->
+      <div class="card" style="display:flex;flex-direction:column">
+        <div class="ph"><span class="ic"></span><h3>产品最新报价</h3><span class="sp"></span>
+          <select class="sel pz" id="qProdSel" onchange="qPage=1;renderQuote()"></select>
+        </div>
+        <div class="tbwrap qtb" style="flex:1;margin-bottom:0" id="quote"></div>
+        <div class="pager" id="qPg"></div>
+      </div>
+    </div>
+
+    <!-- 竞对中标监测 -->
+    <div class="card" style="margin-top:12px">
+      <div class="ph"><span class="ic"></span><h3>竞对中标监测</h3></div>
+      <div class="bq"><input class="inp" id="bidKw" placeholder="请输入项目名称、招标单位等"><button class="btn pri" onclick="renderBid()">查 询</button><button class="btn" onclick="document.getElementById('bidKw').value='';renderBid()">重 置</button></div>
+      <div class="tbwrap" id="bid"></div>
+    </div>
+  </div>
+<div class="toast" id="toast"></div>
+</div>
+
+<script>
+/* ================= 竞对企业（监控范围下拉来自「竞对企业维护」） ================= */
+const ENTS=['珠海金发生物材料有限公司','浙江华峰环保材料有限公司','山东睿安生物科技有限公司','新疆曙光绿华生物科技有限公司',
+  '美瑞新材料股份有限公司','浙江海正生物材料股份有限公司','安徽丰原生物技术股份有限公司','安徽雪郎生物科技股份有限公司'];
+const DEF_ENT='安徽丰原生物技术股份有限公司';   // 监控范围为单选，默认第一家有价格数据的竞对
+
+/* ================= 企业价（字段对应价格数据：品种名称/企业名称/标准名称/规格名称/地区名称/度量名称/中文描述/数据时间/指标当前值） ================= */
+/* 品种名称（表中原值） */
+var PROD_NAME={PBS:'聚丁二酸丁二醇酯',PBAT:'聚己二酸/对苯二甲酸丁二醇酯',PLA:'聚乳酸'};
+/* 中文描述（表中原值，按规格名称） */
+const DESC={'REVODE 190':'送到价；2025-07-25前为出厂价','REVODE 110':'送到价；2025-07-25前为出厂价','REVODE 201':'送到价；2025-07-25前为出厂价','A200':'出厂价','E810':'出厂价'};
+const PRODUCTS=['PBS','PBAT','PLA'];
+/* [产品, 企业名称, 企业简称, 用途(标准名称), 牌号(规格名称), 地区, 价格类型, 最新价(2026-09-30)] */
+const IDX=[
+ ['PBAT','新疆曙光绿华生物科技有限公司','曙光绿华','','','西北地区','出厂价',11500],
+ ['PBAT','山东睿安生物科技有限公司','山东睿安','薄膜料','BT1218','华北地区','出厂价',12000],
+ ['PBAT','珠海金发生物材料有限公司','珠海金发生物','薄膜料','A400','华南地区','出厂价',12000],
+ ['PBAT','浙江华峰环保材料有限公司','浙江华峰','薄膜料','HF101','华东地区','出厂价',12000],
+ ['PLA','浙江海正生物材料股份有限公司','浙江海正生物','透明','REVODE 190','华东地区','送到价',19500],
+ ['PLA','浙江海正生物材料股份有限公司','浙江海正生物','透明','REVODE 110','华东地区','送到价',19000],
+ ['PLA','浙江海正生物材料股份有限公司','浙江海正生物','薄膜料','REVODE 201','华东地区','送到价',18500],
+ ['PLA','安徽丰原生物技术股份有限公司','安徽丰原','吹膜级/挤出级','FY804','华中地区','出厂价',18500],
+ ['PLA','安徽丰原生物技术股份有限公司','安徽丰原','吸塑级/挤出级/纺丝级','FY801','华中地区','出厂价',19500],
+ ['PLA','安徽丰原生物技术股份有限公司','安徽丰原','挤出级/吸塑级','FY602','华中地区','出厂价',19000],
+ ['PLA','安徽丰原生物技术股份有限公司','安徽丰原','挤出级/吸塑级','FY601','华中地区','出厂价',19500],
+ ['PLA','安徽丰原生物技术股份有限公司','安徽丰原','注塑','FY201','华中地区','出厂价',19500],
+ ['PLA','安徽丰原生物技术股份有限公司','安徽丰原','吹膜级/挤出级','FY802','华中地区','出厂价',19000],
+ ['PBS','珠海金发生物材料有限公司','珠海金发生物','挤出级/注塑级/吸塑级','A200','华南地区','出厂价',17500],
+ ['PBS','美瑞新材料股份有限公司','美瑞新材','挤出级/注塑级/吸塑级','E810','华北地区','出厂价',17500],
+];
+const DAYS=['2026-09-22','2026-09-23','2026-09-24','2026-09-25','2026-09-28','2026-09-29','2026-09-30'];
+/* 近 7 个交易日（演示：企业出厂价多为阶梯式调价，最后一日为实际最新价） */
+const STEP=[[0,0,0,0,0,0],[0,200,200,200,0,0],[0,0,0,0,0,0],[300,300,0,0,0,0],[0,0,0,0,0,0],[0,0,0,500,500,0],[0,0,0,0,0,0],
+ [500,500,500,0,0,0],[0,0,0,0,0,0],[-300,-300,0,0,0,0],[0,0,0,0,0,0],[200,200,200,200,0,0],[0,0,0,0,0,0],[-500,-500,-500,0,0,0],[0,0,0,0,0,0]];
+const SERIES=IDX.map((r,i)=>{const [prod,ent,short,use,sku,area,ptype,last]=r;
+  return {prod,ent,short,use,sku,area,ptype,last,vals:[...STEP[i].map(d=>last+d),last],label:sku||PROD_NAME[prod]}});   // 单个企业内一条线 = 一个牌号
+const COLORS=['#2f7cf6','#f6b03e','#36c3e0','#4bc28d','#8a6cf0','#f26d6d','#3a5fc8','#e58a3c','#a35bd6','#20a39e'];
+
+let scope=DEF_ENT;
+const inScope=s=>s.ent===scope;   // 企业价：只展示所选竞对企业自己的报价
+function toast(m){const t=document.getElementById('toast');t.textContent=m;t.style.display='block';clearTimeout(t._t);t._t=setTimeout(()=>t.style.display='none',1600)}
+const EMPTY=`<div class="empty"><svg viewBox="0 0 150 150"><ellipse cx="75" cy="138" rx="58" ry="7" fill="#f0f2f5"/><path d="M28 60l47-22 47 22v62l-47 14-47-14z" fill="#f5f6f8"/><path d="M75 82v54l47-14V60z" fill="#e4e7ec"/><path d="M28 60l47 22 47-22-47-22z" fill="#eceef2"/><path d="M28 60l-14 22 47 22 14-22zM122 60l14 22-47 22-14-22z" fill="#f7f8fa" stroke="#e4e7ec"/></svg>暂无数据</div>`;
+
+/* ================= 查询条件 ================= */
+function initSel(){
+  document.getElementById('scopeSel').innerHTML=ENTS.map(e=>`<option${e===DEF_ENT?' selected':''}>${e}</option>`).join('');
+  syncProd();
+}
+/* 产品下拉：只列所选企业有报价的产品；企业无报价时保留全部产品，图表显示暂无数据 */
+function syncProd(){
+  const ps=PRODUCTS.filter(p=>SERIES.some(s=>s.prod===p&&inScope(s)));const opts=ps.length?ps:PRODUCTS;
+  for(const id of ['prodSel','qProdSel']){const el=document.getElementById(id),cur=el.value;
+    el.innerHTML=opts.map(p=>`<option value="${p}">${PROD_NAME[p]}</option>`).join('');if(opts.includes(cur))el.value=cur;}
+  syncArea();
+}
+function syncArea(){
+  const p=document.getElementById('prodSel').value,el=document.getElementById('areaSel'),cur=el.value;
+  const areas=[...new Set(SERIES.filter(s=>s.prod===p&&inScope(s)).map(s=>s.area))];
+  el.innerHTML=['全部地区',...areas].map(a=>`<option>${a}</option>`).join('');
+  if(areas.includes(cur))el.value=cur;
+}
+function onProd(){hidden={};syncArea();renderPrice()}
+function doQuery(){scope=document.getElementById('scopeSel').value;hidden={};syncProd();qPage=1;dynPage=1;renderAll()}
+function resetAll(){document.getElementById('scopeSel').value=DEF_ENT;document.getElementById('rangeSel').value='近一年';
+  document.getElementById('areaSel').value='全部地区';doQuery()}
+
+/* ================= 核心产品价格走势监控（近7日） ================= */
+let hidden={};
+function renderPrice(){
+  const p=document.getElementById('prodSel').value,a=document.getElementById('areaSel').value;
+  const list=SERIES.filter(s=>s.prod===p&&inScope(s)&&(a==='全部地区'||s.area===a)).map((s,i)=>({...s,color:COLORS[i%COLORS.length],k:s.ent+s.sku}));
+  const box=document.getElementById('chart'),lg=document.getElementById('legend');
+  if(!list.length){box.innerHTML=`<div style="height:240px">${EMPTY}</div>`;lg.innerHTML='';return}
+  const shown=list.filter(s=>!hidden[s.k]);
+  const W=770,H=240,pl=52,pr=20,pt=24,pb=28,pw=W-pl-pr,ph=H-pt-pb;
+  const all=(shown.length?shown:list).flatMap(s=>s.vals);
+  let lo=Math.min(...all),hi=Math.max(...all);
+  const step=[100,200,250,500,1000].find(st=>(hi-lo+400)/st<=5)||1000;
+  lo=Math.floor((lo-200)/step)*step;hi=Math.ceil((hi+200)/step)*step;
+  const X=i=>pl+pw*i/(DAYS.length-1),Y=v=>pt+ph-ph*(v-lo)/(hi-lo);
+  let g='';
+  for(let v=lo;v<=hi;v+=step){const y=Y(v);g+=`<line x1="${pl}" x2="${W-pr}" y1="${y}" y2="${y}" stroke="#eef0f4"/><text x="${pl-8}" y="${y+4}" font-size="11" fill="#909399" text-anchor="end">${v}</text>`}
+  g+=`<line x1="${pl}" x2="${pl}" y1="${pt}" y2="${pt+ph}" stroke="#dcdfe6"/><line x1="${pl}" x2="${W-pr}" y1="${pt+ph}" y2="${pt+ph}" stroke="#dcdfe6"/>`;
+  DAYS.forEach((d,i)=>g+=`<text x="${X(i)}" y="${H-8}" font-size="11" fill="#909399" text-anchor="middle">${+d.slice(5,7)}-${+d.slice(8)}</text>`);
+  g+=`<text x="${pl-8}" y="12" font-size="11" fill="#909399" text-anchor="end">元/吨</text>`;
+  shown.forEach(s=>{g+=`<polyline fill="none" stroke="${s.color}" stroke-width="1.6" points="${s.vals.map((v,i)=>X(i)+','+Y(v)).join(' ')}"/>`;
+    s.vals.forEach((v,i)=>g+=`<circle cx="${X(i)}" cy="${Y(v)}" r="2.6" fill="#fff" stroke="${s.color}" stroke-width="1.4"/>`)});
+  g+=`<line id="hv" y1="${pt}" y2="${pt+ph}" stroke="#c0c4cc" style="display:none"/><rect x="${pl}" y="${pt}" width="${pw}" height="${ph}" fill="transparent" id="hz"/>`;
+  box.innerHTML=`<svg viewBox="0 0 ${W} ${H}" width="100%" style="display:block">${g}</svg><div class="tip" id="tip"></div>`;
+  const svg=box.querySelector('svg'),tip=document.getElementById('tip'),hv=document.getElementById('hv');
+  svg.onmousemove=e=>{const r=svg.getBoundingClientRect(),x=(e.clientX-r.left)*W/r.width,i=Math.round((x-pl)/pw*(DAYS.length-1));
+    if(i<0||i>=DAYS.length||!shown.length){tip.style.display='none';hv.style.display='none';return}
+    hv.setAttribute('x1',X(i));hv.setAttribute('x2',X(i));hv.style.display='';
+    tip.innerHTML=`<b>${DAYS[i]}</b>`+shown.map(s=>`<div><i style="background:${s.color}"></i>${s.label}<span>${s.vals[i]}</span></div>`).join('');
+    tip.style.display='block';const px=X(i)/W*r.width;tip.style.left=(px>r.width*.6?px-tip.offsetWidth:px+28)+'px';tip.style.top='10px'};
+  svg.onmouseleave=()=>{tip.style.display='none';hv.style.display='none'};
+  lg.innerHTML=list.map(s=>`<span class="lg${hidden[s.k]?' off':''}" title="${s.ent}｜${s.use||'—'}｜${s.area}｜出厂价格${DESC[s.sku]?'（'+DESC[s.sku]+'）':''}" onclick="hidden['${s.k}']=!hidden['${s.k}'];renderPrice()"><svg width="26" height="10"><line x1="0" y1="5" x2="26" y2="5" stroke="${s.color}" stroke-width="2"/><circle cx="13" cy="5" r="3.5" fill="#fff" stroke="${s.color}" stroke-width="2"/></svg>${s.label}</span>`).join('');
+}
+
+/* ================= 产品最新报价 ================= */
+let qPage=1;const QSIZE=9;
+function renderQuote(){
+  const p=document.getElementById('qProdSel').value;
+  const rows=SERIES.filter(s=>s.prod===p&&inScope(s)).sort((a,b)=>b.last-a.last);
+  const tot=Math.max(1,Math.ceil(rows.length/QSIZE));if(qPage>tot)qPage=tot;
+  const page=rows.slice((qPage-1)*QSIZE,qPage*QSIZE);
+  document.getElementById('quote').innerHTML=`<table>
+    <colgroup><col style="width:44px"><col><col style="width:104px"><col style="width:126px"><col style="width:96px"><col style="width:80px"><col style="width:120px"><col style="width:92px"></colgroup>
+    <thead><tr><th class="c">序号</th><th>品种名称</th><th>规格名称</th><th>标准名称</th><th>企业简称</th><th>地区名称</th><th>指标当前值(元/吨)</th><th>数据时间</th></tr></thead>
+    <tbody>${page.map((s,i)=>`<tr><td class="c">${(qPage-1)*QSIZE+i+1}</td><td title="${PROD_NAME[s.prod]}">${PROD_NAME[s.prod]}</td><td title="${s.sku}">${s.sku||'—'}</td><td title="${s.use}">${s.use||'—'}</td>
+      <td title="${s.ent}">${s.short}</td><td>${s.area}</td><td>${s.last}${DESC[s.sku]&&DESC[s.sku]!=='出厂价'?`<i class="desc-i" title="中文描述：${DESC[s.sku]}">i</i>`:''}</td><td>${DAYS[DAYS.length-1]}</td></tr>`).join('')}</tbody></table>`
+    +(rows.length?'':`<div style="height:440px">${EMPTY}</div>`);
+  pager('qPg',qPage,tot,n=>{qPage=n;renderQuote()},rows.length);
+}
+
+/* ================= 产品动态监控 ================= */
+const DYN=[
+ {ent:'安徽丰原生物技术股份有限公司',t:'丰原集团聚乳酸新材料产业园二期项目开工',d:'2026-09-12',src:'安徽经济网',tag:'正面'},
+ {ent:'浙江海正生物材料股份有限公司',t:'海正生物：聚乳酸产能扩建项目通过环评审批',d:'2026-08-27',src:'台州日报',tag:'中性'},
+ {ent:'珠海金发生物材料有限公司',t:'金发科技生物降解材料业务半年报：销量同比增长',d:'2026-08-20',src:'证券时报',tag:'正面'},
+ {ent:'浙江华峰环保材料有限公司',t:'华峰集团可降解材料项目建设情况通报',d:'2026-07-15',src:'温州网',tag:'中性'},
+ {ent:'美瑞新材料股份有限公司',t:'美瑞新材发布 PBS 改性材料应用进展',d:'2026-06-30',src:'烟台日报',tag:'中性'},
+ {ent:'山东睿安生物科技有限公司',t:'睿安生物 PBAT 装置检修结束恢复生产',d:'2026-06-08',src:'大众网',tag:'中性'},
+ {ent:'安徽雪郎生物科技股份有限公司',t:'蚌埠：选准赛道 智造强市开新局',d:'2026-02-26',src:'安徽经济网',tag:'中性'},
+ {ent:'安徽雪郎生物科技股份有限公司',t:'中安观察｜“蚌埠新材料”如何打造千亿产业集群？',d:'2026-01-10',src:'中安在线',tag:'中性'},
+];
+let dynPage=1;const DSIZE=3;
+function renderDyn(){
+  const rows=DYN.filter(d=>d.ent===scope);const tot=Math.max(1,Math.ceil(rows.length/DSIZE));if(dynPage>tot)dynPage=tot;
+  document.getElementById('dyn').innerHTML=rows.slice((dynPage-1)*DSIZE,dynPage*DSIZE).map(d=>`<div class="dit"><div><div class="t">${d.t}</div>
+    <div class="m"><span>📅 ${d.d}</span><span>📄 ${d.src}</span></div></div><span class="tag ${d.tag==='正面'?'pos':d.tag==='负面'?'neg':''}">${d.tag}</span></div>`).join('')||`<div style="height:200px">${EMPTY}</div>`;
+  pager('dynPg',dynPage,tot,n=>{dynPage=n;renderDyn()});
+}
+
+/* ================= 竞对中标监测 ================= */
+const BID=[
+ {d:'2026-08-25',buyer:'中国邮政集团有限公司',proj:'2026年度可降解包装袋集中采购项目',ent:'珠海金发生物材料有限公司',amt:'4,500万'},
+ {d:'2026-07-29',buyer:'浙江省供销集团',proj:'可降解餐具年度集采',ent:'浙江海正生物材料股份有限公司',amt:'1,120万'},
+ {d:'2026-06-17',buyer:'安徽省农业农村厅',proj:'2026年全生物降解地膜示范采购',ent:'安徽丰原生物技术股份有限公司',amt:'760万'},
+];
+function renderBid(){
+  const kw=document.getElementById('bidKw').value.trim();
+  const rows=BID.filter(b=>b.ent===scope&&(!kw||b.proj.includes(kw)||b.buyer.includes(kw)));
+  document.getElementById('bid').innerHTML=`<table><colgroup><col style="width:80px"><col style="width:130px"><col style="width:340px"><col><col style="width:340px"><col style="width:110px"><col style="width:120px"></colgroup>
+    <thead><tr><th class="c">序号</th><th>时间</th><th>招标单位</th><th>项目名称</th><th>中标企业</th><th>中标金额</th><th class="c">操作</th></tr></thead>
+    <tbody>${rows.map((b,i)=>`<tr><td class="c">${i+1}</td><td>${b.d}</td><td>${b.buyer}</td><td>${b.proj}</td><td>${b.ent}</td><td>${b.amt}</td><td class="c"><button class="opb" onclick="toast('进入中标详情（原型）')">查看详情</button></td></tr>`).join('')}</tbody></table>`
+    +(rows.length?'':`<div style="height:220px">${EMPTY}</div>`);
+}
+
+/* ================= 分页 ================= */
+const PG={};
+function pager(id,cur,tot,cb){PG[id]=cb;
+  document.getElementById(id).innerHTML=`<span class="ar" onclick="${cur>1?`PG['${id}'](${cur-1})`:''}">‹</span>`+
+    Array.from({length:tot},(_,i)=>`<b class="${i+1===cur?'on':''}" onclick="PG['${id}'](${i+1})">${i+1}</b>`).join('')+
+    `<span class="ar" onclick="${cur<tot?`PG['${id}'](${cur+1})`:''}">›</span>`}
+
+function renderAll(){renderPrice();renderQuote();renderDyn();renderBid()}
+initSel();renderAll();
+</script>
+</body>
+</html>
