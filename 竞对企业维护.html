@@ -25,7 +25,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'PingFang SC','Microsoft YaHei
 .roview{font-size:12px;color:var(--amber);background:var(--amber-bg);border-radius:99px;padding:3px 10px}
 
 .tools{flex-shrink:0;display:flex;align-items:center;gap:10px;padding:14px 22px 10px;flex-wrap:wrap}
-.search{display:flex;align-items:center;gap:8px;height:36px;padding:0 12px;border:1px solid var(--border2);border-radius:7px;background:var(--bg);width:300px}
+.search{display:flex;align-items:center;gap:8px;height:36px;padding:0 12px;border:1px solid var(--border2);border-radius:7px;background:var(--bg);width:400px}
 .search input{border:none;outline:none;flex:1;font-size:13px;font-family:inherit;background:transparent;color:var(--text)}
 .fsel{height:36px;padding:0 10px;border:1px solid var(--border2);border-radius:7px;background:var(--bg);font-family:inherit;font-size:12.5px;color:var(--text)}
 .btn{display:inline-flex;align-items:center;gap:6px;padding:8px 14px;font-size:12.5px;border:1px solid var(--border2);border-radius:7px;background:var(--bg);color:var(--text);cursor:pointer;font-family:inherit;font-weight:500;white-space:nowrap}
@@ -92,7 +92,31 @@ table.t tr:last-child td{border-bottom:none}
 .off-row td{color:var(--text3)}
 .off-row .ename{color:var(--text3);font-weight:400}
 .t .prod{width:440px}
-.prod-in{width:440px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.note-in{width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--text2)}
+.prod-in{width:300px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.t .prod{width:360px}
+.chip{display:inline-flex;align-items:center;gap:2px;background:var(--blue-bg);color:var(--blue);border-radius:5px;padding:2px 4px 2px 8px;font-size:12px;margin:2px 4px 2px 0;white-space:nowrap}
+.chip b{cursor:pointer;font-weight:400;padding:0 4px;opacity:.7}.chip b:hover{opacity:1}
+.chip.ex{background:var(--red-bg);color:var(--red)}
+.chip.ro{padding-right:8px}
+.none{font-size:12px;color:var(--amber);background:var(--amber-bg);border-radius:99px;padding:2px 9px}
+.more{font-size:12px;color:var(--text3)}
+.self{flex-shrink:0;margin:0 22px 12px;background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:12px 18px;display:flex;align-items:center;gap:10px;font-size:12.5px}
+.self .lb{color:var(--text3)}
+.kwbox{border:1px solid var(--border2);border-radius:7px;padding:6px 8px;min-height:38px;display:flex;flex-wrap:wrap;align-items:center;margin-bottom:8px}
+.kwrow{display:flex;gap:8px;align-items:center}
+.kwrow input{flex:1;padding:8px 10px;font-size:13px;border:1px solid var(--border2);border-radius:7px;outline:none;font-family:inherit}
+.hint{font-size:11.5px;color:var(--text3);margin-top:6px;line-height:1.6}
+table.tq{width:100%;border-collapse:collapse;font-size:12.5px}
+table.tq th,table.tq td{padding:9px 12px;border-bottom:1px solid var(--border);text-align:left}
+table.tq th{background:var(--bg2);color:var(--text2);font-weight:600;font-size:11.5px}
+.pill.xx{background:var(--red-bg);color:var(--red)}
+.pill.dx{background:var(--blue-bg);color:var(--blue)}
+.pill.dm{background:var(--teal-bg);color:var(--teal)}
+.enw{display:inline-block;cursor:default}
+.entip{position:fixed;z-index:80;max-width:420px;background:var(--bg);border:1px solid var(--border2);border-radius:8px;box-shadow:0 6px 20px rgba(20,25,35,.15);padding:10px 12px;font-size:12px;display:none;white-space:normal}
+.entip .tl{color:var(--text3);margin:2px 0 4px}
+.entip .tl:not(:first-child){margin-top:8px}
 </style>
 </head>
 <body>
@@ -104,15 +128,17 @@ table.t tr:last-child td{border-bottom:none}
   </div>
 
   <div class="tools">
-    <div class="search"><span style="color:var(--text3)">🔍</span><input id="q" placeholder="搜索企业名称 / 信用代码 / 主营产品…" oninput="resetPage()"></div>
+    <div class="search"><span style="color:var(--text3)">🔍</span><input id="q" placeholder="搜索企业名称 / 信用代码 / 主营产品 / 海关英文名称…" oninput="resetPage()"></div>
+    <select class="fsel" id="fen" onchange="resetPage()"><option value="">海关英文名称：全部</option><option value="y">已维护</option><option value="n">未维护</option></select>
     <span class="sp"></span>
     <span id="adminbtns"></span>
   </div>
 
+  <div class="self" id="selfbox"></div>
   <div class="tblwrap">
     <table class="t">
       <thead><tr>
-        <th>企业名称</th><th>统一社会信用代码</th><th class="prod">主营产品</th><th>加入时间</th><th id="opth">操作</th>
+        <th>企业名称</th><th>统一社会信用代码</th><th class="prod">主营产品</th><th>海关英文名称</th><th>备注</th><th>加入时间</th><th id="opth">操作</th>
       </tr></thead>
       <tbody id="tbody"></tbody>
     </table>
@@ -130,13 +156,28 @@ table.t tr:last-child td{border-bottom:none}
   </div></div>
 
   <!-- edit modal -->
-  <div class="ov" id="editov"><div class="modal" style="width:460px">
-    <div class="mhd"><h3>编辑竞对企业</h3><div class="mx" onclick="closeEdit()">✕</div></div>
+  <div class="ov" id="editov"><div class="modal" style="width:620px">
+    <div class="mhd"><h3>编辑企业</h3><div class="mx" onclick="closeEdit()">✕</div></div>
     <div class="mbody">
       <div class="fr"><label>企业名称</label><input id="ename" disabled></div>
+      <div class="fr"><label>海关英文名称</label>
+        <div class="kwbox" id="enbox"></div>
+        <div class="kwrow"><input id="enin" placeholder="输入英文名称或关键词，如 HUAFON，回车添加" onkeydown="if(event.key==='Enter')addKw('en')"><button class="btn" onclick="tryKw()">试查</button><button class="btn pri" onclick="addKw('en')">添加</button></div>
+        <div class="hint">海外市场分析中，海关数据里的企业名称出现任一关键词即视为该企业。按完整单词匹配（与国贸通接口一致），不区分大小写、忽略标点：KINGFA 能匹配 ZHUHAI KINGFA BIOMATERIAL CO., LTD.，LOGISTIC 匹配不到 LOGISTICS。关键词请按海关数据中的实际名称填写，填完用“试查”确认。</div>
+      </div>
+      <div class="fr"><label>排除关键词（选填）</label>
+        <div class="kwbox" id="exbox"></div>
+        <div class="kwrow"><input id="exin" placeholder="名称中出现这些词的不算该企业，如 COFCO" onkeydown="if(event.key==='Enter')addKw('ex')"><button class="btn" onclick="addKw('ex')">添加</button></div>
+      </div>
       <div class="fr"><label>备注</label><textarea id="enote" rows="2" placeholder="选填"></textarea></div>
     </div>
     <div class="mft"><span class="sp"></span><button class="btn" onclick="closeEdit()">取消</button><button class="btn pri" onclick="saveEdit()">保存</button></div>
+  </div></div>
+
+  <div class="ov" id="tryov"><div class="modal" style="width:720px">
+    <div class="mhd"><h3 id="trytt"></h3><div class="mx" onclick="closeTry()">✕</div></div>
+    <div class="mbody" id="trybody" style="max-height:520px"></div>
+    <div class="mft"><span class="sp"></span><button class="btn" onclick="closeTry()">关闭</button><button class="btn pri" id="tryadd" onclick="closeTry();addKw('en')">添加该关键词</button></div>
   </div></div>
 
   <div class="ov" id="delov"><div class="modal" style="width:420px">
@@ -191,28 +232,32 @@ const MASTER=[
  {id:'sk',name:'SKC（韩国）',code:'—（境外）',track:'PLA、PBAT、生物降解薄膜、光学膜、聚酯薄膜、化工材料、半导体材料、二次电池铜箔、可降解购物袋料、功能性薄膜'},
 ];
 // 竞对库：初始收录
+// 海关英文名称：海关数据中企业名称出现任一关键词（按完整单词匹配）即视为该企业；ex 为排除关键词
+const SELF={name:'新疆蓝山屯河科技股份有限公司',en:['TUNHE','BLUE RIDGE'],ex:['COFCO'],updated:'2026-11-03'};
+// 海关数据中的中国企业名称（2026-01 ~ 2026-10 海关数据，用于试查；含 PBAT 记录及 2026-11-04 PLA 接口实测返回的名称）
+const CNN=[["EX", "Hainan Konlian New Material Co Ltd", 1], ["EX", "SEIREN SHANGHAI CO LTD", 2], ["EX", "SHANXI RUITUOFENG NEW MATERIALS CO LTD", 21], ["EX", "HENAN LONGDU TORISE BIOMATERIALS CO LTD", 1], ["EX", "ZHEJIANG GRETRAK NEW MATERIAL TECHNOLOGY CO LTD", 5], ["EX", "KEMO INTERNATIONAL TRADE PTE LTD", 5], ["EX", "XINJIANG BLUE RIDGE TUNHE POLYESTER CO LTD", 8], ["EX", "SHANGHAI CARTHANE CO LTD", 2], ["EX", "Dongguan Xinhai Environment Friendly Materials Co Ltd", 1], ["EX", "YIWU SANYING IMPORT & EXPORT CO LT", 2], ["EX", "HUBEI YIHUA DEGRADABLE NEW MATERIALS CO., LTD", 2], ["EX", "ZHEJIANG HUAFON NEW MATERIALS CO., LTD.", 3], ["EX", "ZHUHAI KINGFA BIOMATERIAL CO.,LTD", 1], ["EX", "SHANDONG DAWN INTERNATIONAL TRADING CO.,LTD.", 2], ["EX", "SHANXI RUITUOFENG NEW MATERIALS CO.,LTD", 5], ["EX", "YANTAI UTC INTERNATIONAL LOGISTICS CO.,LTD", 1], ["EX", "Shanxi Ruituofeng New Materials Co Ltd", 2], ["EX", "C Air, Inc.", 2], ["EX", "DONG GUAN XINGMAI TECHNOLOGY CO.,LT", 1], ["EX", "XINJIANG BLUE RIDGE TUNHE POLYESTER CO., LTD", 5], ["EX", "ZHEJIANG HUABO SUPPLY CHAIN MANAGEME", 2], ["EX", "JINHUI ZHAOLONG HIGH TECHNOLOGY CO LTD", 7], ["EX", "HUAFON GROUP CO., LTD.", 1], ["EX", "SHANGHAI EVERSHARP INTERNATIONAL TRADING CO LTD", 1], ["EX", "HUAFON GROUP CO., LTD", 12], ["EX", "TRANS UNION INTL LOGISTICS CO LTD", 2], ["EX", "SHENZHEN FULING IMPORT&EXPORT CO LTD", 3], ["EX", "SHANGHAI YUNNING CHEMICAL TECHNOLOG", 1], ["EX", "Jf Polymers (Shanghai) Co Ltd", 1], ["EX", "WUXI JISIMAN NEW MATERIAL CO. LTD", 1], ["EX", "COACE CHEMICAL COMPANY LIMITED", 1], ["EX", "HENAN TECHUANG BIOTECHNOLOGY CO.,LTD", 3], ["EX", "SHANGHAI CARTHANE CO. LTD", 1], ["EX", "ZEES CHEMICAL CO., LTD", 1], ["EX", "SHANGHAI CARTHANE", 1], ["EX", "ZUHAI KINGFA BIOMATERIAL CO LTD", 1], ["EX", "SHANDONG RUIAN NEW MATERIAL BIOTECHNOLOGY CO LTD", 1], ["EX", "HUAFON GROUP CO LTD", 9], ["EX", "Xinjiang Blue Ridge Tunhe Polyester", 1], ["EX", "Shenzhen Lucky Logistics Ltd", 1], ["EX", "ZHUHAI KINGFA BIOMATERIAL CO LTD", 2], ["EX", "KINPOLY ADVANCED MATERIALS CO LTD", 2], ["EX", "SUZHOU PUHUI ENVIRONMENTAL PROTECTION CO LTD", 1], ["EX", "KUNMING LIQIAO QINGJIE TRADING CO", 1], ["EX", "HAINAN KONLIAN NEW MATERIAL CO LTD", 1], ["EX", "ZHEJIANG GRETRAK NEW MATERIAL TECHN", 2], ["EX", "Jinhui Zhaolong High Technology Co Ltd", 1], ["EX", "CHANGYA NEWMATERIAL TECHNOLOGY CO., LTD", 1], ["EX", "SHANDONG RUIAN BIOTECHNOLOGY CO.,LTD", 1], ["EX", "NINGBO TOP ICON INTERNATIONAL LOGIST", 2], ["EX", "ZHEJIANG GRETRAK NEW MATERIAL", 2], ["EX", "SHANDONG DAWN POLYMER CO., LTD", 1], ["EX", "HONG KONG RIBANG CHEMICAL LIMITED", 2], ["EX", "SHANXI RUITUOFENG NEW MATERIALS CO", 1], ["EX", "Natco Shanghai Co Ltd", 1], ["EX", "ZHUHAI KINGFA BIOMATERIAL CO., LTD.", 2], ["EX", "KINPOLY ADVANCED MATERIALS CO., LTD", 2], ["EX", "HANGZHOU ZINDE SUPPLY CHAIN CO LTD", 1], ["EX", "SHANGHAI SPEEDY INTERNATIONAL LOGIST", 2], ["EX", "KEMO", 1], ["EX", "DONGGUAN XINHAI ENVIRONMENT FRIENDLY MATERIALSCO LTD", 1], ["EX", "MYLS SOLUTION B V", 1], ["EX", "HENAN TECHUANG BIOTECHNOLOGY CO LTD", 1], ["EX", "HENAN TECHUANG BIOTECHNOLOGY C", 1], ["EX", "SHANDONG RUIAN BIOTECHNOLOGY CO LTD", 1], ["EX", "ZHEJIANG HUAFON NEW MATERIALS CO LTD", 1], ["IM", "DONGGUAN KENRUI NEW MATERIAL TECHOLOGY CO LTD", 2], ["IM", "SHANGHAI SHINSEI ELECTRONICS INDUSTRY CO LTD", 1], ["IM", "NINGBO LANAYA INTERNATIONAL TRADE CO LTD", 1], ["IM", "NINGBO HUADA TRADING CO LTD", 1], ["IM", "DONGGUAN LONGSHENG INTERNATIONAL", 4], ["IM", "DRAGON LOYAL LTD", 1], ["IM", "SHENZHEN CITY REX INTERNATIONAL IMP&EXP CO LTD", 1], ["IM", "MUKU (ZHEJIANG) INTERNATIONAL SUPPLY CHAIN MANAGEMENT CO LTD", 1], ["IM", "OECHSLER PLASTIC PRODUCTS (TAICANG) CO LTD", 1], ["IM", "DONG GUAN PRECIOUS FINE MOLDING LTD", 1], ["IM", "NINGBO QINGYUE IMPORT AND", 1], ["IM", "SHPP (SHANGHAI) CO LTD", 4], ["IM", "XUZHOU SAIWEI NYLON PRODUCTS", 1], ["IM", "FANCHENG INTERNATIONAL", 1], ["IM", "BASF (CHINA) COMPANY LTD", 3], ["IM", "DSV AIR & SEA CO LTD", 1], ["IM", "NTIC (SHANGHAI) CO., LTD.", 1], ["IM", "NICER GUANGZHOU CHEMICAL CO LTD", 2], ["IM", "POLYSTAR (SHANGHAI) TRADING CO LTD", 1], ["IM", "C H ROBINSON FREIGHT SERVICES (CHINA) LTD GUANGZHOU BRANCH", 8], ["IM", "EVONIK SPECIALTY CHEMICALS (SHANGHAI) CO LTD", 3], ["IM", "C.H. ROBINSON FREIGHT SERVICES (CHINA) LTD. GUANGZHOU BRANCH", 7], ["IM", "C.H. ROBINSON FREIGHT SERVICES (CHINA) LTD.", 6], ["IM", "STOLT NIELSEN TRANSPORTATION LTD", 2], ["IM", "GROUP FORTUNE TRADING LIMITED", 1], ["IM", "NINGBO CHEN WEI SUPPLY CHAIN MANAGEMENT COMPANY LIMITED", 3], ["IM", "LUXSHARE PRECISION LIMITED", 3], ["IM", "DONGGUAN HUIYUAN SUPPLY CHAIN MANAGEMENT CO., LTD", 1], ["IM", "ETERNAL INTERNATIONAL TRADE CO., LIMITED", 2], ["IM", "FENG TAY ENTERPRISES CO LTD", 2], ["IM", "ETERNAL INTERNATIONAL TRADE CO LTD", 1], ["IM", "LUXSHARE PRECISION LTD", 1], ["IM", "FOSHAN HONGYUAN TRADING CO LTD", 2], ["EX", "GUANGDONG INSLOGIC CO.,LTD", 975], ["EX", "SHENZHEN ESUN INDUSTRIAL CO., LTD", 210], ["EX", "ZHEJIANG HISUN BIOMATERIALS CO", 11], ["EX", "SHENZHEN RUI BEITE TRADING CO.,LTD.", 58], ["EX", "HUIFENG SUPPLY CHAIN MANAGEMENT(HANGZHOU)CO LTD", 18], ["EX", "GRAND INTERCONTINENTAL (ASIA) GROUP LIMITED", 7], ["EX", "GUANGZHOU THUMBROTHER ADVANCED MATE", 5], ["EX", "WANHUA CHEMICAL (SINGAPORE) PTE LT", 3], ["EX", "WANHUA CHEMICAL (SINGAPORE) :PTE LTD 50 RAFFLES PLACE #33 06 SIN", 2], ["EX", "ANHUI BBCA BIOCHEMICAL & FUTERRO PLA CO LTD", 16], ["EX", "FUJIAN MAX TRADING CO LTD", 1], ["EX", "JINNENG CHEMICAL (QINGDAO) CO LTD", 5], ["EX", "UNION CLASSIC TRADING LTD", 45], ["EX", "MASHALA TRADING CO LTD", 14], ["EX", "JIANGSU TONGKUN HENGYANG CHEMICAL FIBER CO LTD", 1], ["EX", "WANHUA CHEMICAL (SINGAPORE) :PTE LTD 50 RAFFLES PLACE #33 06 SING", 1], ["EX", "KUEHNE NAGEL LTD TST REPRESENTATIVE", 5], ["EX", "WANHUA CHEMICAL (SINGAPORE) PTE LTD 50 RAFFLES PLACE 33 06 SINGAPORE LAND TOWER SINGAPORE 048623 ON BEHALF OF VK GLOBAL HK LTD", 1], ["EX", "ZHUHAI KINGFA BIOMATERIAL", 1], ["EX", "ZHUHAI KINGFA BIOMATERIAL CO", 1], ["EX", "ZHEJIANG HISUN BIOMATERIALS CO LTD", 2], ["EX", "SHENZHEN ESUN INDUSTRIAL CO LTD", 53], ["EX", "ZHEJIANG HISUN BIOMATERIALS CO LT", 1], ["EX", "ZHUHAI KINGFA BIOMATERIAL CO., LTD", 2], ["EX", "GUANGDONG INSLOGIC CO LTD", 131], ["EX", "SHENZHEN RUI BEITE TRADING CO LTD", 2], ["EX", "HUIFENG SUPPLY CHAIN MANAGEMENT (HANGZHOU) CO LTD", 2], ["IM", "MITSUI PLASTICS TRADING (SHANGHAI)", 80], ["IM", "SHENZHEN ESUN INDUSTRIAL CO., LTD", 10], ["IM", "JF POLYMERS (SUZHOU) CO LTD", 50], ["IM", "HEFEI HENGXIN LIFE SCIENCE AND", 7], ["IM", "XIAOGAN ESUN NEW MATERIAL CO LTD", 9], ["IM", "JIUJIANG XUNCHUANG NEW MATERIAL CO", 5], ["IM", "NINGBO KEYSTONE MATERIAL TECHNOLOGY", 4], ["IM", "SINPEX CONNECTION LOGISTICS (SHANGHA", 2], ["IM", "FOSHAN XIAOYI IMPORT&EXPORT", 1]];
 let lib=[
- {id:'jf',tag:'重点竞对',status:'启用',owner:'统一管理员',updated:'2026-06-18',note:''},
+ {id:'jf',en:["KINGFA","KING FA","JINFA","ECOPOND"],ex:["LABI"],tag:'重点竞对',status:'启用',owner:'统一管理员',updated:'2026-07-06',note:'KING FA 为报关时分开写的情况；JINFA 为拼音写法，会匹配到金发拉比（母婴用品），已排除 LABI；ECOPOND 为金发可降解材料品牌名'},
  {id:'hl',tag:'重点竞对',status:'启用',owner:'统一管理员',updated:'2026-06-18',note:''},
- {id:'wh',tag:'重点竞对',status:'启用',owner:'统一管理员',updated:'2026-06-20',note:''},
+ {id:'wh',en:["WANHUA"],ex:[],tag:'重点竞对',status:'启用',owner:'统一管理员',updated:'2026-06-20',note:'海关数据中有 4 种写法，部分带新加坡地址'},
  {id:'tc',tag:'一般竞对',status:'启用',owner:'统一管理员',updated:'2026-06-20',note:''},
  {id:'jd',tag:'一般竞对',status:'启用',owner:'统一管理员',updated:'2026-06-22',note:''},
  {id:'zl',tag:'一般竞对',status:'启用',owner:'统一管理员',updated:'2026-06-22',note:''},
  {id:'dh',tag:'一般竞对',status:'停用',owner:'统一管理员',updated:'2026-05-30',note:'暂不监测'},
- {id:'hf',tag:'一般竞对',status:'启用',owner:'统一管理员',updated:'2026-06-25',note:''},
+ {id:'hf',en:["HUAFON"],ex:[],tag:'一般竞对',status:'启用',owner:'统一管理员',updated:'2026-06-25',note:''},
  {id:'de',tag:'一般竞对',status:'启用',owner:'统一管理员',updated:'2026-06-25',note:''},
  {id:'lj',tag:'重点竞对',status:'启用',owner:'统一管理员',updated:'2026-07-02',note:'PHA新赛道'},
  {id:'kh',tag:'一般竞对',status:'启用',owner:'统一管理员',updated:'2026-07-05',note:''},
- {id:'bs',tag:'重点竞对',status:'启用',owner:'统一管理员',updated:'2026-07-05',note:'外资对标'},
+ {id:'bs',en:["BASF"],ex:[],tag:'重点竞对',status:'启用',owner:'统一管理员',updated:'2026-07-05',note:'外资对标'},
  {id:'ch',tag:'一般竞对',status:'启用',owner:'统一管理员',updated:'2026-06-15',note:''},
  {id:'lh',tag:'一般竞对',status:'启用',owner:'统一管理员',updated:'2026-06-15',note:''},
  {id:'rf',tag:'一般竞对',status:'启用',owner:'统一管理员',updated:'2026-06-16',note:''},
  {id:'zw',tag:'一般竞对',status:'启用',owner:'统一管理员',updated:'2026-06-16',note:''},
  {id:'yt',tag:'一般竞对',status:'启用',owner:'统一管理员',updated:'2026-06-17',note:'PGA方向'},
- {id:'hz',tag:'重点竞对',status:'启用',owner:'统一管理员',updated:'2026-06-28',note:'PLA龙头'},
- {id:'fy',tag:'重点竞对',status:'启用',owner:'统一管理员',updated:'2026-06-28',note:'乳酸-PLA一体化'},
- {id:'gh',tag:'一般竞对',status:'启用',owner:'统一管理员',updated:'2026-06-29',note:''},
- {id:'jl',tag:'重点竞对',status:'启用',owner:'统一管理员',updated:'2026-06-30',note:'PBAT规模'},
+ {id:'hz',en:["HISUN"],ex:[],tag:'重点竞对',status:'启用',owner:'统一管理员',updated:'2026-06-28',note:'PLA龙头'},
+ {id:'fy',en:["BBCA"],ex:[],tag:'重点竞对',status:'启用',owner:'统一管理员',updated:'2026-06-28',note:'乳酸-PLA一体化'},
+ {id:'gh',en:["ESUN"],ex:[],tag:'一般竞对',status:'启用',owner:'统一管理员',updated:'2026-06-29',note:'出口商名称为 SHENZHEN ESUN INDUSTRIAL CO., LTD'},
+ {id:'jl',en:["JINHUI ZHAOLONG"],ex:[],tag:'重点竞对',status:'启用',owner:'统一管理员',updated:'2026-06-30',note:'PBAT规模'},
  {id:'lc',tag:'一般竞对',status:'启用',owner:'统一管理员',updated:'2026-07-01',note:''},
  {id:'jj',tag:'一般竞对',status:'启用',owner:'统一管理员',updated:'2026-07-01',note:'下游制品'},
  {id:'fl',tag:'一般竞对',status:'启用',owner:'统一管理员',updated:'2026-07-02',note:'下游制品'},
@@ -239,7 +284,9 @@ function renderPager(total,pages){
 function render(){
   const q=document.getElementById('q').value.trim();
   let rows=lib.filter(x=>{const m=M(x.id);
-    if(q&&!(m.name.includes(q)||m.code.includes(q)||m.track.includes(q)))return false;
+    const en=x.en||[];const fe=document.getElementById('fen').value;
+    if(fe==='y'&&!en.length||fe==='n'&&en.length)return false;
+    if(q&&!(m.name.includes(q)||m.code.includes(q)||m.track.includes(q)||en.some(k=>k.toLowerCase().includes(q.toLowerCase()))))return false;
     return true;});
   rows.sort((a,b)=>{const ka=a.updated==='今天'?'9999-99-99':a.updated,kb=b.updated==='今天'?'9999-99-99':b.updated;return kb.localeCompare(ka);});
   const total=rows.length,pages=Math.max(1,Math.ceil(total/pageSize));
@@ -248,15 +295,18 @@ function render(){
   renderPager(total,pages);
   document.getElementById('tbody').innerHTML=pageRows.map(x=>{const m=M(x.id);
     const stAct=x.status==='启用'?`<span class="act" onclick="askStop('${x.id}')">停用</span>`:`<span class="act" onclick="toggleStatus('${x.id}')">启用</span>`;
-    const ops=`${stAct}<span class="act off" onclick="askDel('${x.id}')">删除</span>`;
+    const ops=`<span class="act" onclick="openEdit('${x.id}')">编辑</span>${stAct}<span class="act off" onclick="askDel('${x.id}')">删除</span>`;
+    const en=x.en||[];const exl=x.ex||[];const enH=en.length?`<span class="enw" data-tip="${encodeURIComponent(JSON.stringify({en,ex:exl}))}">`+en.slice(0,2).map(k=>`<span class="chip ro">${esc(k)}</span>`).join('')+(en.length>2?`<span class="more">等${en.length}个</span>`:'')+`</span>`:'<span class="none">未维护</span>';
     return `<tr class="${x.status==='停用'?'off-row':''}">
       <td class="ename">${m.name}</td>
       <td class="muted">${m.code}</td>
       <td class="prod"><div class="prod-in" title="${m.track}">${m.track}</div></td>
+      <td>${enH}</td>
+      <td>${x.note?`<div class="note-in" title="${esc(x.note)}">${esc(x.note)}</div>`:'<span class="muted">-</span>'}</td>
       <td class="muted">${x.updated}</td>
       <td>${ops}</td>
     </tr>`;
-  }).join('')||`<tr><td colspan="5" style="text-align:center;color:var(--text3);padding:40px">无匹配的竞对企业</td></tr>`;
+  }).join('')||`<tr><td colspan="7" style="text-align:center;color:var(--text3);padding:40px">无匹配的竞对企业</td></tr>`;
 
 }
 
@@ -276,9 +326,33 @@ function confirmAdd(){if(!addBuf.length){toast('请选择要加入的企业');re
   closeAdd();render();toast('已加入 '+addBuf.length+' 家竞对企业');
 }
 /* edit */
-function openEdit(id){editId=id;const x=lib.find(l=>l.id===id);document.getElementById('ename').value=M(id).name;document.getElementById('enote').value=x.note||'';document.getElementById('editov').classList.add('show')}
+let EB=null;
+function openEdit(id){editId=id;const x=id==='self'?SELF:lib.find(l=>l.id===id);EB={en:(x.en||[]).slice(),ex:(x.ex||[]).slice()};
+  document.getElementById('ename').value=id==='self'?SELF.name:M(id).name;document.getElementById('enote').value=x.note||'';
+  document.getElementById('enin').value='';document.getElementById('exin').value='';renderKw();document.getElementById('editov').classList.add('show');setTimeout(()=>document.getElementById('enin').focus(),50)}
+function renderKw(){for(const k of ['en','ex']){document.getElementById(k+'box').innerHTML=EB[k].map((w,i)=>`<span class="chip ${k==='ex'?'ex':''}">${esc(w)}<b onclick="EB.${k}.splice(${i},1);renderKw()">×</b></span>`).join('')||`<span class="more">${k==='en'?'未维护':'无'}</span>`}}
+function ownerOf(w){const u=w.toUpperCase();if(editId!=='self'&&SELF.en.some(k=>k.toUpperCase()===u))return '本企业';const o=lib.find(l=>l.id!==editId&&(l.en||[]).some(k=>k.toUpperCase()===u));return o?M(o.id).name:null}
+function addKw(k){const inp=document.getElementById(k+'in');const w=inp.value.trim();if(!w)return;
+  if(EB[k].some(x=>x.toUpperCase()===w.toUpperCase())){toast('已存在');return}
+  if(k==='en'){const o=ownerOf(w);if(o){toast(`“${w}”已在「${o}」下维护`);return}}
+  EB[k].push(w);inp.value='';renderKw();inp.focus()}
 function closeEdit(){document.getElementById('editov').classList.remove('show')}
-function saveEdit(){const x=lib.find(l=>l.id===editId);x.note=document.getElementById('enote').value;closeEdit();render();toast('已保存')}
+function saveEdit(){const x=editId==='self'?SELF:lib.find(l=>l.id===editId);
+  if(document.getElementById('enin').value.trim()){toast('输入框中的关键词还未添加');return}
+  x.en=EB.en;x.ex=EB.ex;x.note=document.getElementById('enote').value;if(editId==='self')SELF.updated='今天';else x.updated='今天';
+  closeEdit();renderSelf();render();toast('已保存')}
+/* 试查：海关数据中名称出现该关键词（按完整单词匹配，与接口一致）的中国企业 */
+const wN=t=>' '+String(t).toUpperCase().replace(/[^\p{L}\p{N}]+/gu,' ').trim()+' ';const wHit=(name,k)=>wN(name).includes(wN(k));
+function tryKw(){const w=document.getElementById('enin').value.trim();if(!w){toast('请先输入关键词');return}
+  const u=w.toUpperCase();const exs=EB.ex.map(e=>e.toUpperCase());
+  const hit=CNN.filter(r=>wHit(r[1],w)).sort((a,b)=>b[2]-a[2]);
+  const ok=hit.filter(r=>!exs.some(e=>wHit(r[1],e)));
+  document.getElementById('trytt').textContent=`试查“${w}”`;
+  document.getElementById('trybody').innerHTML=`<div style="font-size:12.5px;color:var(--text);margin-bottom:10px">2026-01 ~ 2026-10 海关数据中，名称出现“${esc(w)}”（按完整单词匹配）的中国企业名称 <b>${ok.length}</b> 个${hit.length>ok.length?`（另有 ${hit.length-ok.length} 个因包含排除关键词不计入）`:''}</div>
+  ${hit.length?`<table class="tq"><thead><tr><th>海关数据中的企业名称</th><th>角色</th><th>记录数</th><th></th></tr></thead><tbody>${hit.map(r=>{const x=exs.some(e=>wHit(r[1],e));return `<tr><td>${esc(r[1])}</td><td><span class="pill ${r[0]==='EX'?'dx':'dm'}">${r[0]==='EX'?'出口商':'进口商'}</span></td><td>${r[2]}</td><td>${x?'<span class="pill xx">已排除</span>':''}</td></tr>`}).join('')}</tbody></table>`:'<div style="padding:30px 0;text-align:center;color:var(--text3)">没有匹配的企业名称</div>'}`;
+  document.getElementById('tryadd').style.display=EB.en.some(x=>x.toUpperCase()===u)?'none':'';
+  document.getElementById('tryov').classList.add('show')}
+function closeTry(){document.getElementById('tryov').classList.remove('show')}
 /* toggle status */
 function askDel(id){delId=id;document.getElementById('delname').textContent=M(id).name;document.getElementById('delov').classList.add('show')}
 function closeDel(){document.getElementById('delov').classList.remove('show')}
@@ -288,7 +362,20 @@ function askStop(id){stopId=id;document.getElementById('stopname').textContent=M
 function closeStop(){document.getElementById('stopov').classList.remove('show')}
 function confirmStop(){const x=lib.find(l=>l.id===stopId);if(x)x.status='停用';closeStop();render();toast('已停用（不再进入监测/对标）')}
 
-renderRole();render();
+function esc(t){return String(t).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]))}
+function renderSelf(){document.getElementById('selfbox').innerHTML=`<span class="pill tag-key">本企业</span><b>${SELF.name}</b><span class="lb" style="margin-left:12px">海关英文名称</span>${SELF.en.map(k=>`<span class="chip ro">${esc(k)}</span>`).join('')}${SELF.ex.length?`<span class="lb">排除</span>${SELF.ex.map(k=>`<span class="chip ex ro">${esc(k)}</span>`).join('')}`:''}<span class="sp"></span><span class="act" onclick="openEdit('self')">编辑</span>`}
+renderRole();renderSelf();render();
+</script>
+<div class="entip" id="entip"></div>
+<script>
+(function(){const tip=document.getElementById('entip');
+document.addEventListener('mouseover',e=>{const w=e.target.closest&&e.target.closest('.enw');if(!w){tip.style.display='none';return}
+const d=JSON.parse(decodeURIComponent(w.dataset.tip));
+tip.innerHTML=`<div class="tl">海关英文名称（${d.en.length}个）</div>`+d.en.map(k=>`<span class="chip ro">${esc(k)}</span>`).join('')+(d.ex.length?`<div class="tl">排除关键词（${d.ex.length}个）</div>`+d.ex.map(k=>`<span class="chip ex ro">${esc(k)}</span>`).join(''):'');
+tip.style.display='block';const r=w.getBoundingClientRect();const th=tip.offsetHeight,tw=tip.offsetWidth;
+let top=r.bottom+6;if(top+th>innerHeight-8)top=r.top-th-6;let left=r.left;if(left+tw>innerWidth-8)left=innerWidth-tw-8;
+tip.style.top=top+'px';tip.style.left=left+'px'});
+document.addEventListener('scroll',()=>{tip.style.display='none'},true);})();
 </script>
 </body>
 </html>
