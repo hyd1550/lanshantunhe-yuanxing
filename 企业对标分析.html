@@ -76,6 +76,7 @@ table.cmp tr:last-child td{border-bottom:none}
 .sname{font-size:13px;font-weight:500}
 .smeta{font-size:11px;color:var(--text3);margin-top:1px}
 .stag{font-size:10px;padding:1px 7px;border-radius:99px;background:var(--blue-bg);color:var(--blue)}
+.stag.self{background:#E8F3EC;color:#1F7A45}
 /* report modal */
 .rsec{font-size:13.5px;font-weight:600;margin:16px 0 8px;padding-left:9px;border-left:3px solid var(--blue)}
 .rsec:first-child{margin-top:0}
@@ -101,7 +102,7 @@ table.cmp tr:last-child td{border-bottom:none}
       <span id="basesel"></span>
       <span style="font-size:12.5px;color:var(--text2);margin-right:4px">年度</span>
       <select class="ysel" onchange="setYear(this.value)"><option value="2">2025 年</option><option value="1">2024 年</option><option value="0">2023 年</option></select>
-      <span style="font-size:11px;color:var(--text3);margin-right:10px">（影响研发投入 / 招投标 / 区域分布）</span>
+      <span style="font-size:11px;color:var(--text3);margin-right:10px">（全部指标按所选年度统计）</span>
       <button class="btn pri" onclick="openReport()">查看对比报告</button>
     </div>
     <div class="view" id="view"></div>
@@ -110,6 +111,7 @@ table.cmp tr:last-child td{border-bottom:none}
   <div class="ov" id="selov"><div class="modal" style="width:560px">
     <div class="mhd"><h3>选择对标企业</h3><div class="mx" onclick="closeSelect()">✕</div></div>
     <div class="msearch"><span style="color:var(--text3)">🔍</span><input id="ssearch" placeholder="搜索企业名称…" oninput="renderSList(this.value)"></div>
+    <div style="padding:2px 4px 6px;font-size:11.5px;color:var(--text3)">可选范围＝本企业＋竞对企业维护清单；已选为基准的企业不可再选为对标企业</div>
     <div class="slist" id="slist"></div>
     <div class="mft"><span id="selcnt" style="margin-right:auto;font-size:12.5px;color:var(--text2)"></span><button class="btn" onclick="closeSelect()">取消</button><button class="btn pri" onclick="confirmSelect()">确定</button></div>
   </div></div>
@@ -118,7 +120,7 @@ table.cmp tr:last-child td{border-bottom:none}
     <div class="mhd"><h3>选择基准企业</h3><div class="mx" onclick="closeBase()">✕</div></div>
     <div class="msearch"><span style="color:var(--text3)">🔍</span><input id="bsearch" placeholder="搜索企业名称…" oninput="renderBList(this.value)"></div>
     <div class="slist" id="blist"></div>
-    <div class="mft"><span style="margin-right:auto;font-size:12px;color:var(--text3)">基准企业为对比参照，单选</span><button class="btn" onclick="closeBase()">取消</button><button class="btn pri" onclick="confirmBase()">确定</button></div>
+    <div class="mft"><span style="margin-right:auto;font-size:12px;color:var(--text3);line-height:1.6">基准企业为对比参照，单选；<b style="color:var(--text2)">本企业</b>由系统配置项指定，不在「竞对企业维护」中维护</span><button class="btn" onclick="closeBase()">取消</button><button class="btn pri" onclick="confirmBase()">确定</button></div>
   </div></div>
 
   <div class="rpage" id="reportpage" style="display:none">
@@ -135,7 +137,7 @@ table.cmp tr:last-child td{border-bottom:none}
 </div>
 
 <script>
-const PYEARS=['2021','2022','2023','2024','2025'];
+const PY0=2019;   // 专利年度数据起始年
 const RDYEARS=['2023','2024','2025'];
 const PCAT=['发明','实用新型','外观'];
 const MAX=4;
@@ -144,14 +146,14 @@ function mk(id,name,s,mkt,listed,ci){
   const norm=p=>p==='内蒙'?'内蒙古':p;
   const provs=mkt.split('、').map(norm);const regions={};[100,72,52].forEach((v,i)=>{if(provs[i])regions[provs[i]]=v});
   return {id,name,base:false,color:COLORS[ci%COLORS.length],listed,
-    pat:{发明:Math.round(150*s),实用新型:Math.round(100*s),外观:Math.round(28*s)},
-    trend:[110,140,175,205,235].map(v=>Math.round(v*s)),
+    patStock:Math.round(420*s),patShare:{发明:0.54,实用新型:0.36},
+    patAnn:[80,95,110,140,175,205,235].map(v=>Math.round(v*s)),
     rd:listed?[64000,72000,82000].map(v=>Math.round(v*s)):null,
     bidAmtY:[+(5.9*s*0.72).toFixed(1),+(5.9*s*0.86).toFixed(1),+(5.9*s).toFixed(1)],bidNumY:[Math.round(75*s*0.75),Math.round(75*s*0.87),Math.round(75*s)],cust:Math.round(60*s),mkt,regions};
 }
 const CO=[
- {id:'th',name:'蓝山屯河',base:true,color:'#185FA5',listed:false,
-   pat:{发明:90,实用新型:70,外观:20},trend:[100,120,140,160,180],
+ {id:'th',name:'蓝山屯河',base:true,self:true,color:'#185FA5',listed:false,
+   patStock:300,patShare:{发明:0.5,实用新型:0.39},patAnn:[75,88,100,120,140,160,180],
    rd:[16000,20000,24000],bidAmtY:[1.8,2.4,3.0],bidNumY:[40,48,58],cust:45,mkt:'新疆、内蒙、甘肃',regions:{'新疆':100,'内蒙古':70,'甘肃':55,'青海':30,'陕西':22}},
  mk('jf','金发科技',1.28,'广东、浙江、福建',true,0),
  mk('hl','恒力石化',1.0,'江苏、浙江、山东',true,1),
@@ -183,7 +185,7 @@ const INFO={
  lj:{area:'江苏·盐城',founded:'2016',capital:'未披露',nature:'非上市·融资企业',qual:'创新型中小企业',industry:'合成生物',main:'PHA'},
 };
 const inf=c=>INFO[c.id]||{};
-let baseId='th';
+let baseId=(CO.find(c=>c.self)||CO[0]).id;   // 基准默认取「企业性质=本企业」那条，不再硬编码、不依赖置顶
 let sel=['th','jf','jd','lj'];
 let mapCo='th';
 let yi=2;
@@ -192,9 +194,17 @@ let selbuf=[];
 let baseBuf='';
 const get=id=>CO.find(c=>c.id===id);
 const isBase=id=>id===baseId;
+const isSelf=c=>!!c.self;                    // 企业性质：本企业 / 竞对企业
+const selfFirst=(a,b)=>(b.self?1:0)-(a.self?1:0);  // 本企业排首位
 const baseCo=()=>get(baseId);
 const selCo=()=>[baseId,...sel.filter(x=>x!==baseId)].map(get);
-const patTotal=c=>PCAT.reduce((a,k)=>a+c.pat[k],0);
+const curY=()=>+RDYEARS[yi];                                   // 所选统计年度
+const winYears=()=>{const y=curY();return [y-4,y-3,y-2,y-1,y].map(String)};   // 趋势区间：所选年份及前 4 年
+const annOf=(c,yr)=>{const i=+yr-PY0;return i>=0&&i<c.patAnn.length?c.patAnn[i]:0};
+const trendOf=c=>winYears().map(yr=>annOf(c,yr));             // 区间内各年申请量
+const totalOf=c=>{let t=c.patStock;for(let yr=PY0;yr<=curY();yr++)t+=annOf(c,yr);return t};   // 截至所选年末累计
+const patOf=c=>{const t=totalOf(c),i=Math.round(t*c.patShare.发明),u=Math.round(t*c.patShare.实用新型);return {发明:i,实用新型:u,外观:t-i-u}};
+const patTotal=c=>totalOf(c);
 const amtW=c=>Math.round(c.bidAmtY[yi]*10000);
 const rdv=(c,i)=>c.rd?c.rd[i]:null;
 function toast(m){const e=document.getElementById('toast');e.textContent=m;e.classList.add('show');clearTimeout(e._t);e._t=setTimeout(()=>e.classList.remove('show'),1900)}
@@ -204,18 +214,20 @@ function renderChips(){
   document.getElementById('chips').innerHTML=selCo().map(c=>`<span class="chip${isBase(c.id)?' base':''}"><span class="dot" style="background:${c.color}"></span>${c.name}${isBase(c.id)?'（基准）':''}${isBase(c.id)?'':`<span class="x" onclick="removeChip('${c.id}')">✕</span>`}</span>`).join('')+(sel.length<2?'<span style="font-size:12px;color:var(--red);margin-left:6px">请至少选择 1 家对标企业</span>':'');
 }
 function renderBaseSel(){const el=document.getElementById('basesel');if(!el)return;
-  el.innerHTML=`<span style="font-size:12.5px;color:var(--text2);margin-right:2px">基准企业：</span><span class="addbtn" onclick="openBase()">${baseCo().name} ⇄ 更换</span>`;
+  const bc=baseCo();
+  el.innerHTML=`<span style="font-size:12.5px;color:var(--text2);margin-right:2px">基准企业：</span><span class="addbtn" onclick="openBase()">${bc.name}${bc.self?'':'<span style="color:var(--text3);font-weight:400">（非本企业）</span>'} ⇄ 更换</span>`;
 }
 function openBase(){baseBuf=baseId;document.getElementById('bsearch').value='';renderBList('');document.getElementById('baseov').classList.add('show')}
 function closeBase(){document.getElementById('baseov').classList.remove('show')}
 function renderBList(q){
   q=(q||'').trim();
-  document.getElementById('blist').innerHTML=CO.filter(c=>!q||c.name.includes(q)).map(c=>{
+  document.getElementById('blist').innerHTML=CO.filter(c=>!q||c.name.includes(q)).slice().sort(selfFirst).map(c=>{
     const on=c.id===baseBuf;
     return `<div class="srow${on?' on':''}" onclick="baseChoose('${c.id}')">
       <span class="sck">${on?'✓':''}</span>
       <span class="sdot" style="background:${c.color}"></span>
-      <div class="sinfo"><div class="sname">${c.name}</div><div class="smeta">${c.listed?'上市公司':'非上市'}</div></div>
+      <div class="sinfo"><div class="sname">${c.name}</div><div class="smeta">${isSelf(c)?'本企业 · 由系统配置':(c.listed?'上市公司':'非上市')}</div></div>
+      ${isSelf(c)?'<span class="stag self">本企业</span>':''}
     </div>`;
   }).join('');
 }
@@ -229,13 +241,13 @@ function openSelect(){selbuf=[...sel];document.getElementById('ssearch').value='
 function closeSelect(){document.getElementById('selov').classList.remove('show')}
 function renderSList(q){
   q=(q||'').trim();
-  document.getElementById('slist').innerHTML=CO.filter(c=>!q||c.name.includes(q)).map(c=>{
+  document.getElementById('slist').innerHTML=CO.filter(c=>!q||c.name.includes(q)).slice().sort(selfFirst).map(c=>{
     const on=selbuf.includes(c.id);const dis=isBase(c.id);
     return `<div class="srow${on?' on':''}${dis?' dis':''}" onclick="${dis?'':`selToggle('${c.id}')`}">
       <span class="sck">${on?'✓':''}</span>
       <span class="sdot" style="background:${c.color}"></span>
-      <div class="sinfo"><div class="sname">${c.name}</div><div class="smeta">${c.listed?'上市公司':'非上市'}</div></div>
-      ${dis?'<span class="stag">基准</span>':''}
+      <div class="sinfo"><div class="sname">${c.name}</div><div class="smeta">${isSelf(c)?'本企业 · 由系统配置':(c.listed?'上市公司':'非上市')}</div></div>
+      ${dis?'<span class="stag">基准</span>':(isSelf(c)?'<span class="stag self">本企业</span>':'')}
     </div>`;
   }).join('');
   document.getElementById('selcnt').textContent=`已选 ${selbuf.filter(x=>x!==baseId).length} / ${MAX} 家竞对企业（不含基准）`;
@@ -264,11 +276,11 @@ function groupedBar(cats,list,valFn){
 }
 function lineChart(list){
   const W=680,H=300,pl=42,pr=14,pt=16,pb=34,pw=W-pl-pr,ph=H-pt-pb;
-  let max=0;list.forEach(c=>c.trend.forEach(v=>max=Math.max(max,v)));max=Math.ceil(max/50)*50||100;
-  const X=i=>pl+pw*i/(PYEARS.length-1),Y=v=>pt+ph-ph*v/max;let g='';
+  let max=0;list.forEach(c=>trendOf(c).forEach(v=>max=Math.max(max,v)));max=Math.ceil(max/50)*50||100;
+  const X=i=>pl+pw*i/(winYears().length-1),Y=v=>pt+ph-ph*v/max;let g='';
   for(let t=0;t<=4;t++){const v=max*t/4,y=Y(v);g+=`<line x1="${pl}" y1="${y.toFixed(1)}" x2="${W-pr}" y2="${y.toFixed(1)}" stroke="#eeece5"/><text x="${pl-6}" y="${(y+3).toFixed(1)}" font-size="10" fill="#9c9a90" text-anchor="end">${Math.round(v)}</text>`}
-  PYEARS.forEach((yr,i)=>g+=`<text x="${X(i).toFixed(1)}" y="${H-12}" font-size="10.5" fill="#6b6960" text-anchor="middle">${yr}</text>`);
-  list.forEach(c=>{let d=c.trend.map((v,i)=>`${X(i).toFixed(1)},${Y(v).toFixed(1)}`).join(' ');g+=`<polyline points="${d}" fill="none" stroke="${c.color}" stroke-width="2.2"/>`;c.trend.forEach((v,i)=>g+=`<circle cx="${X(i).toFixed(1)}" cy="${Y(v).toFixed(1)}" r="3" fill="${c.color}"><title>${c.name} ${PYEARS[i]}：${v} 件</title></circle>`)});
+  winYears().forEach((yr,i)=>g+=`<text x="${X(i).toFixed(1)}" y="${H-12}" font-size="10.5" fill="#6b6960" text-anchor="middle">${yr}</text>`);
+  list.forEach(c=>{let d=trendOf(c).map((v,i)=>`${X(i).toFixed(1)},${Y(v).toFixed(1)}`).join(' ');g+=`<polyline points="${d}" fill="none" stroke="${c.color}" stroke-width="2.2"/>`;trendOf(c).forEach((v,i)=>g+=`<circle cx="${X(i).toFixed(1)}" cy="${Y(v).toFixed(1)}" r="3" fill="${c.color}"><title>${c.name} ${winYears()[i]}：${v} 件</title></circle>`)});
   return `<svg viewBox="0 0 ${W} ${H}" width="100%">${g}</svg>`;
 }
 function barChart(list,valFn,unit){
@@ -281,7 +293,7 @@ function barChart(list,valFn,unit){
     g+=`<text x="${pl+bw+8}" y="${y+16}" font-size="11" fill="#6b6960">${v.toLocaleString()} ${unit}</text>`});
   return `<svg viewBox="0 0 ${W} ${H}" width="100%">${g}</svg>`;
 }
-function colhd(list){return list.map(c=>`<th><span style="display:inline-flex;align-items:center;gap:6px"><span style="width:8px;height:8px;border-radius:50%;background:${c.color};display:inline-block"></span>${c.name}${isBase(c.id)?'·基准':''}</span></th>`).join('')}
+function colhd(list){return list.map(c=>`<th><span style="display:inline-flex;align-items:center;gap:6px"><span style="width:8px;height:8px;border-radius:50%;background:${c.color};display:inline-block"></span>${c.name}</span></th>`).join('')}
 
 function setYear(v){yi=+v;renderView();}
 function renderView(){
@@ -292,27 +304,27 @@ function renderView(){
   const txtRow=(label,fn)=>`<tr><td class="metric">${label}</td>`+list.map(c=>`<td>${fn(c)}</td>`).join('')+`</tr>`;
   const rdYoy=(c,i)=>!c.rd?'-':(i>0?Math.round((c.rd[i]-c.rd[i-1])/c.rd[i-1]*100)+'%':'—');
 
-  const patRows=[...PCAT,'总量'].map(k=>{const lb=k==='发明'?'发明专利':k==='外观'?'外观设计':k;return numRow(lb,c=>k==='总量'?patTotal(c):c.pat[k]);}).join('');
-  const trendRows=numRow('近一年新增（件）',c=>c.trend[4]-c.trend[3])
-    +txtRow('同比增速',c=>Math.round((c.trend[4]-c.trend[3])/c.trend[3]*100)+'%')
-    +numRow('5 年累计申报（件）',c=>c.trend.reduce((a,b)=>a+b,0))
-    +txtRow('年均增速（CAGR）',c=>Math.round((Math.pow(c.trend[4]/c.trend[0],1/4)-1)*100)+'%');
+  const patRows=[...PCAT,'总量'].map(k=>{const lb=(k==='发明'?'发明专利':k==='外观'?'外观设计':k==='总量'?'专利总量':k)+'（件）';return numRow(lb,c=>k==='总量'?patTotal(c):patOf(c)[k]);}).join('');
+  const trendRows=numRow(`${curY()} 年新增（件）`,c=>trendOf(c)[4])
+    +txtRow(`${curY()} 年同比增速`,c=>Math.round((trendOf(c)[4]-trendOf(c)[3])/trendOf(c)[3]*100)+'%')
+    +numRow('5 年累计申报（件）',c=>trendOf(c).reduce((a,b)=>a+b,0))
+    +txtRow('年均增速（CAGR）',c=>Math.round((Math.pow(trendOf(c)[4]/trendOf(c)[0],1/4)-1)*100)+'%');
   const rdRows=numRow(`${RDYEARS[yi]} 年研发投入（万元）`,c=>rdv(c,yi))+txtRow('同比增速',c=>rdYoy(c,yi));
   const bidRows=numRow('中标金额（万元）',c=>amtW(c))+numRow('中标数量（次）',c=>c.bidNumY[yi])+numRow('客户数量（家）',c=>c.bidCustY[yi])+txtRow('前三市场分布',c=>c.mkt);
 
   const fmt=v=>typeof v==='number'?v.toLocaleString():v;
   const lead=(fn,unit,label)=>{const wv=list.filter(c=>fn(c)!=null);if(!wv.length)return `${label}暂无数据。`;const top=wv.reduce((a,b)=>fn(b)>fn(a)?b:a);const bc=baseCo();const bv=fn(bc);const bstr=bv==null?'无数据':fmt(bv)+unit;return top.id===baseId?`${label}<b>${bc.name}</b> 领先（${fmt(fn(top))}${unit}）。`:`${label}<b>${top.name}</b> 领先（${fmt(fn(top))}${unit}），${bc.name} ${bstr}。`;};
   const bc=baseCo();
-  const sumP=lead(patTotal,' 件','专利总量：');
-  const topT=list.reduce((a,b)=>b.trend[4]>a.trend[4]?b:a);const thc=Math.round((Math.pow(bc.trend[4]/bc.trend[0],1/4)-1)*100);
-  const sumT=`近 5 年专利申报 <b>${topT.id===baseId?bc.name:topT.name}</b> 规模领先，${bc.name}年均增速约 ${thc}%。`;
+  const sumP=lead(patTotal,' 件',`截至 ${curY()} 年末专利总量：`);
+  const topT=list.reduce((a,b)=>trendOf(b)[4]>trendOf(a)[4]?b:a);const thc=Math.round((Math.pow(trendOf(bc)[4]/trendOf(bc)[0],1/4)-1)*100);
+  const sumT=`${winYears()[0]}—${winYears()[4]} 年专利申报 <b>${topT.id===baseId?bc.name:topT.name}</b> 规模领先，${bc.name}年均增速约 ${thc}%。`;
   const sumRD=lead(c=>rdv(c,yi),' 万元',`${RDYEARS[yi]} 年研发投入：`);
   const sumBid=lead(c=>amtW(c),' 万元',`${RDYEARS[yi]} 年中标金额：`);
 
   document.getElementById('view').innerHTML=`
-    <div class="card"><h4>专利总量对比</h4><div class="desc">发明/实用新型/外观设计分组对比（件）· 不随年度筛选</div>${groupedBar(PCAT,list,(c,k)=>c.pat[k])}${legend(list)}
+    <div class="card"><h4>专利总量对比（截至 ${curY()} 年末）</h4><div class="desc">发明/实用新型/外观设计累计专利申请量（件）</div>${groupedBar(PCAT,list,(c,k)=>patOf(c)[k])}${legend(list)}
       <table class="cmp"><thead><tr><th>专利类型</th>${colhd(list)}</tr></thead><tbody>${patRows}</tbody></table><div class="sumline">${sumP}</div></div>
-    <div class="card"><h4>近 5 年专利申报趋势</h4><div class="desc">各企业年度专利申报量（件）· 近 5 年，不随年度筛选</div>${lineChart(list)}${legend(list)}
+    <div class="card"><h4>专利申报趋势（${winYears()[0]}—${winYears()[4]} 年）</h4><div class="desc">各企业年度专利申请量（件）</div>${lineChart(list)}${legend(list)}
       <table class="cmp"><thead><tr><th>趋势指标</th>${colhd(list)}</tr></thead><tbody>${trendRows}</tbody></table><div class="sumline">${sumT}</div></div>
     <div class="card"><h4>研发投入</h4><div class="desc">${RDYEARS[yi]} 年研发投入对比（万元）</div>${barChart(list,c=>rdv(c,yi),'万元')}
       <table class="cmp"><thead><tr><th>指标</th>${colhd(list)}</tr></thead><tbody>${rdRows}</tbody></table><div class="sumline">${sumRD}</div></div>
@@ -352,12 +364,12 @@ function openReport(){
   const bc=baseCo();const comps=list.filter(c=>!isBase(c.id));
   const names=comps.map(c=>c.name).join('、');
   const rdYoy=(c,i)=>!c.rd?'-':(i>0?Math.round((c.rd[i]-c.rd[i-1])/c.rd[i-1]*100)+'%':'—');
-  const cmp=(rows)=>`<table class="cmp"><thead><tr><th>指标</th>${list.map(c=>`<th>${c.name}${isBase(c.id)?'·基准':''}</th>`).join('')}</tr></thead><tbody>${rows.map(([m,fn])=>`<tr><td class="metric">${m}</td>${list.map(c=>`<td>${fn(c)}</td>`).join('')}</tr>`).join('')}</tbody></table>`;
+  const cmp=(rows)=>`<table class="cmp"><thead><tr><th>指标</th>${list.map(c=>`<th>${c.name}</th>`).join('')}</tr></thead><tbody>${rows.map(([m,fn])=>`<tr><td class="metric">${m}</td>${list.map(c=>`<td>${fn(c)}</td>`).join('')}</tr>`).join('')}</tbody></table>`;
   const topPat=comps.length?comps.reduce((a,b)=>patTotal(b)>patTotal(a)?b:a):bc;
   const rdComps=comps.filter(c=>c.rd);const topRd=rdComps.length?rdComps.reduce((a,b)=>b.rd[yi]>a.rd[yi]?b:a):bc;
   const topBid=comps.length?comps.reduce((a,b)=>b.bidAmtY[yi]>a.bidAmtY[yi]?b:a):bc;
   const rankPat=[...list].sort((a,b)=>patTotal(b)-patTotal(a)).findIndex(c=>c.id===baseId)+1;
-  const dims=[['专利总量',c=>patTotal(c)],['专利年均增速',c=>c.trend[4]/c.trend[0]],[`${RDYEARS[yi]}年研发投入`,c=>rdv(c,yi)],['中标金额',c=>c.bidAmtY[yi]],['中标数量',c=>c.bidNumY[yi]],['客户数量',c=>c.bidCustY[yi]]];
+  const dims=[['专利总量',c=>patTotal(c)],['专利年均增速',c=>trendOf(c)[4]/trendOf(c)[0]],[`${RDYEARS[yi]}年研发投入`,c=>rdv(c,yi)],['中标金额',c=>c.bidAmtY[yi]],['中标数量',c=>c.bidNumY[yi]],['客户数量',c=>c.bidCustY[yi]]];
   const N=list.length;
   const ana=dims.map(([lb,fn])=>{const vals=list.map(fn).filter(v=>v!=null);const bv=fn(bc);if(bv==null||!vals.length)return null;const mx=Math.max(...vals);const rank=vals.filter(v=>v>bv).length+1;const gap=mx>0?Math.round((mx-bv)/mx*100):0;return {lb,rank,gap};}).filter(Boolean);
   const leads=ana.filter(a=>a.rank===1).map(a=>a.lb).slice(0,2);
@@ -366,14 +378,17 @@ function openReport(){
   const posTxt=avg<=1.5?'总体处于领先位置':(avg>=N-0.5?'总体位次靠后':'总体位次居中');
   const strongTxt=leads.length?`在 ${leads.join('、')} 上居首`:'暂无居首的维度';
   const gapTxt=gaps.length?`与领先者差距最大的是 ${gaps.map(g=>`${g.lb}（落后约 ${g.gap}%）`).join('、')}`:'各维度与领先者差距不大';
+  const topT=list.reduce((a,b)=>trendOf(b)[4]>trendOf(a)[4]?b:a);const thc=Math.round((Math.pow(trendOf(bc)[4]/trendOf(bc)[0],1/4)-1)*100);
+  const sumT=`${winYears()[0]}—${winYears()[4]} 年专利申报 <b>${topT.id===baseId?bc.name:topT.name}</b> 规模领先，${bc.name}年均增速约 ${thc}%。`;
   const judge=`以 <b>${bc.name}</b> 为基准，${posTxt}。${strongTxt}；${gapTxt}。竞对中，专利规模以 <b>${topPat.name}</b> 领先、${RDYEARS[yi]} 年研发投入以 <b>${topRd.name}</b> 最高、招投标金额以 <b>${topBid.name}</b> 领先。`;
   document.getElementById('rsheet').innerHTML=`
     <div class="rmeta">本报告以 <b>${bc.name}</b> 为基准，对比 <b>${names}</b>　|　统计年度：${RDYEARS[yi]} 年　|　生成时间：2026-07-13</div>
     <div class="rsec">一、企业基本信息</div>${cmp([['所属地区',c=>inf(c).area],['成立年份',c=>inf(c).founded],['注册资本',c=>inf(c).capital],['企业性质',c=>inf(c).nature],['资质标签',c=>inf(c).qual],['所属行业（国标）',c=>inf(c).industry],['主营产品',c=>inf(c).main]])}
-    <div class="rsec">二、专利对比</div>${cmp([['发明专利',c=>c.pat.发明],['实用新型',c=>c.pat.实用新型],['外观设计',c=>c.pat.外观],['专利总量',c=>patTotal(c)],['近一年新增',c=>c.trend[4]-c.trend[3]]])}
-    <div class="rsec">三、研发投入</div>${cmp([[`${RDYEARS[yi]}年研发投入（万元）`,c=>c.rd?c.rd[yi].toLocaleString():'-'],['同比增速',c=>rdYoy(c,yi)]])}
-    <div class="rsec">四、市场分析（招投标 · ${RDYEARS[yi]} 年）</div>${cmp([['中标金额（万元）',c=>amtW(c).toLocaleString()],['中标数量（次）',c=>c.bidNumY[yi]],['客户数量（家）',c=>c.bidCustY[yi]],['前三市场分布',c=>c.mkt]])}
-    <div class="rsec">五、综合研判</div><p style="font-size:12.5px;line-height:1.8;background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:12px 14px">${judge}</p>`;
+    <div class="rsec">二、专利总量对比（截至 ${curY()} 年末）</div>${cmp([['发明专利（件）',c=>patOf(c).发明.toLocaleString()],['实用新型（件）',c=>patOf(c).实用新型.toLocaleString()],['外观设计（件）',c=>patOf(c).外观.toLocaleString()],['专利总量（件）',c=>patTotal(c).toLocaleString()]])}
+    <div class="rsec">三、专利申报趋势（${winYears()[0]}—${winYears()[4]} 年）</div>${cmp([[`${curY()} 年新增（件）`,c=>trendOf(c)[4].toLocaleString()],[`${curY()} 年同比增速`,c=>Math.round((trendOf(c)[4]-trendOf(c)[3])/trendOf(c)[3]*100)+'%'],['5 年累计申报（件）',c=>trendOf(c).reduce((a,b)=>a+b,0).toLocaleString()],['年均增速（CAGR）',c=>Math.round((Math.pow(trendOf(c)[4]/trendOf(c)[0],1/4)-1)*100)+'%']])}<div class="sumline">${sumT}</div>
+    <div class="rsec">四、研发投入（${RDYEARS[yi]} 年）</div>${cmp([[`${RDYEARS[yi]}年研发投入（万元）`,c=>c.rd?c.rd[yi].toLocaleString():'-'],['同比增速',c=>rdYoy(c,yi)]])}
+    <div class="rsec">五、市场分析（招投标 · ${RDYEARS[yi]} 年）</div>${cmp([['中标金额（万元）',c=>amtW(c).toLocaleString()],['中标数量（次）',c=>c.bidNumY[yi]],['客户数量（家）',c=>c.bidCustY[yi]],['前三市场分布',c=>c.mkt]])}
+    <div class="rsec">六、综合研判</div><p style="font-size:12.5px;line-height:1.8;background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:12px 14px">${judge}</p>`;
   document.getElementById('reportpage').style.display='flex';document.getElementById('mainpage').style.display='none';document.getElementById('rbody').scrollTop=0;
 }
 function backToMain(){document.getElementById('reportpage').style.display='none';document.getElementById('mainpage').style.display='flex';}
